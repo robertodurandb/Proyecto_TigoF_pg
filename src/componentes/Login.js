@@ -1,0 +1,88 @@
+import React from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../estilos/style.css'
+import Tigo from '../imagenes/tigo1.png'
+
+function Login(props){
+
+const [username, setUsername] = React.useState("")
+const [password, setPassword] = React.useState("")
+const [hashError, setHashError] = React.useState(false)
+
+const {loginCallback} = props
+
+function doLogin() {
+    fetch('http://localhost:9100/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    }).then ((response) => {
+        console.log(response.status)
+        if (response.status == 401){
+            setHashError(true)
+            console.log("hubo un error y no hay data")  
+        }else{
+            setHashError(false)
+            return response.json()
+            .then((data) =>{
+                sessionStorage.setItem("token", data.token)
+                sessionStorage.setItem("currentUser", data.username)
+                sessionStorage.setItem("role", data.role)
+                loginCallback()
+            })    
+        }    
+    })
+    
+    
+
+    
+}
+
+function handleUsernameChanged (event) {
+    setUsername(event.target.value)
+}
+function handlePasswordChanged (event) {
+    setPassword(event.target.value)
+}
+
+    return(
+        <div className='container'>
+            <div className='container-fluid login border border-secondary border-2 rounded p-3 m'>
+                <div>
+                    <img src={Tigo} alt='Tigo' className='img-fluid'/>
+                </div>
+                <div className='text-center pb-2'>
+                    <h3>Login</h3>
+                </div>
+                <div className='text-center mb-3'>
+                    <input placeholder='Username' className="form-control" id="exampleInputPassword1" value={username} onChange={handleUsernameChanged}/>
+                    <input placeholder='Password' type='password' className="form-control" id="exampleInputPassword2" value={password} onChange={handlePasswordChanged}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            console.log("Enter presed")
+                            doLogin();
+                        }
+
+                    }}
+                    />
+                    { hashError ? (
+                        <div>Usuario o Password incorrectos</div>
+                    ) :
+                    null}
+                </div>
+                <div className='text-center'>
+                    <button type="button" className="btn btn-primary" onClick={doLogin}>Iniciar Sesion</button>
+                </div>
+                
+           
+            </div>
+            
+        </div>
+    )
+}
+export default Login;

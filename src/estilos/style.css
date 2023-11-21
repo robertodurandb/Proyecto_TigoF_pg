@@ -1,0 +1,9 @@
+.App {
+    text-align: center;
+    padding: 40px 30px;
+    max-width: 100% !important;
+  }
+  .container-fluid {
+    max-width: 400px;
+    margin-top: 100px;
+  }

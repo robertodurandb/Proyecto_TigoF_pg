@@ -1,0 +1,21 @@
+.contenedorlista{
+    max-width: 1050px;
+    margin: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.contenedorprincipal{
+    text-align: center;
+}
+.partep{
+    text-decoration-line: underline;
+}
+.contenedorelimina{
+    max-width: 1050px;
+    margin: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+ }
+.partep{
+    text-decoration-line: underline;
+}
