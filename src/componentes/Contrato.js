@@ -14,7 +14,7 @@ console.log("hola")
 console.log(fechaactual);
 
 function Contrato() {
-    const [iddetallecontrato, setIddetallecontrato] = useState();
+    // const [iddetallecontrato, setIddetallecontrato] = useState();
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
     const [caja_idcaja, setCaja_idcaja] = useState("c0101");
@@ -64,16 +64,16 @@ function Contrato() {
   };
   const editarContrato = (val)=>{
     setEditar(true);
-    setIddetallecontrato(val.iddetallecontrato);
+    // setIddetallecontrato(val.iddetallecontrato);
+    setNum_contrato(val.num_contrato);
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
     setCaja_idcaja(val.caja_idcaja);
-    setNum_contrato(val.num_contrato);
     setFecha_contrato(val.fecha_contrato)
     setInstalacion(val.instalacion);
   }
   const update = () => {
-    Axios.put("http://localhost:9100/detallecontrato/"+iddetallecontrato, {
+    Axios.put("http://localhost:9100/detallecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
         caja_idcaja: caja_idcaja,
@@ -110,7 +110,7 @@ function getPlanes(){
 }
 
   const limpiarcampos = ()=>{
-    setIddetallecontrato();
+    // setIddetallecontrato();
     setPlanes_idplanes("");
     setCliente_dnicliente("");
     setCaja_idcaja("");
@@ -251,7 +251,7 @@ function getPlanes(){
           </thead>
           <tbody>
           {contratos.map((val, key) => {
-            return <tr key={val.iddetallecontrato}>
+            return <tr key={val.num_contrato}>
                     <td>{val.num_contrato}</td>
                     <td>{val.nombreplan}</td>
                     <td>{val.cliente_dnicliente}</td>

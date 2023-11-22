@@ -18,7 +18,7 @@ function Pagos() {
     const [contrato, setContrato] = useState();
     const [montopago, setMontopago] = useState();
     const [fechapago, setFechapago] = useState(fechaactual);
-    const [mespago, setMespago] = useState();
+    const [mespago, setMespago] = useState("1 Enero");
     const [editar, setEditar] = useState(false);
     const [pagos, setPagos] = useState([]);
 
@@ -26,7 +26,7 @@ function Pagos() {
 
     const add = () => {
         Axios.post("http://localhost:9100/pago", {
-            detallecontrato_iddetallecontrato: contrato,
+            num_contrato: contrato,
             montopago: montopago,
             fechapago: fechapago,
             mespago: mespago,
@@ -40,8 +40,8 @@ function Pagos() {
             alert("Pago Registrado con exito");
         }).catch((error) => {
           if (401 === error.response.status){
-          sessionStorage.removeItem("token");
-          window.location.reload();
+          // sessionStorage.removeItem("token");
+          // window.location.reload();
           alert("Sesión expirada, vuelva a iniciar sesión");
           }
           return error;
@@ -55,14 +55,14 @@ function Pagos() {
       };
       const editarPago = (val)=>{
         setEditar(true);
-        setContrato(val.detallecontrato_iddetallecontrato);
+        setContrato(val.num_contrato);
         setMontopago(val.montopago);
         setFechapago(val.fechapago);
         setMespago(val.mespago);
       }
       const update = () => {
         Axios.put("http://localhost:9100/pago/"+idpago, {
-            detallecontrato_iddetallecontrato: contrato,
+            num_contrato: contrato,
             montopago: montopago,
             fechapago: fechapago,
             mespago: mespago,
@@ -177,7 +177,7 @@ function Pagos() {
               <tbody>
               {pagos.map((val, key) => {
                 return <tr key={val.idpago}>
-                        <td>{val.detallecontrato_iddetallecontrato}</td>
+                        <td>{val.num_contrato}</td>
                         <td>{val.montopago}</td>
                         <td>{val.fechapago}</td>
                         <td>{val.mespago}</td>
