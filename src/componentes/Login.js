@@ -57,7 +57,6 @@ function handlePasswordChanged (event) {
                     <img src={Tigo} alt='Tigo' className='img-fluid'/>
                 </div>
                 <div className='text-center pb-2'>
-                    <h3>Login</h3>
                 </div>
                 <div className='text-center mb-3'>
                     <input placeholder='Username' className="form-control" id="exampleInputPassword1" value={username} onChange={handleUsernameChanged}/>
