@@ -40,8 +40,8 @@ function Pagos() {
             alert("Pago Registrado con exito");
         }).catch((error) => {
           if (401 === error.response.status){
-          // sessionStorage.removeItem("token");
-          // window.location.reload();
+          sessionStorage.removeItem("token");
+          window.location.reload();
           alert("Sesión expirada, vuelva a iniciar sesión");
           }
           return error;
@@ -112,7 +112,7 @@ function Pagos() {
                 <span className="input-group-text" id="basic-addon1">
                   Monto del pago:
                 </span>
-                <input type="text" value={montopago}
+                <input type="number" value={montopago}
                   onChange={(event) => { setMontopago(event.target.value); }}
                   className="form-control" placeholder="Ingrese monto pago" aria-label="monto pago" aria-describedby="basic-addon1"
                 ></input>
