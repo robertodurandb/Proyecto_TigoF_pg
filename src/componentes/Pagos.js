@@ -18,7 +18,8 @@ function Pagos() {
     const [contrato, setContrato] = useState();
     const [montopago, setMontopago] = useState();
     const [fechapago, setFechapago] = useState(fechaactual);
-    const [mespago, setMespago] = useState("1 Enero");
+    const [mespago, setMespago] = useState();
+    const [anio, setAnio] = useState();
     const [editar, setEditar] = useState(false);
     const [pagos, setPagos] = useState([]);
 
@@ -30,6 +31,7 @@ function Pagos() {
             montopago: montopago,
             fechapago: fechapago,
             mespago: mespago,
+            anio: anio,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -55,10 +57,13 @@ function Pagos() {
       };
       const editarPago = (val)=>{
         setEditar(true);
+
+        setIdpago(val.idpago);
         setContrato(val.num_contrato);
         setMontopago(val.montopago);
         setFechapago(val.fechapago);
         setMespago(val.mespago);
+        setAnio(val.anio);
       }
       const update = () => {
         Axios.put("http://localhost:9100/pago/"+idpago, {
@@ -66,6 +71,7 @@ function Pagos() {
             montopago: montopago,
             fechapago: fechapago,
             mespago: mespago,
+            anio: anio,
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -90,7 +96,7 @@ function Pagos() {
         setMontopago("");
         setFechapago(fechaactual);
         setMespago("");
-        
+        setAnio("");
         setEditar(false);
       }
 
@@ -131,23 +137,19 @@ function Pagos() {
                 <span className="input-group-text" id="basic-addon1">
                   Mes Pago:
                 </span>
-                <select value={mespago}
-                onChange={(event) => { setMespago(event.target.value); }}
-                className="form-control" aria-label="Mes pago" aria-describedby="basic-addon1"
-                >
-                  <option>1 Enero</option>
-                  <option>2 Febrero</option>
-                  <option>3 Marzo</option>
-                  <option>4 Abril</option>
-                  <option>5 Mayo</option>
-                  <option>6 Junio</option>
-                  <option>7 Julio</option>
-                  <option>8 Agosto</option>
-                  <option>9 Setiembre</option>
-                  <option>10 Octubre</option>
-                  <option>11 Noviembre</option>
-                  <option>12 Diciembre</option>
-                </select>
+                <input type="number" value={mespago}
+                  onChange={(event) => { setMespago(event.target.value); }}
+                  className="form-control" placeholder="Ingrese mes pago" aria-label="mes pago" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text" id="basic-addon1">
+                  Año pago:
+                </span>
+                <input type="number" value={anio}
+                  onChange={(event) => { setAnio(event.target.value); }}
+                  className="form-control" placeholder="Ingrese anio pago" aria-label="anio pago" aria-describedby="basic-addon1"
+                ></input>
               </div>
               {
                 editar? 
@@ -171,6 +173,7 @@ function Pagos() {
                     <th scope="col">Monto pagado</th>
                     <th scope="col">Fecha pago</th>
                     <th scope="col">Mes pagado</th>
+                    <th scope="col">Año</th>
                     <th scope="col">Acciones</th>
                 </tr>
               </thead>
@@ -181,6 +184,7 @@ function Pagos() {
                         <td>{val.montopago}</td>
                         <td>{val.fechapago}</td>
                         <td>{val.mespago}</td>
+                        <td>{val.anio}</td>
                         <td>
                         <button type="button" className="btn btn-info" 
                         onClick={()=>{
