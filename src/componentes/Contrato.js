@@ -21,6 +21,7 @@ function Contrato() {
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [instalacion, setInstalacion] = useState("Pendiente");
+    const [diapago, setDiapago] = useState("1");
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
 

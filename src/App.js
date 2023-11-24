@@ -6,6 +6,7 @@ import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
 import Pagos from '../src/componentes/Pagos';
 import Principal from '../src/componentes/Principal';
+import Consultapagos from '../src/componentes/Consultapagos';
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
 import {
@@ -48,7 +49,10 @@ function App() {
         <Router>
               <div className="btn-group">
                 <Link to="/" className="btn btn-dark">
-                  Principal
+                  Consulta Clientes
+                </Link>
+                <Link to="/consultapagos" className="btn btn-dark">
+                  Consulta Pagos
                 </Link>
                 <Link to="/contrato" className="btn btn-dark">
                   Contrato
@@ -73,6 +77,9 @@ function App() {
               <hr />
             <Routes>
                 <Route path="/contrato" element={<Contratos />} />
+            </Routes>
+            <Routes>
+                <Route path="/consultapagos" element={<Consultapagos />} />
             </Routes>
               <Routes>
                 <Route path="/cliente" element={<Clientes />} />

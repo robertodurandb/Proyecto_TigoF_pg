@@ -33,11 +33,8 @@ function Principal() {
         fetch('http://localhost:9100/todolist')
             .then(response => response.json())
             .then(data => setListaClientes(data))
-
+            console.log(listaClientes);
     }
-    // const mostrarcli=()=>{
-    //     console.log(listaClientes); 
-    // }
 
     const mostrarCliente=()=>{
         ventanaModal();
@@ -97,7 +94,7 @@ function Principal() {
                                 <td>{cliente.apellidocli}</td>
                                 <td>{cliente.direccioncli}</td>
                                 <td>{cliente.distritocli}</td>
-                                <td>{cliente.dia_pago}</td>
+                                <td>{cliente.diapago}</td>
                                 <td>{cliente.nombreplan}</td>
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
