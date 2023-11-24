@@ -21,7 +21,8 @@ function Contrato() {
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [instalacion, setInstalacion] = useState("Pendiente");
-    const [diapago, setDiapago] = useState("1");
+    const [fechainstalacion, setFechainstalacion] = useState("");
+    const [diapago, setDiapago] = useState(1);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
 
@@ -40,6 +41,8 @@ function Contrato() {
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         instalacion: instalacion,
+        fecha_instalacion: fechainstalacion,
+        diapago: diapago,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -70,8 +73,10 @@ function Contrato() {
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
     setCaja_idcaja(val.caja_idcaja);
-    setFecha_contrato(val.fecha_contrato)
+    setFecha_contrato(val.fecha_contrato);
     setInstalacion(val.instalacion);
+    setFechainstalacion(val.fechainstalacion);
+    setDiapago(val.diapago);
   }
   const update = () => {
     Axios.put("http://localhost:9100/detallecontrato/"+num_contrato, {
@@ -81,6 +86,8 @@ function Contrato() {
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         instalacion: instalacion,
+        fecha_instalacion: fechainstalacion,
+        diapago: diapago,
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -118,7 +125,8 @@ function getPlanes(){
     setNum_contrato("");
     setFecha_contrato(fechaactual);
     setInstalacion("Pendiente");
-    
+    setFechainstalacion("");
+    setDiapago(1);
     setEditar(false);
   }
 
@@ -210,6 +218,7 @@ function getPlanes(){
               className="form-control" placeholder="Fecha Contrato" aria-label="fecha contrato" aria-describedby="basic-addon1"
             ></input>
           </div>
+          ************************completado por el técnico***************************
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
               instalacion:
@@ -220,6 +229,27 @@ function getPlanes(){
             >
               <option>Pendiente</option>
               <option>Completada</option>
+            </select>
+          </div>
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="basic-addon1">
+              Fecha instalacion:
+            </span>
+            <input type="text" value={fechainstalacion}
+              onChange={(event) => { setFechainstalacion(event.target.value); }}
+              className="form-control" placeholder="Por ejm. 2023-11-25" aria-label="fecha instalacion" aria-describedby="basic-addon1"
+            ></input>
+          </div>
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="basic-addon1">
+              Dia pago:
+            </span>
+            <select value={diapago}
+            onChange={(event) => { setDiapago(event.target.value); }}
+            className="form-control" aria-label="Dia Pago" aria-describedby="basic-addon1"
+            >
+              <option>1</option>
+              <option>16</option>
             </select>
           </div>
           {
@@ -245,8 +275,10 @@ function getPlanes(){
                 <th scope="col">Plan</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Caja</th>
-                <th scope="col">Fecha</th>
+                <th scope="col">Fecha Contrato</th>
                 <th scope="col">instalacion</th>
+                <th scope="col">Fecha instalacion</th>
+                <th scope="col">Dia de pago</th>
                 <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -259,6 +291,8 @@ function getPlanes(){
                     <td>{val.nombrecaja}</td>
                     <td>{val.fecha_contrato}</td>
                     <td>{val.instalacion}</td>
+                    <td>{val.fecha_instalacion}</td>
+                    <td>{val.diapago}</td>
                     <td>
                     <button type="button" className="btn btn-info" 
                     onClick={()=>{
