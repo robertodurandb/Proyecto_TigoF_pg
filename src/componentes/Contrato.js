@@ -20,8 +20,9 @@ function Contrato() {
     const [caja_idcaja, setCaja_idcaja] = useState("c0101");
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
+    const [ubicacioninstalacion, setUbicacioninstalacion] = useState("");
     const [instalacion, setInstalacion] = useState("Pendiente");
-    const [fechainstalacion, setFechainstalacion] = useState("");
+    const [fecha_instalacion, setFecha_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
@@ -40,8 +41,9 @@ function Contrato() {
         caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
+        ubicacioninstalacion: ubicacioninstalacion,
         instalacion: instalacion,
-        fecha_instalacion: fechainstalacion,
+        fecha_instalacion: fecha_instalacion,
         diapago: diapago,
     },{
       headers: {
@@ -74,8 +76,9 @@ function Contrato() {
     setCliente_dnicliente(val.cliente_dnicliente);
     setCaja_idcaja(val.caja_idcaja);
     setFecha_contrato(val.fecha_contrato);
+    setUbicacioninstalacion(val.ubicacioninstalacion);
     setInstalacion(val.instalacion);
-    setFechainstalacion(val.fechainstalacion);
+    setFecha_instalacion(val.fecha_instalacion);
     setDiapago(val.diapago);
   }
   const update = () => {
@@ -85,8 +88,9 @@ function Contrato() {
         caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
+        ubicacioninstalacion: ubicacioninstalacion,
         instalacion: instalacion,
-        fecha_instalacion: fechainstalacion,
+        fecha_instalacion: fecha_instalacion,
         diapago: diapago,
     }, {
       headers: {
@@ -124,31 +128,12 @@ function getPlanes(){
     setCaja_idcaja("");
     setNum_contrato("");
     setFecha_contrato(fechaactual);
+    setUbicacioninstalacion("");
     setInstalacion("Pendiente");
-    setFechainstalacion("");
-    setDiapago(1);
+    setFecha_instalacion("");
+    setDiapago("1");
     setEditar(false);
   }
-
-  //*******************Consultar DNI esta pendiente */
-    // let number = 0;
-    // number = cliente_dnicliente.length;
-    // if (number<8){
-    //   alert("dni no cumple")
-    // }
-    // if (number=8) {
-    //   Axios.get("http://localhost:9100/cliente/"+cliente_dnicliente).then((response) => {
-    //     setBusquedaCliente(response.data);
-    //   })
-    //   .catch(() => {
-    //     console.log("no se pudo encontrar el DNI")
-    //   });
-    // }
-
-  // const validarDni = ()=>{
-  //     SetNombreCliente(busquedaCliente[0].apellidocli);
-  //   alert(nombreCliente);
-  //   }
     
   useEffect(() =>{
     getCajas();
@@ -177,7 +162,6 @@ function getPlanes(){
               onChange={(event) => { setCliente_dnicliente(event.target.value); }}
               className="form-control" placeholder="Ingrese dni cliente" aria-label="dni cliente" aria-describedby="basic-addon1"
             ></input>
-            {/* <button onClick={validarDni}>Validar</button> */}
           </div>
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
@@ -221,6 +205,15 @@ function getPlanes(){
           ************************completado por el técnico***************************
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
+              Ubicación de Instalación:
+            </span>
+            <input type="text" value={ubicacioninstalacion}
+              onChange={(event) => { setUbicacioninstalacion(event.target.value); }}
+              className="form-control" placeholder="Ubicación Maps" aria-label="Ubicacion" aria-describedby="basic-addon1"
+            ></input>
+          </div>
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="basic-addon1">
               instalacion:
             </span>
             <select value={instalacion}
@@ -235,8 +228,8 @@ function getPlanes(){
             <span className="input-group-text" id="basic-addon1">
               Fecha instalacion:
             </span>
-            <input type="text" value={fechainstalacion}
-              onChange={(event) => { setFechainstalacion(event.target.value); }}
+            <input type="text" value={fecha_instalacion}
+              onChange={(event) => { setFecha_instalacion(event.target.value); }}
               className="form-control" placeholder="Por ejm. 2023-11-25" aria-label="fecha instalacion" aria-describedby="basic-addon1"
             ></input>
           </div>

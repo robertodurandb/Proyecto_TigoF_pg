@@ -12,7 +12,6 @@ function Cliente() {
     const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
     const [telefonocli, setTelefonocli] = useState();
     const [telefonocli2, setTelefonocli2] = useState();
-    const [ubicacioncli, setUbicacioncli] = useState();
     const [clientes, setClientes] = useState([]);
     const [editar, setEditar] = useState(false);
    
@@ -31,7 +30,6 @@ function Cliente() {
         nacionalidadcli: nacionalidadcli,
         telefonocli: telefonocli,
         telefonocli2: telefonocli2,
-        ubicacion_cli: ubicacioncli,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -69,7 +67,6 @@ function Cliente() {
     setNacionalidadcli(val.nacionalidadcli);
     setTelefonocli(val.telefonocli);
     setTelefonocli2(val.telefonocli2);
-    setUbicacioncli(val.ubicacion_cli);
   }
   const update = () => {
     Axios.put("http://localhost:9100/cliente/"+dnicliente, {
@@ -82,7 +79,6 @@ function Cliente() {
         nacionalidadcli: nacionalidadcli,
         telefonocli: telefonocli,
         telefonocli2: telefonocli2,
-        ubicacion_cli: ubicacioncli,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -110,7 +106,6 @@ function Cliente() {
     setNacionalidadcli("Peruana");
     setTelefonocli("");
     setTelefonocli2("");
-    setUbicacioncli("");
     
     setEditar(false);
   }
@@ -204,15 +199,7 @@ function Cliente() {
               className="form-control" placeholder="Telefono (opcional)" aria-label="Telefono2" aria-describedby="basic-addon1"
             ></input>
           </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Localización Maps:
-            </span>
-            <input type="text" value={ubicacioncli}
-              onChange={(event) => { setUbicacioncli(event.target.value); }}
-              className="form-control" placeholder="Por el Técnico (al momento de la instalación)" aria-label="Ubicacion" aria-describedby="basic-addon1"
-            ></input>
-          </div>
+          
           {
             editar? 
             <div>
