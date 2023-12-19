@@ -69,6 +69,16 @@ function Principal() {
     //Funcion de Filtrado
      const results = !busqueda ? listaClientes : listaClientes.filter((dato)=> dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
 
+
+     //INTENTAR CON ESTA PAGINA WEB https://es.stackoverflow.com/questions/538120/react-como-puedo-consultar-dos-par%C3%A1metros-a-la-vez
+    // let results = [];
+    // if (!busqueda) {
+    //     results = listaClientes
+    // } else {
+    //         results = listaClientes.filter((dato)=> {dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())|| dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())})      
+    // }
+    
+
     useEffect(() =>{
         getClientes()
     }, [])
