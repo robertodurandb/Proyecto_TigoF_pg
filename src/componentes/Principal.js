@@ -67,17 +67,19 @@ function Principal() {
         console.log(e.target.value);
     }
     //Funcion de Filtrado
-     const results = !busqueda ? listaClientes : listaClientes.filter((dato)=> dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
-
-
-     //INTENTAR CON ESTA PAGINA WEB https://es.stackoverflow.com/questions/538120/react-como-puedo-consultar-dos-par%C3%A1metros-a-la-vez
-    // let results = [];
-    // if (!busqueda) {
-    //     results = listaClientes
-    // } else {
-    //         results = listaClientes.filter((dato)=> {dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())|| dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())})      
-    // }
-    
+    //  const results = !busqueda ? listaClientes : listaClientes.filter((dato)=> dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
+     const newfilter = listaClientes.filter(dato => {
+        return (
+    dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
+    dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
+    )
+    });
+    let results = [];
+    if (busqueda === "") {
+        results = listaClientes;
+    } else {
+        results = newfilter;
+    }
 
     useEffect(() =>{
         getClientes()
@@ -85,7 +87,7 @@ function Principal() {
 
     return(
         <div className="App">
-            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI' className='form-control'/>
+            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control'/>
               <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>

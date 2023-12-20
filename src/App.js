@@ -41,6 +41,11 @@ function App() {
     checkLogin()
   }
 
+  function isAdmin() {
+    let role = localStorage.getItem("role")
+    return role == "admin"
+  }
+
   return (
 
     <div className="container-xl">
@@ -48,7 +53,7 @@ function App() {
         (
         <Router>
               <div className="btn-group">
-                <Link to="/" className="btn btn-dark">
+              <Link to="/" className="btn btn-dark">
                   Consulta Clientes
                 </Link>
                 <Link to="/consultapagos" className="btn btn-dark">
@@ -61,17 +66,20 @@ function App() {
                   Cliente
                 </Link>
                 <Link to="/planes" className="btn btn-dark">
-                  Planes
-                </Link>
-                <Link to="/caja" className="btn btn-dark">
-                  Caja
-                </Link>
-                <Link to="/pagos" className="btn btn-dark">
-                  Pagos
-                </Link>
-                <Link to="/usuario" className="btn btn-dark">
-                  Usuario
-                </Link>
+                Planes
+              </Link>
+              <Link to="/caja" className="btn btn-dark">
+                Caja
+              </Link>
+              <Link to="/pagos" className="btn btn-dark">
+                Pagos
+              </Link>
+              <Link to="/usuario" className="btn btn-dark">
+                Usuario
+              </Link>
+                
+                
+                
                 <button onClick={signOut}>Cerrar Sesion</button>
               </div>
               <hr />
@@ -93,9 +101,12 @@ function App() {
               <Routes>
                 <Route path="/pagos" element={<Pagos />} />
               </Routes>
-              <Routes>
+              isAdmin()?(
+                <Routes>
                 <Route path="/usuario" element={<Usuarios />} />
               </Routes>
+              )
+              
               <Routes>
                 <Route path="/" element={<Principal />} />
               </Routes>

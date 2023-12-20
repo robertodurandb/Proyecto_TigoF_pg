@@ -66,7 +66,6 @@ function handlePasswordChanged (event) {
                             console.log("Enter presed")
                             doLogin();
                         }
-
                     }}
                     />
                     { hashError ? (
