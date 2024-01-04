@@ -13,8 +13,10 @@ function Consultapagos() {
     //Funcion de Filtrado
      const results = !busqueda ? listaPagos : listaPagos.filter((dato)=> dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
 
+     let ipbackend = "http://10.0.28.60:9100/";
+
     function getPagos(){
-        fetch('http://localhost:9100/pagos2')
+        fetch(ipbackend+'pagos2')
             .then(response => response.json())
             .then(data => setListaPagos(data))
             console.log(listaPagos[0]);

@@ -24,9 +24,10 @@ function Pagos() {
     const [pagos, setPagos] = useState([]);
 
     let token = sessionStorage.getItem("token");
+    let ipbackend = "http://10.0.28.60:9100/";
 
     const add = () => {
-        Axios.post("http://localhost:9100/pago", {
+        Axios.post(ipbackend+"pago", {
             num_contrato: contrato,
             montopago: montopago,
             fechapago: fechapago,
@@ -50,7 +51,7 @@ function Pagos() {
           });
       };
       const getPagos = () => {
-        Axios.get("http://localhost:9100/pagos").then((response) => {
+        Axios.get(ipbackend+"pagos").then((response) => {
           setPagos(response.data);
           console.log(response.data);
         });
@@ -66,7 +67,7 @@ function Pagos() {
         setAnio(val.anio);
       }
       const update = () => {
-        Axios.put("http://localhost:9100/pago/"+idpago, {
+        Axios.put(ipbackend+"pago/"+idpago, {
             num_contrato: contrato,
             montopago: montopago,
             fechapago: fechapago,

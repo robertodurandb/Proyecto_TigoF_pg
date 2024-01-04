@@ -16,10 +16,11 @@ function Cliente() {
     const [editar, setEditar] = useState(false);
    
     let token = sessionStorage.getItem("token");
+    let ipbackend = "http://10.0.28.60:9100/";
    
   const add = () => {
     if (dnicliente.length>7) {
-    Axios.post("http://localhost:9100/cliente", 
+    Axios.post(ipbackend+"cliente", 
     {  
         dnicliente: dnicliente,
         nombrecli: nombrecli,
@@ -51,7 +52,7 @@ function Cliente() {
   }
   };
   const getClientes = () => {
-    Axios.get("http://localhost:9100/clientes").then((response) => {
+    Axios.get(ipbackend+"clientes").then((response) => {
       setClientes(response.data);
     });
   };
@@ -69,7 +70,7 @@ function Cliente() {
     setTelefonocli2(val.telefonocli2);
   }
   const update = () => {
-    Axios.put("http://localhost:9100/cliente/"+dnicliente, {
+    Axios.put(ipbackend+"cliente/"+dnicliente, {
         dnicliente: dnicliente,
         nombrecli: nombrecli,
         apellidocli: apellidocli,

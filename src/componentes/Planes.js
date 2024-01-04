@@ -13,9 +13,10 @@ function Planes() {
     const [editar, setEditar] = useState(false);
 
     let token = sessionStorage.getItem("token");
+    let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
-    Axios.post("http://localhost:9100/plan", {
+    Axios.post(ipbackend+"plan", {
       nombreplan: nombreplan,
       descplan: descplan,
       precioplan: precioplan,
@@ -39,7 +40,7 @@ function Planes() {
       });
   };
   const getPlanes = () => {
-    Axios.get("http://localhost:9100/planes").then((response) => {
+    Axios.get(ipbackend+"planes").then((response) => {
       setPlanes(response.data);
     });
   };
@@ -54,7 +55,7 @@ function Planes() {
     console.log("el id plan capturado es "+idplanes);
     }
   const update = () => {
-    Axios.put("http://localhost:9100/plan/"+idplanes, {
+    Axios.put(ipbackend+"plan/"+idplanes, {
         nombreplan: nombreplan,
         descplan: descplan,
         precioplan: precioplan,

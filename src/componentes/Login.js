@@ -10,9 +10,10 @@ const [password, setPassword] = React.useState("")
 const [hashError, setHashError] = React.useState(false)
 
 const {loginCallback} = props
+let ipbackend = "http://10.0.28.60:9100/";
 
 function doLogin() {
-    fetch('http://localhost:9100/login', {
+    fetch(ipbackend+'login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

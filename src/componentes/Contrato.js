@@ -33,9 +33,10 @@ function Contrato() {
     // const [nombreCliente, SetNombreCliente] = useState();
 
     let token = sessionStorage.getItem("token");
+    let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
-    Axios.post("http://localhost:9100/detallecontrato", {
+    Axios.post(ipbackend+"detallecontrato", {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
         caja_idcaja: caja_idcaja,
@@ -63,7 +64,7 @@ function Contrato() {
       });
   };
   const getContratos = () => {
-    Axios.get("http://localhost:9100/detallecontratos").then((response) => {
+    Axios.get(ipbackend+"detallecontratos").then((response) => {
       setContratos(response.data);
       console.log(response.data);
     });
@@ -82,7 +83,7 @@ function Contrato() {
     setDiapago(val.diapago);
   }
   const update = () => {
-    Axios.put("http://localhost:9100/detallecontrato/"+num_contrato, {
+    Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
         caja_idcaja: caja_idcaja,
@@ -111,12 +112,12 @@ function Contrato() {
   };
 
   function getCajas(){
-    fetch('http://localhost:9100/cajas')
+    fetch(ipbackend+'cajas')
         .then(response => response.json())
         .then(data => setListaCajas(data))
 }
 function getPlanes(){
-  fetch('http://localhost:9100/planes')
+  fetch(ipbackend+'planes')
       .then(response => response.json())
       .then(data => setListaPlanes(data))
 }

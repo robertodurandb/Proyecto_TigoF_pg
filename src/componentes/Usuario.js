@@ -14,9 +14,10 @@ function Usuarios() {
     const [editar, setEditar] = useState(false);
 
     let token = sessionStorage.getItem("token");
+    let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
-    Axios.post("http://localhost:9100/usuario",{
+    Axios.post(ipbackend+"usuario",{
       dniuser: dniuser,
       nombre_user: nombre_user,
       apellido_user: apellido_user,
@@ -41,7 +42,7 @@ function Usuarios() {
       });
   };
   const getUsers = () => {
-    Axios.get("http://localhost:9100/usuarios").then((response) => {
+    Axios.get(ipbackend+"usuarios").then((response) => {
         setUsuarios(response.data);
     });
   };
@@ -55,7 +56,7 @@ function Usuarios() {
     setEstado(val.estado_user);
   }
   const update = () => {
-    Axios.put("http://localhost:9100/usuario/"+iduser, {
+    Axios.put(ipbackend+"usuario/"+iduser, {
         dniuser: dniuser,
         nombre_user: nombre_user,
         apellido_user: apellido_user,

@@ -11,9 +11,10 @@ function Caja() {
   const [editar, setEditar] = useState(false);
 
   let token = sessionStorage.getItem("token");
+  let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
-    Axios.post("http://localhost:9100/caja", {
+    Axios.post(ipbackend+"caja", {
       idcaja: idcaja,
       nombrecaja: nombrecaja,
       localizacion: localizacion,
@@ -36,7 +37,7 @@ function Caja() {
       });
   };
   const getCajas = () => {
-    Axios.get("http://localhost:9100/cajas").then((response) => {
+    Axios.get(ipbackend+"cajas").then((response) => {
       setCajas(response.data);
     });
   };
@@ -48,7 +49,7 @@ function Caja() {
     setEstado(val.estado);
   }
   const update = () => {
-    Axios.put("http://localhost:9100/caja/"+idcaja, {
+    Axios.put(ipbackend+"caja/"+idcaja, {
       idcaja: idcaja,
       nombrecaja: nombrecaja,
       localizacion: localizacion,
