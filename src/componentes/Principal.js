@@ -65,8 +65,7 @@ function Principal() {
     //Funcion de Busqueda
     const searcher = (e) =>{
         setBusqueda(e.target.value);
-        console.log(e.target.value);
-    }
+        }
     //Funcion de Filtrado
     //  const results = !busqueda ? listaClientes : listaClientes.filter((dato)=> dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
      const newfilter = listaClientes.filter(dato => {
