@@ -14,7 +14,6 @@ console.log("hola")
 console.log(fechaactual);
 
 function Contrato() {
-    // const [iddetallecontrato, setIddetallecontrato] = useState();
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
     const [caja_idcaja, setCaja_idcaja] = useState("c0101");
@@ -29,11 +28,9 @@ function Contrato() {
 
     const [listaCajas, setListaCajas] = useState([]);
     const [listaPlanes, setListaPlanes] = useState([]);
-    // const [busquedaCliente, setBusquedaCliente] = useState([]);
-    // const [nombreCliente, SetNombreCliente] = useState();
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"detallecontrato", {
@@ -71,7 +68,6 @@ function Contrato() {
   };
   const editarContrato = (val)=>{
     setEditar(true);
-    // setIddetallecontrato(val.iddetallecontrato);
     setNum_contrato(val.num_contrato);
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
@@ -139,6 +135,7 @@ function getPlanes(){
   useEffect(() =>{
     getCajas();
     getPlanes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
@@ -297,8 +294,7 @@ function getPlanes(){
                     </td>
             </tr>
            
-          })}
-            
+          })}  
           </tbody>
         </table>
       </div>

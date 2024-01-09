@@ -7,7 +7,7 @@ function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
 
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://10.0.28.60:9100/";
 
         function getPagos(){
             fetch(ipbackend+'pagos2')
@@ -36,6 +36,7 @@ function Consultapagos() {
 
      useEffect(() =>{   
         getPagos()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) 
 
     
@@ -51,8 +52,9 @@ function Consultapagos() {
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
+                            <th>Plan contratado</th>
                             <th>Fecha_pago</th>
-                            <th>Monto</th>
+                            <th>Monto pagado</th>
                             <th>Mes_Facturado</th>
                             <th>Año</th>
                         </tr>
@@ -63,6 +65,7 @@ function Consultapagos() {
                                 <td>{pagos.cliente_dnicliente}</td>
                                 <td>{pagos.apellidocli}</td>
                                 <td>{pagos.nombrecli}</td>
+                                <td>{pagos.nombreplan}</td>
                                 <td>{pagos.fechapago}</td>
                                 <td>{pagos.montopago}</td>
                                 <td>{pagos.mespago}</td>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -25,8 +25,12 @@ function Pagos() {
     const [editar, setEditar] = useState(false);
     const [pagos, setPagos] = useState([]);
 
+    const [apellidoscli, setApellidoscli] = useState();
+    const [plan, setPlan] = useState();
+    const [listapagos, setListapagos] = useState();
+
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://10.0.28.60:9100/";
 
     const add = () => {
         Axios.post(ipbackend+"pago", {
@@ -54,12 +58,21 @@ function Pagos() {
           return error;
           });
       };
+
+     
       const getPagos = () => {
         Axios.get(ipbackend+"pagos").then((response) => {
           setPagos(response.data);
           console.log(response.data);
         });
       };
+
+      function getPagos2(){
+        fetch(ipbackend+'pagos2')
+            .then(response => response.json())
+            .then(data => setListapagos(data))
+    };
+
       const editarPago = (val)=>{
         setEditar(true);
 
@@ -111,6 +124,19 @@ function Pagos() {
         setEditar(false);
       }
 
+    function datospagos() {
+      let indice = listapagos.find(e => e.num_contrato=contrato)
+      console.log(indice.apellidocli)
+      setApellidoscli(indice.apellidocli);
+      setPlan(indice.nombreplan);
+    }
+    
+
+      useEffect(() =>{   
+        getPagos2()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
       return (
         <div className="container">
           <div className="card text-center">
@@ -125,6 +151,14 @@ function Pagos() {
                   className="form-control" placeholder="Ingrese número de contrato" aria-label="Numero Contrato" aria-describedby="basic-addon1"
                 ></input>
               </div>
+              {/* //BOTON VALIDAR */}
+              <button onClick={datospagos}>validar</button>
+              <span className="input-group-text" id="basic-addon1">
+                  Apellidos Cliente:{apellidoscli}
+                </span>
+                <span className="input-group-text" id="basic-addon1">
+                  Plan Contratado:{plan}
+                </span>
               <div className="input-group mb-3">
                 <span className="input-group-text" id="basic-addon1">
                   Monto del pago:
@@ -234,6 +268,7 @@ function Pagos() {
                 </tr>
                
               })}
+              
                 
               </tbody>
             </table>

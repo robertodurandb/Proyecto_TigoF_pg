@@ -10,7 +10,7 @@ const [password, setPassword] = React.useState("")
 const [hashError, setHashError] = React.useState(false)
 
 const {loginCallback} = props
-let ipbackend = "http://192.168.18.8:9100/";
+let ipbackend = "http://10.0.28.60:9100/";
 
 function doLogin() {
     fetch(ipbackend+'login', {
@@ -83,5 +83,6 @@ function handlePasswordChanged (event) {
             
         </div>
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 }
 export default Login;
