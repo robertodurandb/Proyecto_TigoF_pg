@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { CSVLink } from "react-csv";
 //import '../estilos/style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+// eslint-disable-next-line
 function Consultapagos() {
-    const [listaPagos, setListaPagos] = React.useState([]);
-    const [busqueda, setBusqueda] = React.useState("");
+    const [listaPagos, setListaPagos] = useState([]);
+    const [busqueda, setBusqueda] = useState("");
 
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
         function getPagos(){
             fetch(ipbackend+'pagos2')
@@ -19,9 +20,6 @@ function Consultapagos() {
         setBusqueda(e.target.value);
     }
     
-    //Funcion de Filtrado
-     //const results = !busqueda ? listaPagos : listaPagos.filter((dato)=> dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
-
      const newfilter = listaPagos.filter(dato => {
         return (
     dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
@@ -46,6 +44,7 @@ function Consultapagos() {
     return(
         <div className='App'>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control'/>
+            <CSVLink data={results}>Exportar CSV</CSVLink>
             <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>

@@ -30,7 +30,7 @@ function Principal() {
     const [modalMostrar, setModalMostrar] = React.useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
     function getClientes(){
         fetch(ipbackend+'todolist')

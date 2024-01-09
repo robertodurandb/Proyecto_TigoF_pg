@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -33,7 +33,7 @@ function Contrato() {
     // const [nombreCliente, SetNombreCliente] = useState();
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"detallecontrato", {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -8,8 +8,8 @@ let fechaactual = "";
 let fecha = new Date();
 let dia = fecha.getDate();
 let mes = (fecha.getMonth())+1;
-let anio = fecha.getFullYear();
-fechaactual = anio + "-" + mes + "-" + dia;
+let anioactual = fecha.getFullYear();
+fechaactual = anioactual + "-" + mes + "-" + dia;
 console.log("hola")
 console.log(fechaactual);
 
@@ -18,13 +18,15 @@ function Pagos() {
     const [contrato, setContrato] = useState();
     const [montopago, setMontopago] = useState();
     const [fechapago, setFechapago] = useState(fechaactual);
-    const [mespago, setMespago] = useState();
-    const [anio, setAnio] = useState();
+    const [mespago, setMespago] = useState(mes);
+    const [anio, setAnio] = useState(anioactual);
+    const [mediopago, setMediopago] = useState();
+    const [observacion, setObservacion] = useState();
     const [editar, setEditar] = useState(false);
     const [pagos, setPagos] = useState([]);
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
     const add = () => {
         Axios.post(ipbackend+"pago", {
@@ -33,6 +35,8 @@ function Pagos() {
             fechapago: fechapago,
             mespago: mespago,
             anio: anio,
+            mediopago: mediopago,
+            observacion: observacion,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -65,6 +69,8 @@ function Pagos() {
         setFechapago(val.fechapago);
         setMespago(val.mespago);
         setAnio(val.anio);
+        setMediopago(val.mediopago);
+        setObservacion(val.observacion);
       }
       const update = () => {
         Axios.put(ipbackend+"pago/"+idpago, {
@@ -73,6 +79,8 @@ function Pagos() {
             fechapago: fechapago,
             mespago: mespago,
             anio: anio,
+            mediopago: mediopago,
+            observacion: observacion,
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -96,8 +104,10 @@ function Pagos() {
         setContrato("");
         setMontopago("");
         setFechapago(fechaactual);
-        setMespago("");
-        setAnio("");
+        setMespago(mes);
+        setAnio(anioactual);
+        setMediopago("");
+        setObservacion("");
         setEditar(false);
       }
 
@@ -136,20 +146,43 @@ function Pagos() {
               </div>
               <div className="input-group mb-3">
                 <span className="input-group-text" id="basic-addon1">
-                  Mes Pago:
+                  Mes Facturado:
                 </span>
-                <input type="number" value={mespago}
-                  onChange={(event) => { setMespago(event.target.value); }}
-                  className="form-control" placeholder="Ingrese mes pago" aria-label="mes pago" aria-describedby="basic-addon1"
+                <select value={mespago}
+                onChange={(event) => { setMespago(event.target.value); }}
+                className="form-control" aria-label="Ingrese mes pago" aria-describedby="basic-addon1"
+                >
+                  <option>1</option><option>2</option><option>3</option>
+                  <option>4</option><option>5</option><option>6</option>
+                  <option>7</option><option>8</option><option>9</option>
+                  <option>10</option><option>11</option><option>12</option>
+                </select>
+              </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text" id="basic-addon1">
+                  Año:
+                </span>
+                <input type="number" value={anio}
+                  onChange={(event) => { setAnio(event.target.value); }}
+                  className="form-control" placeholder="Año" aria-label="anio pago" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="input-group mb-3">
                 <span className="input-group-text" id="basic-addon1">
-                  Año pago:
+                  Medio pago:
                 </span>
-                <input type="number" value={anio}
-                  onChange={(event) => { setAnio(event.target.value); }}
-                  className="form-control" placeholder="Ingrese anio pago" aria-label="anio pago" aria-describedby="basic-addon1"
+                <input type="text" value={mediopago}
+                  onChange={(event) => { setMediopago(event.target.value); }}
+                  className="form-control" placeholder="Yape o transferencia...etc" aria-label="medio pago" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text" id="basic-addon1">
+                  Observación:
+                </span>
+                <input type="text" value={observacion}
+                  onChange={(event) => { setObservacion(event.target.value); }}
+                  className="form-control" placeholder="ejemplo: pendiente 20 soles" aria-label="observacion" aria-describedby="basic-addon1"
                 ></input>
               </div>
               {
@@ -175,6 +208,8 @@ function Pagos() {
                     <th scope="col">Fecha pago</th>
                     <th scope="col">Mes pagado</th>
                     <th scope="col">Año</th>
+                    <th scope="col">Medio pago</th>
+                    <th scope="col">Observación</th>
                     <th scope="col">Acciones</th>
                 </tr>
               </thead>
@@ -186,6 +221,8 @@ function Pagos() {
                         <td>{val.fechapago}</td>
                         <td>{val.mespago}</td>
                         <td>{val.anio}</td>
+                        <td>{val.mediopago}</td>
+                        <td>{val.observacion}</td>
                         <td>
                         <button type="button" className="btn btn-info" 
                         onClick={()=>{
