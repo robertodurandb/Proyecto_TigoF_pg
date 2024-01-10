@@ -49,12 +49,15 @@ function Consultapagos() {
             <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
+                            <th>N°Contrato</th>
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
                             <th>Plan contratado</th>
+                            <th>Monto a pagar</th>
                             <th>Fecha_pago</th>
                             <th>Monto pagado</th>
+                            <th>Medio de pago</th>
                             <th>Mes_Facturado</th>
                             <th>Año</th>
                         </tr>
@@ -62,12 +65,15 @@ function Consultapagos() {
                     <tbody>
                     {results.map((pagos, key)=>(
                             <tr>
+                                <td>{pagos.num_contrato}</td>
                                 <td>{pagos.cliente_dnicliente}</td>
                                 <td>{pagos.apellidocli}</td>
                                 <td>{pagos.nombrecli}</td>
                                 <td>{pagos.nombreplan}</td>
+                                <td>{pagos.precioplan}</td>
                                 <td>{pagos.fechapago}</td>
                                 <td>{pagos.montopago}</td>
+                                <td>{pagos.mediopago}</td>
                                 <td>{pagos.mespago}</td>
                                 <td>{pagos.anio}</td>
                             </tr>

@@ -10,8 +10,6 @@ let dia = fecha.getDate();
 let mes = (fecha.getMonth())+1;
 let anio = fecha.getFullYear();
 fechaactual = anio + "-" + mes + "-" + dia;
-console.log("hola")
-console.log(fechaactual);
 
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
@@ -28,6 +26,9 @@ function Contrato() {
 
     const [listaCajas, setListaCajas] = useState([]);
     const [listaPlanes, setListaPlanes] = useState([]);
+    const [listaclientes, setListaclientes] = useState([]);
+    const [apellidocliente, setApellidocliente] = useState([]);
+    const [nombrecliente, setNombrecliente] = useState([]);
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://10.0.28.60:9100/";
@@ -63,7 +64,6 @@ function Contrato() {
   const getContratos = () => {
     Axios.get(ipbackend+"detallecontratos").then((response) => {
       setContratos(response.data);
-      console.log(response.data);
     });
   };
   const editarContrato = (val)=>{
@@ -106,7 +106,11 @@ function Contrato() {
       return error;
       });
   };
-
+  function getClientes(){
+    fetch(ipbackend+'clientes')
+        .then(response => response.json())
+        .then(data => setListaclientes(data))
+}
   function getCajas(){
     fetch(ipbackend+'cajas')
         .then(response => response.json())
@@ -117,9 +121,15 @@ function getPlanes(){
       .then(response => response.json())
       .then(data => setListaPlanes(data))
 }
+function datoscliente() {
+  let index = listaclientes.findIndex(function(i){
+    return i.dnicliente == cliente_dnicliente;
+  });
+  setApellidocliente(listaclientes[index].apellidocli)
+  setNombrecliente(listaclientes[index].nombrecli)
+}
 
   const limpiarcampos = ()=>{
-    // setIddetallecontrato();
     setPlanes_idplanes("");
     setCliente_dnicliente("");
     setCaja_idcaja("");
@@ -135,6 +145,7 @@ function getPlanes(){
   useEffect(() =>{
     getCajas();
     getPlanes();
+    getClientes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
@@ -161,6 +172,14 @@ function getPlanes(){
               className="form-control" placeholder="Ingrese dni cliente" aria-label="dni cliente" aria-describedby="basic-addon1"
             ></input>
           </div>
+          {/* //BOTON VALIDAR */}
+          <button onClick={datoscliente}>validar DNI</button>
+              <span className="input-group-text" id="basic-addon1">
+                  Apellidos Cliente: {apellidocliente}
+                </span>
+                <span className="input-group-text" id="basic-addon1">
+                  Nombres Cliente: {nombrecliente}
+                </span>
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
               Plan:

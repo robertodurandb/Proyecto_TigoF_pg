@@ -10,13 +10,11 @@ let dia = fecha.getDate();
 let mes = (fecha.getMonth())+1;
 let anioactual = fecha.getFullYear();
 fechaactual = anioactual + "-" + mes + "-" + dia;
-console.log("hola")
-console.log(fechaactual);
 
 function Pagos() {
     const [idpago, setIdpago] = useState();
     const [contrato, setContrato] = useState();
-    const [montopago, setMontopago] = useState();
+    const [montopago, setMontopago] = useState(0);
     const [fechapago, setFechapago] = useState(fechaactual);
     const [mespago, setMespago] = useState(mes);
     const [anio, setAnio] = useState(anioactual);
@@ -25,9 +23,10 @@ function Pagos() {
     const [editar, setEditar] = useState(false);
     const [pagos, setPagos] = useState([]);
 
-    const [apellidoscli, setApellidoscli] = useState();
-    const [plan, setPlan] = useState();
-    const [listapagos, setListapagos] = useState();
+    const [apellidoscliente, setApellidoscliente] = useState();
+    const [nombrescliente, setNombrescliente] = useState();
+    const [plancliente, setPlancliente] = useState();
+    const [listaclientes, setListaclientes] = useState();
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://10.0.28.60:9100/";
@@ -40,7 +39,7 @@ function Pagos() {
             mespago: mespago,
             anio: anio,
             mediopago: mediopago,
-            observacion: observacion,
+            observacionpago: observacion,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -63,15 +62,14 @@ function Pagos() {
       const getPagos = () => {
         Axios.get(ipbackend+"pagos").then((response) => {
           setPagos(response.data);
-          console.log(response.data);
         });
       };
 
-      function getPagos2(){
-        fetch(ipbackend+'pagos2')
-            .then(response => response.json())
-            .then(data => setListapagos(data))
-    };
+    function getClientes(){
+      fetch(ipbackend+'todolist')
+          .then(response => response.json())
+          .then(data => setListaclientes(data))
+  }
 
       const editarPago = (val)=>{
         setEditar(true);
@@ -83,7 +81,7 @@ function Pagos() {
         setMespago(val.mespago);
         setAnio(val.anio);
         setMediopago(val.mediopago);
-        setObservacion(val.observacion);
+        setObservacion(val.observacionpago);
       }
       const update = () => {
         Axios.put(ipbackend+"pago/"+idpago, {
@@ -93,7 +91,7 @@ function Pagos() {
             mespago: mespago,
             anio: anio,
             mediopago: mediopago,
-            observacion: observacion,
+            observacionpago: observacion,
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -115,7 +113,7 @@ function Pagos() {
       const limpiarcampos = ()=>{
         setIdpago();
         setContrato("");
-        setMontopago("");
+        setMontopago(0);
         setFechapago(fechaactual);
         setMespago(mes);
         setAnio(anioactual);
@@ -125,15 +123,17 @@ function Pagos() {
       }
 
     function datospagos() {
-      let indice = listapagos.find(e => e.num_contrato=contrato)
-      console.log(indice.apellidocli)
-      setApellidoscli(indice.apellidocli);
-      setPlan(indice.nombreplan);
+      let index = listaclientes.findIndex(function(i){
+        return i.num_contrato == contrato;
+      });
+      setApellidoscliente(listaclientes[index].apellidocli)
+      setPlancliente(listaclientes[index].nombreplan)
+      setMontopago(listaclientes[index].precioplan)
+      setNombrescliente(listaclientes[index].nombrecli)
     }
-    
 
       useEffect(() =>{   
-        getPagos2()
+        getClientes()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -154,14 +154,17 @@ function Pagos() {
               {/* //BOTON VALIDAR */}
               <button onClick={datospagos}>validar</button>
               <span className="input-group-text" id="basic-addon1">
-                  Apellidos Cliente:{apellidoscli}
+                  Apellidos Cliente:{apellidoscliente}
                 </span>
                 <span className="input-group-text" id="basic-addon1">
-                  Plan Contratado:{plan}
+                  Nombres Cliente:{nombrescliente}
+                </span>
+                <span className="input-group-text" id="basic-addon1">
+                  Plan Contratado:{plancliente}
                 </span>
               <div className="input-group mb-3">
                 <span className="input-group-text" id="basic-addon1">
-                  Monto del pago:
+                  Monto pagado:
                 </span>
                 <input type="number" value={montopago}
                   onChange={(event) => { setMontopago(event.target.value); }}
@@ -256,7 +259,7 @@ function Pagos() {
                         <td>{val.mespago}</td>
                         <td>{val.anio}</td>
                         <td>{val.mediopago}</td>
-                        <td>{val.observacion}</td>
+                        <td>{val.observacionpago}</td>
                         <td>
                         <button type="button" className="btn btn-info" 
                         onClick={()=>{

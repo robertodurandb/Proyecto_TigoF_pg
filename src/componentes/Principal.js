@@ -36,7 +36,6 @@ function Principal() {
         fetch(ipbackend+'todolist')
             .then(response => response.json())
             .then(data => setListaClientes(data))
-            console.log(listaClientes[1]);
     }
 
     const mostrarCliente=()=>{
