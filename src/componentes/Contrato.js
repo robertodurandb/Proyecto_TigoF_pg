@@ -17,7 +17,7 @@ function Contrato() {
     const [caja_idcaja, setCaja_idcaja] = useState("c0101");
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
-    const [ubicacioninstalacion, setUbicacioninstalacion] = useState("");
+    const [observacion, setObservacion] = useState("");
     const [instalacion, setInstalacion] = useState("Pendiente");
     const [fecha_instalacion, setFecha_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
@@ -40,7 +40,7 @@ function Contrato() {
         caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
-        ubicacioninstalacion: ubicacioninstalacion,
+        observacion: observacion,
         instalacion: instalacion,
         fecha_instalacion: fecha_instalacion,
         diapago: diapago,
@@ -73,7 +73,7 @@ function Contrato() {
     setCliente_dnicliente(val.cliente_dnicliente);
     setCaja_idcaja(val.caja_idcaja);
     setFecha_contrato(val.fecha_contrato);
-    setUbicacioninstalacion(val.ubicacioninstalacion);
+    setObservacion(val.observacion);
     setInstalacion(val.instalacion);
     setFecha_instalacion(val.fecha_instalacion);
     setDiapago(val.diapago);
@@ -85,7 +85,7 @@ function Contrato() {
         caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
-        ubicacioninstalacion: ubicacioninstalacion,
+        observacion: observacion,
         instalacion: instalacion,
         fecha_instalacion: fecha_instalacion,
         diapago: diapago,
@@ -135,7 +135,7 @@ function datoscliente() {
     setCaja_idcaja("");
     setNum_contrato("");
     setFecha_contrato(fechaactual);
-    setUbicacioninstalacion("");
+    setObservacion("");
     setInstalacion("Pendiente");
     setFecha_instalacion("");
     setDiapago("1");
@@ -219,14 +219,13 @@ function datoscliente() {
               className="form-control" placeholder="Fecha Contrato" aria-label="fecha contrato" aria-describedby="basic-addon1"
             ></input>
           </div>
-          ************************completado por el técnico***************************
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
-              Ubicación de Instalación:
+              Observación:
             </span>
-            <input type="text" value={ubicacioninstalacion}
-              onChange={(event) => { setUbicacioninstalacion(event.target.value); }}
-              className="form-control" placeholder="Ubicación Maps" aria-label="Ubicacion" aria-describedby="basic-addon1"
+            <input type="text" value={observacion}
+              onChange={(event) => { setObservacion(event.target.value); }}
+              className="form-control" placeholder="Observacion" aria-label="Ubicacion" aria-describedby="basic-addon1"
             ></input>
           </div>
           <div className="input-group mb-3">
@@ -243,7 +242,7 @@ function datoscliente() {
           </div>
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
-              Fecha instalacion:
+              Fecha_instalacion:
             </span>
             <input type="text" value={fecha_instalacion}
               onChange={(event) => { setFecha_instalacion(event.target.value); }}
@@ -286,9 +285,10 @@ function datoscliente() {
                 <th scope="col">Cliente</th>
                 <th scope="col">Caja</th>
                 <th scope="col">Fecha Contrato</th>
-                <th scope="col">instalacion</th>
+                <th scope="col">Observacion</th>
                 <th scope="col">Fecha instalacion</th>
                 <th scope="col">Dia de pago</th>
+                <th scope="col">instalacion</th>
                 <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -300,9 +300,10 @@ function datoscliente() {
                     <td>{val.cliente_dnicliente}</td>
                     <td>{val.nombrecaja}</td>
                     <td>{val.fecha_contrato}</td>
-                    <td>{val.instalacion}</td>
+                    <td>{val.observacion}</td>
                     <td>{val.fecha_instalacion}</td>
                     <td>{val.diapago}</td>
+                    <td>{val.instalacion}</td>
                     <td>
                     <button type="button" className="btn btn-info" 
                     onClick={()=>{
