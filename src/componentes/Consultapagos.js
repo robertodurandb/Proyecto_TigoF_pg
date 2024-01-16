@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CSVLink } from "react-csv";
-//import '../estilos/style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-// eslint-disable-next-line
 function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");

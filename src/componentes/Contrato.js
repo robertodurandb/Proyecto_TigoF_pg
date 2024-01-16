@@ -14,7 +14,6 @@ fechaactual = anio + "-" + mes + "-" + dia;
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
-    const [caja_idcaja, setCaja_idcaja] = useState("c0101");
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [observacion, setObservacion] = useState("");
@@ -24,7 +23,6 @@ function Contrato() {
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
 
-    const [listaCajas, setListaCajas] = useState([]);
     const [listaPlanes, setListaPlanes] = useState([]);
     const [listaclientes, setListaclientes] = useState([]);
     const [apellidocliente, setApellidocliente] = useState([]);
@@ -37,7 +35,6 @@ function Contrato() {
     Axios.post(ipbackend+"detallecontrato", {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
-        caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
@@ -71,7 +68,6 @@ function Contrato() {
     setNum_contrato(val.num_contrato);
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
-    setCaja_idcaja(val.caja_idcaja);
     setFecha_contrato(val.fecha_contrato);
     setObservacion(val.observacion);
     setInstalacion(val.instalacion);
@@ -82,7 +78,6 @@ function Contrato() {
     Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
-        caja_idcaja: caja_idcaja,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
@@ -111,11 +106,6 @@ function Contrato() {
         .then(response => response.json())
         .then(data => setListaclientes(data))
 }
-  function getCajas(){
-    fetch(ipbackend+'cajas')
-        .then(response => response.json())
-        .then(data => setListaCajas(data))
-}
 function getPlanes(){
   fetch(ipbackend+'planes')
       .then(response => response.json())
@@ -132,7 +122,6 @@ function datoscliente() {
   const limpiarcampos = ()=>{
     setPlanes_idplanes("");
     setCliente_dnicliente("");
-    setCaja_idcaja("");
     setNum_contrato("");
     setFecha_contrato(fechaactual);
     setObservacion("");
@@ -143,10 +132,8 @@ function datoscliente() {
   }
     
   useEffect(() =>{
-    getCajas();
     getPlanes();
     getClientes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
@@ -190,21 +177,6 @@ function datoscliente() {
                         return(
                             <>
                                 <option value={planes.idplanes}>{planes.nombreplan}</option>
-                            </>
-                        )
-                    })}
-            </select>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Caja:
-            </span>
-            <select className="form-control" aria-label="Caja" aria-describedby="basic-addon1" value={caja_idcaja} 
-            onChange={(event) => { setCaja_idcaja(event.target.value); }}>
-                    { listaCajas.map((caja, key)=>{
-                        return(
-                            <>
-                                <option value={caja.idcaja}>{caja.nombrecaja}</option>
                             </>
                         )
                     })}
@@ -283,7 +255,6 @@ function datoscliente() {
                 
                 <th scope="col">Plan</th>
                 <th scope="col">Cliente</th>
-                <th scope="col">Caja</th>
                 <th scope="col">Fecha Contrato</th>
                 <th scope="col">Observacion</th>
                 <th scope="col">Fecha instalacion</th>
@@ -298,7 +269,6 @@ function datoscliente() {
                     <td>{val.num_contrato}</td>
                     <td>{val.nombreplan}</td>
                     <td>{val.cliente_dnicliente}</td>
-                    <td>{val.nombrecaja}</td>
                     <td>{val.fecha_contrato}</td>
                     <td>{val.observacion}</td>
                     <td>{val.fecha_instalacion}</td>

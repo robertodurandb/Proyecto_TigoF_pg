@@ -133,8 +133,7 @@ function Pagos() {
     }
 
       useEffect(() =>{   
-        getClientes()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getClientes();
     }, [])
 
       return (

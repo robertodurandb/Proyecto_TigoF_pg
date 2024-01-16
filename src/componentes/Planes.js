@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Planes() {
     const [idplanes, setIdplanes] = useState();
@@ -11,6 +12,14 @@ function Planes() {
     const [estado, setEstado] = useState("Activo");
     const [planes, setPlanes] = useState([]);
     const [editar, setEditar] = useState(false);
+
+    const [modalMostrar, setModalMostrar] = React.useState(false);
+
+    const ventanaModal = () => setModalMostrar(!modalMostrar);
+
+    const agregarPlan=()=>{
+      ventanaModal();
+  }
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://10.0.28.60:9100/";
@@ -92,6 +101,7 @@ function Planes() {
     <div className="container">
       <div className="card text-center">
         <div className="card-header">Gestion de Planes</div>
+        <button onClick={agregarPlan}>Agregar</button>
         <div className="card-body">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
@@ -189,6 +199,17 @@ function Planes() {
             
           </tbody>
         </table>
+
+        <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+                <ModalBody>
+                <div className='container'>
+                    <h3 className=''>Detalle del Contrato</h3>
+                </div>
+                </ModalBody>
+                <ModalFooter>
+                    <button className='btn btn-danger' onClick={ventanaModal}>Cerrar</button>
+                </ModalFooter>
+            </Modal>
       </div>
     </div>
   );

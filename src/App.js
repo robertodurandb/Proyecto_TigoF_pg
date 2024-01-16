@@ -4,6 +4,7 @@ import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
 import Pagos from '../src/componentes/Pagos';
+import Instalacion from '../src/componentes/Instalacion';
 import Principal from '../src/componentes/Principal';
 import Consultapagos from '../src/componentes/Consultapagos';
 import Usuarios from '../src/componentes/Usuario';
@@ -76,6 +77,9 @@ function App() {
               <Link to="/pagos" className="btn btn-dark">
                 Pagos
               </Link>
+              <Link to="/instalacion" className="btn btn-dark">
+                Instalaciones
+              </Link>
               <Link to="/usuario" className="btn btn-dark">
                 Usuario
               </Link>  
@@ -92,6 +96,9 @@ function App() {
             </Routes>
               <Routes>
                 <Route path="/cliente" element={<Clientes />} />
+              </Routes>
+              <Routes>
+                <Route path="/instalacion" element={<Instalacion />} />
               </Routes>
               <Routes>
                 <Route path="/planes" element={logged2?<Planes />:null} />
