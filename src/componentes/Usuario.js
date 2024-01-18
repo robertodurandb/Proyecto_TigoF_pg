@@ -3,7 +3,6 @@ import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Usuarios() {
-    const [iduser, setIduser] = useState();
     const [dniuser, setDniuser] = useState("");
     const [nombre_user, setNombreuser] = useState("");
     const [apellido_user, setApellidouser] = useState("");
@@ -48,7 +47,6 @@ function Usuarios() {
   };
   const editarUser = (val)=>{
     setEditar(true);
-    setIduser(val.iduser);
     setDniuser(val.dniuser);
     setNombreuser(val.nombre_user);
     setApellidouser(val.apellido_user);
@@ -56,7 +54,7 @@ function Usuarios() {
     setEstado(val.estado_user);
   }
   const update = () => {
-    Axios.put(ipbackend+"usuario/"+iduser, {
+    Axios.put(ipbackend+"usuario/"+dniuser, {
         dniuser: dniuser,
         nombre_user: nombre_user,
         apellido_user: apellido_user,
@@ -80,7 +78,6 @@ function Usuarios() {
       });
   };
   const limpiarcampos = ()=>{
-    setIduser("");
     setDniuser("");
     setNombreuser("");
     setApellidouser("");
@@ -182,7 +179,7 @@ function Usuarios() {
           </thead>
           <tbody>
           {usuarios.map((val, key) => {
-            return <tr key={val.iduser}>
+            return <tr key={val.dniuser}>
                     <td>{val.dniuser}</td>
                     <td>{val.nombre_user}</td>
                     <td>{val.apellido_user}</td>

@@ -26,6 +26,7 @@ function Instalacion() {
     // const [listacontratos, setListacontratos] = useState();
 
     let token = sessionStorage.getItem("token");
+    let user = sessionStorage.getItem("currentUser")
     let ipbackend = "http://10.0.28.60:9100/";
 
     const add = () => {
@@ -34,6 +35,7 @@ function Instalacion() {
             numcontrato: numcontrato,
             geolocalizacion: geolocalizacion,
             observacion: observacion,
+            tecnico: user,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -79,6 +81,7 @@ function Instalacion() {
             numcontrato: numcontrato,
             geolocalizacion: geolocalizacion,
             observacion: observacion,
+            user_update: user,
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -103,6 +106,8 @@ function Instalacion() {
         setNumcontrato("");
         setGeolocalizacion("");
         setObservacion("");
+        // setTecnico("");
+        // setUsuarioactualiza("");
         setEditar(false);
       }
 //************ACA ESTAMOS***/
@@ -196,6 +201,8 @@ function Instalacion() {
                     <th scope="col">Fecha instalación</th>
                     <th scope="col">Geolocalización</th>
                     <th scope="col">Observación</th>
+                    <th scope="col">Técnico</th>
+                    <th scope="col">Usuario Actualiza</th>
                     <th scope="col">Acciones</th>
                 </tr>
               </thead>
@@ -207,6 +214,8 @@ function Instalacion() {
                         <td>{val.fechainstalacion}</td>
                         <td>{val.geolocalizacion}</td>
                         <td>{val.observacion}</td>
+                        <td>{val.tecnico}</td>
+                        <td>{val.user_update}</td>
                         <td>
                         <button type="button" className="btn btn-info" 
                         onClick={()=>{
