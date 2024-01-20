@@ -16,14 +16,11 @@ function Planes() {
     const [modalMostrar, setModalMostrar] = React.useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
-    const ventanaModal2 = () => setModalMostrar(!modalMostrar);
 
     const agregarPlan=()=>{
       ventanaModal();
   }
-    const agregarCliente=()=>{
-      ventanaModal2();
-    }
+
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://10.0.28.60:9100/";
@@ -113,7 +110,6 @@ function Planes() {
       <div className="container text-start">
         <br/>
         <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Cliente</button>
-        <button type="button" className="btn btn-info" onClick={agregarCliente}>Registrar Nuevo Cliente</button>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -148,76 +144,10 @@ function Planes() {
           </tbody>
         </table>
 
-        <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>
                 <div className='from-group'>
-                <h4 className=''>Nuevo Plan:</h4>
-                <div className='mb-3'>
-                        <label for='nombreplan' className="form-label">Nombre Plan:</label>
-                        <input type="text" value={nombreplan}
-                                onChange={(event) => { setNombreplan(event.target.value); }}
-                                className="form-control" id="nombreplan" placeholder="Ingrese Nombre del Plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='descplan' className="form-label">
-                          Descripción Plan:
-                        </label>
-                        <input type="text" value={descplan}
-                          onChange={(event) => { setDescplan(event.target.value); }}
-                          className="form-control" id="descplan" placeholder="Ingrese la descripción del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='precioplan' className="form-label">
-                          Precio Plan:
-                        </label>
-                        <input type="text" value={precioplan}
-                          onChange={(event) => { setPrecioplan(event.target.value); }}
-                          className="form-control" id="precioplan" placeholder="Ingrese Precio del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='velocidadplan' className="form-label">
-                          Velocidad Plan:
-                        </label>
-                        <input type="text" value={velocidadplan}
-                          onChange={(event) => { setVelocidadplan(event.target.value); }}
-                          className="form-control" id="velocidadplan" placeholder="Ingrese Velocidad del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                          <label for='estado' className="form-label">
-                            Estado:
-                          </label>
-                          <select value={estado}
-                          onChange={(event) => { setEstado(event.target.value); }}
-                          className="form-select" id="estado" aria-describedby="basic-addon1"
-                          >
-                            <option>Activo</option>
-                            <option>Inactivo</option>
-                          </select>
-                </div>
-                </div>
-                </ModalBody>
-                <ModalFooter>
-                          {
-                            editar? 
-                            <div>
-                            <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-                            </div>
-                            :<button className="btn btn-success" onClick={add}>Registrar</button>
-                          }
-                    <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
-                </ModalFooter>
-            </Modal>
-
-            /******** **************------************************/
-
-            <Modal isOpen={modalMostrar} toggle={ventanaModal2}>
-                <ModalBody>
-                <div className='from-group'>
-                <h4 className=''>Nuevo Plan:</h4>
+                <h4 className=''>Agregar/Modificar Plan:</h4>
                 <div className='mb-3'>
                         <label for='nombreplan' className="form-label">Nombre Plan:</label>
                         <input type="text" value={nombreplan}

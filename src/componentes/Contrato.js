@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 
 //FUNCION PARA OBTENER FECHA ACTUAL
@@ -27,6 +28,24 @@ function Contrato() {
     const [listaclientes, setListaclientes] = useState([]);
     const [apellidocliente, setApellidocliente] = useState([]);
     const [nombrecliente, setNombrecliente] = useState([]);
+
+    // const [dnicliente, setDnicliente] = useState("");
+    const [nombrecli, setNombrecli] = useState("");
+    const [apellidocli, setApellidocli] = useState("");
+    const [direccioncli, setDireccioncli] = useState("");
+    const [distritocli, setDistritocli] = useState("");
+    const [provinciacli, setProvinciacli] = useState("");
+    const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
+    const [telefonocli, setTelefonocli] = useState();
+    const [telefonocli2, setTelefonocli2] = useState();
+
+    const [modalMostrar, setModalMostrar] = React.useState(false);
+
+    const ventanaModal = () => setModalMostrar(!modalMostrar);
+
+    const agregarCliente=()=>{
+      ventanaModal();
+  }
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://10.0.28.60:9100/";
@@ -57,6 +76,39 @@ function Contrato() {
       }
       return error;
       });
+  };
+  /************************************ */
+  const addcliente = () => {
+    if (cliente_dnicliente.length>7) {
+    Axios.post(ipbackend+"cliente", 
+    {  
+        dnicliente: cliente_dnicliente,
+        nombrecli: nombrecli,
+        apellidocli: apellidocli,
+        direccioncli: direccioncli,
+        distritocli: distritocli,
+        provinciacli: provinciacli,
+        nacionalidadcli: nacionalidadcli,
+        telefonocli: telefonocli,
+        telefonocli2: telefonocli2,
+    },{
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(() => {
+      limpiarcampos();
+      alert("Cliente Registrado con exito");
+    }).catch((error) => {
+      if (401 === error.response.status){
+      sessionStorage.removeItem("token");
+      window.location.reload();
+      alert("Sesión expirada, vuelva a iniciar sesión");
+      }
+      return error;
+      });
+  } else {
+      alert("El Documento de Identidad debe tener mas de 7 caracteres")
+  }
   };
   const getContratos = () => {
     Axios.get(ipbackend+"detallecontratos").then((response) => {
@@ -111,6 +163,8 @@ function getPlanes(){
       .then(response => response.json())
       .then(data => setListaPlanes(data))
 }
+
+/** PENDIENTE TRABAJAR FUNCION SI NO EXISTE EL DNI***/
 function datoscliente() {
   let index = listaclientes.findIndex(function(i){
     return i.dnicliente == cliente_dnicliente;
@@ -118,7 +172,6 @@ function datoscliente() {
   setApellidocliente(listaclientes[index].apellidocli)
   setNombrecliente(listaclientes[index].nombrecli)
 }
-
   const limpiarcampos = ()=>{
     setPlanes_idplanes("");
     setCliente_dnicliente("");
@@ -129,6 +182,20 @@ function datoscliente() {
     setFecha_instalacion("");
     setDiapago("1");
     setEditar(false);
+    /*************** */
+    
+  }
+  const cerrarModal = ()=>{
+    setCliente_dnicliente("");
+    setNombrecli("");
+    setApellidocli("");
+    setDireccioncli("");
+    setDistritocli("");
+    setProvinciacli("");
+    setNacionalidadcli("Peruana");
+    setTelefonocli("");
+    setTelefonocli2("");
+    ventanaModal();
   }
     
   useEffect(() =>{
@@ -159,8 +226,9 @@ function datoscliente() {
               className="form-control" placeholder="Ingrese dni cliente" aria-label="dni cliente" aria-describedby="basic-addon1"
             ></input>
           </div>
-          {/* //BOTON VALIDAR */}
+          {/* //BOTON VALIDAR Y CREAR NUEVO CLIENTE*/}
           <button onClick={datoscliente}>validar DNI</button>
+          <button type="button" className="" onClick={agregarCliente}>Nuevo Cliente</button>
               <span className="input-group-text" id="basic-addon1">
                   Apellidos Cliente: {apellidocliente}
                 </span>
@@ -287,6 +355,100 @@ function datoscliente() {
           })}  
           </tbody>
         </table>
+
+        <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+                <ModalBody>
+                <div className='from-group'>
+                <h4 className=''>Agregar Nuevo Cliente:</h4>
+                <div className='mb-3'>
+                        <label for='dnicliente' className="form-label">DNI Cliente:</label>
+                        <input type="text" value={cliente_dnicliente}
+                          onChange={(event) => { setCliente_dnicliente(event.target.value); }}
+                          className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='nombres' className="form-label">
+                          Nombres:
+                        </label>
+                        <input type="text" value={nombrecli}
+                          onChange={(event) => { setNombrecli(event.target.value); }}
+                          className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='apellidos' className="form-label">
+                          Apellidos:
+                        </label>
+                        <input type="text" value={apellidocli}
+                          onChange={(event) => { setApellidocli(event.target.value); }}
+                          className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='direccion' className="form-label">
+                          Direccion:
+                        </label>
+                        <input type="text" value={direccioncli}
+                          onChange={(event) => { setDireccioncli(event.target.value); }}
+                          className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='distrito' className="form-label">
+                          Distrito:
+                        </label>
+                        <input type="text" value={distritocli}
+                          onChange={(event) => { setDistritocli(event.target.value); }}
+                          className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='provincia' className="form-label">
+                          Provincia:
+                        </label>
+                        <input type="text" value={provinciacli}
+                          onChange={(event) => { setProvinciacli(event.target.value); }}
+                          className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                          <label for='nacionalidad' className="form-label">
+                            Nacionalidad:
+                          </label>
+                          <select value={nacionalidadcli}
+                          onChange={(event) => { setNacionalidadcli(event.target.value); }}
+                          className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
+                          >
+                            <option>Peruana</option>
+                            <option>Extranjera</option>
+                          </select>
+                </div>
+                <div className="mb-3">
+                        <label for='telefono1' className="form-label">
+                          Telefono 1:
+                        </label>
+                        <input type="number" value={telefonocli}
+                          onChange={(event) => { setTelefonocli(event.target.value); }}
+                          className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='telefono2' className="form-label">
+                          Telefono 2:
+                        </label>
+                        <input type="number" value={telefonocli2}
+                          onChange={(event) => { setTelefonocli(event.target.value); }}
+                          className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                </div>
+                </ModalBody>
+                <ModalFooter>
+                    <button className="btn btn-success" onClick={addcliente}>Registrar</button>
+                    <button className='btn btn-danger' onClick={cerrarModal}>Cerrar</button>
+                </ModalFooter>
+            </Modal>
       </div>
     </div>
   );

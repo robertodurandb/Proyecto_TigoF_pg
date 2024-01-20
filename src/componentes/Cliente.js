@@ -114,7 +114,7 @@ function Cliente() {
   return (
     <div className="container">
       <div className="card text-center">
-        <div className="card-header">Gestion de Clientes</div>
+        <div className="card-header">Registrar Cliente Nuevo</div>
         <div className="card-body">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
@@ -167,7 +167,7 @@ function Cliente() {
             </span>
             <input type="text" value={provinciacli}
               onChange={(event) => { setProvinciacli(event.target.value); }}
-              className="form-control" placeholder="Ingrese Provincia" aria-label="Provincia" aria-describedby="basic-addon1"
+              className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
             ></input>
           </div>
           <div className="input-group mb-3">
@@ -213,7 +213,7 @@ function Cliente() {
         </div>
         <div className="lista">
           <button className="btn btn-info" onClick={getClientes}>
-            Editar Datos
+            Modificar Clientes
           </button>
         </div>
         <table className="table table-striped">
