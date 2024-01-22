@@ -28,8 +28,10 @@ function Contrato() {
     const [listaclientes, setListaclientes] = useState([]);
     const [apellidocliente, setApellidocliente] = useState([]);
     const [nombrecliente, setNombrecliente] = useState([]);
+    const [direccioncliente, setDireccioncliente] = useState([]);
+    const [distritocliente, setDistritocliente] = useState([]);
+    const [errordni, setErrordni] = useState();
 
-    // const [dnicliente, setDnicliente] = useState("");
     const [nombrecli, setNombrecli] = useState("");
     const [apellidocli, setApellidocli] = useState("");
     const [direccioncli, setDireccioncli] = useState("");
@@ -169,8 +171,35 @@ function datoscliente() {
   let index = listaclientes.findIndex(function(i){
     return i.dnicliente == cliente_dnicliente;
   });
-  setApellidocliente(listaclientes[index].apellidocli)
-  setNombrecliente(listaclientes[index].nombrecli)
+  if (cliente_dnicliente.length <8) {
+    
+      setErrordni("debe introducir al menos 8 digitos");
+      setCliente_dnicliente("");
+      setApellidocliente("")
+      setNombrecliente("")
+      setDireccioncliente("")
+      setDistritocliente("")
+    setTimeout(() => {
+      console.log("Delayed for 1 second.");
+      setErrordni("");
+    }, "3000");
+  } else {
+    setErrordni("");
+    if (index == -1) {
+      setApellidocliente("")
+      setNombrecliente("")
+      setDireccioncliente("")
+      setDistritocliente("")
+      alert("El DNI ingresado no existe")
+    } else {
+      setApellidocliente(listaclientes[index].apellidocli)
+      setNombrecliente(listaclientes[index].nombrecli)
+      setDireccioncliente(listaclientes[index].direccioncli)
+      setDistritocliente(listaclientes[index].distritocli)
+    }
+  }
+  
+  
 }
   const limpiarcampos = ()=>{
     setPlanes_idplanes("");
@@ -181,6 +210,10 @@ function datoscliente() {
     setInstalacion("Pendiente");
     setFecha_instalacion("");
     setDiapago("1");
+    setApellidocliente("")
+    setNombrecliente("")
+    setDireccioncliente("")
+    setDistritocliente("")
     setEditar(false);
     /*************** */
     
@@ -195,6 +228,10 @@ function datoscliente() {
     setNacionalidadcli("Peruana");
     setTelefonocli("");
     setTelefonocli2("");
+    setApellidocliente("")
+    setNombrecliente("")
+    setDireccioncliente("")
+    setDistritocliente("")
     ventanaModal();
   }
     
@@ -226,15 +263,18 @@ function datoscliente() {
               className="form-control" placeholder="Ingrese dni cliente" aria-label="dni cliente" aria-describedby="basic-addon1"
             ></input>
           </div>
+          <div className="fw-bold">{errordni}</div>
           {/* //BOTON VALIDAR Y CREAR NUEVO CLIENTE*/}
-          <button onClick={datoscliente}>validar DNI</button>
-          <button type="button" className="" onClick={agregarCliente}>Nuevo Cliente</button>
-              <span className="input-group-text" id="basic-addon1">
-                  Apellidos Cliente: {apellidocliente}
+          <button type="button" className="btn btn-secondary" onClick={datoscliente}>validar DNI</button> &nbsp;
+          <button type="button" className="btn btn-secondary" onClick={agregarCliente}>Nuevo Cliente</button>
+              <br/>
+                <span className="input-group-text" id="basic-addon1">
+                  Cliente: {apellidocliente+" "+nombrecliente}
                 </span>
                 <span className="input-group-text" id="basic-addon1">
-                  Nombres Cliente: {nombrecliente}
+                  Direccion: {direccioncliente+" "+distritocliente}
                 </span>
+                <br/>
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
               Plan:
