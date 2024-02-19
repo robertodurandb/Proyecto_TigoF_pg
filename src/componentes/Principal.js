@@ -6,8 +6,9 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Principal() {
 
-    const [listaClientes, setListaClientes] = React.useState([]);
-    const [busqueda, setBusqueda] = React.useState("");
+    const [listaClientes, setListaClientes] = useState([]);
+    const [busqueda, setBusqueda] = useState("");
+    const [listaPagos, setListaPagos] = useState([]);
 
     //Datos para el Modal
     const [num_contrato, setNum_contrato] = useState();
@@ -28,9 +29,23 @@ function Principal() {
     const [ubicacioninstalacion, setUbicacioninstalacion] = useState();
 
     const [modalMostrar, setModalMostrar] = React.useState(false);
+    const [modalPagos, setModalPagos] = React.useState(false);
+
+    //Datos para el modal de pagos
+    const [verPagos, setVerPagos] = useState(false);
+    const [results2, setResults2] = useState([]);
+    
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
+    const ventanaModal2 = () => setModalPagos(!modalPagos);
     let ipbackend = "http://10.0.28.60:9100/";
+
+    function getPagos(){
+        fetch(ipbackend+'pagos')
+            .then(response => response.json())
+            .then(data => setListaPagos(data))
+            
+    }
 
     function getClientes(){
         fetch(ipbackend+'todolist')
@@ -40,6 +55,9 @@ function Principal() {
 
     const mostrarCliente=()=>{
         ventanaModal();
+    }
+    const mostrarPagos=()=>{
+        ventanaModal2();
     }
     const capturarID = (cliente) => {
         setNum_contrato(cliente.num_contrato);
@@ -61,27 +79,53 @@ function Principal() {
 
         mostrarCliente();
     }
+    const capturarIDpago = (cliente) =>{
+        setNum_contrato(cliente.num_contrato);
+        setDnicli(cliente.dnicliente);
+        setNombrecli(cliente.nombrecli);
+        setApellidocli(cliente.apellidocli);
+        setDiapago(cliente.diapago);
+        setNombreplan(cliente.nombreplan);
+        setVerPagos(false);
+        mostrarPagos();   
+    }
+    const Verpagos = ()=> {
+        console.log("contrato seleccionado es: "+num_contrato)
+        let results3 = listaPagos.filter(function(cli) {
+            return cli.num_contrato == num_contrato;
+          });
+        setResults2(results3);
+        setVerPagos(true);
+        }
+
+       
     //Funcion de Busqueda
     const searcher = (e) =>{
         setBusqueda(e.target.value);
         }
     //Funcion de Filtrado
-    //  const results = !busqueda ? listaClientes : listaClientes.filter((dato)=> dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()))
      const newfilter = listaClientes.filter(dato => {
         return (
     dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
     dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
     )
     });
+
     let results = [];
+    
+    
     if (busqueda === "") {
         results = listaClientes;
     } else {
         results = newfilter;
     }
+    
+    
+    
 
     useEffect(() =>{
         getClientes()
+        getPagos()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -117,6 +161,9 @@ function Principal() {
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
                                 }}>Detalles</button></td>
+                                <td><button type='button' className='btn btn-outline-success'
+                                onClick={()=>{capturarIDpago(cliente);
+                                }}>Pagos</button></td>
                             </tr>
                     ))}
                     </tbody>
@@ -192,7 +239,70 @@ function Principal() {
                     <button className='btn btn-danger' onClick={ventanaModal}>Cerrar</button>
                 </ModalFooter>
             </Modal>
-            
+
+            {/* MODAL PARA MOSTRAR LOS PAGOS DEL CLIENTE
+                         */}
+            <Modal isOpen={modalPagos} toggle={ventanaModal2}>
+                <ModalBody>
+                <div className='container'>
+                    <h3 className=''>Detalle de Pagos del Cliente</h3>
+                    <div className='row mb-2'>
+                        <div className='col-4'>DNI Cliente:</div>
+                        <div className='col-6'>{dnicli}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Contrato:</div>
+                        <div className='col-6'>{num_contrato}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Cliente:</div>
+                        <div className="col-6">{nombrecli+" "+apellidocli}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Dia pago:</div>
+                        <div className='col-6'>{diapago}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Nombre Plan:</div>
+                        <div className='col-6'>{nombreplan}</div>
+                    </div>
+
+                    <button onClick={Verpagos}>Ver Pagos</button>
+                    <div>
+                    {
+                        verPagos ? 
+                            <table className='table table-hover mt-5 shadow-lg'>
+                                <thead>
+                                    <tr className='bg-curso text-white'>
+                                        <th>Fecha_Pago</th>
+                                        <th>Monto Pagado</th>
+                                        <th>Medio pago</th>
+                                        <th>Mes Facturado</th>
+                                        <th>Obs</th>    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {results2.map((pagos, key)=>(
+                                        <tr key={pagos.idpago}>
+                                            <td>{pagos.fechapago}</td>
+                                            <td>{pagos.montopago}</td>
+                                            <td>{pagos.mediopago}</td>
+                                            <td>{pagos.mespago}</td>
+                                            <td>{pagos.observacionpago}</td>
+                                        </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        :null
+                    }
+                    
+                    </div>
+                </div>
+                </ModalBody>
+                <ModalFooter>
+                    <button className='btn btn-danger' onClick={ventanaModal2}>Cerrar</button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }
