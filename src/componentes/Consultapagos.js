@@ -5,7 +5,7 @@ function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
 
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
         function getPagos(){
             fetch(ipbackend+'pagos2')

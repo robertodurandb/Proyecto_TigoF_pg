@@ -23,7 +23,7 @@ function Planes() {
 
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"plan", {
@@ -109,7 +109,7 @@ function Planes() {
       <h1>Gestion de Planes</h1>
       <div className="container text-start">
         <br/>
-        <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Cliente</button>
+        <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Plan</button>
         <table className="table table-striped">
           <thead>
             <tr>
