@@ -54,12 +54,12 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
     
+    let ipbackend = "http://192.168.18.8:9100/";
+    let token = sessionStorage.getItem("token");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModal2 = () => setModalPagos(!modalPagos);
     const ventanaModal3 = () => setModalPagar(!modalPagar);
-    let ipbackend = "http://192.168.18.8:9100/";
-    let token = sessionStorage.getItem("token");
 
     function getPagos(){
         fetch(ipbackend+'pagos')
@@ -90,16 +90,21 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
             mespago: mespago,
             anio: anio,
             mediopago: mediopago,
-            observacionpago: observacion,
+            observacion: observacion,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
             limpiarcampos();
+            getPagos();
+            ventanaModal3();
             alert("Pago Registrado con exito");
+            ventanaModal2();
         }).catch((error) => {
+            console.log(error.response.status)
           if (401 === error.response.status){
+            limpiarcampos();
           sessionStorage.removeItem("token");
           window.location.reload();
           alert("Sesión expirada, vuelva a iniciar sesión");
@@ -169,15 +174,11 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
 
     let results = [];
     
-    
     if (busqueda === "") {
         results = listaClientes;
     } else {
         results = newfilter;
     }
-    
-    
-    
 
     useEffect(() =>{
         getClientes()
@@ -367,11 +368,11 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                 <h4 className=''>Registrar pago:</h4>
                 <div className='mb-3'>
                         <label for='contrato' className="form-label">DNI Cliente:</label>
-                        <span>{dnicli}</span>
+                        <span className='form-control'>{dnicli}</span>
                         <label for='contrato' className="form-label">Número de contrato:</label>
-                        <span>{num_contrato}</span>
+                        <span className='form-control'>{num_contrato}</span>
                         <label for='contrato' className="form-label">Nombres y Apellidos:</label>
-                        <span>{nombrecli+" "+apellidocli}</span>
+                        <span className='form-control'>{nombrecli+" "+apellidocli}</span>
                 </div>
                 <div className="mb-3">
                         <label for='descplan' className="form-label">
@@ -397,7 +398,7 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                         </label>
                         <select value={mespago}
                             onChange={(event) => { setMespago(event.target.value); }}
-                            className="form-control" aria-describedby="basic-addon1"
+                            className="form-select" aria-describedby="basic-addon1"
                             >
                             <option>1</option><option>2</option><option>3</option>
                             <option>4</option><option>5</option><option>6</option>
