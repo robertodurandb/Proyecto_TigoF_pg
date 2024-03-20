@@ -9,6 +9,7 @@ import Principal from '../src/componentes/Principal';
 import Consultapagos from '../src/componentes/Consultapagos';
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
+import Inicio from '../src/componentes/Inicio';
 import {
   BrowserRouter as Router,
   Routes,
@@ -57,6 +58,9 @@ function App() {
         <Router>
               <div className="btn-group">
               <Link to="/" className="btn btn-dark">
+                  Inicio
+                </Link>
+              <Link to="/consultaclientes" className="btn btn-dark">
                   Consulta Clientes
                 </Link>
                 <Link to="/consultapagos" className="btn btn-dark">
@@ -113,7 +117,10 @@ function App() {
               <Route path="/usuario" element={logged2?<Usuarios />:null} />
             </Routes>     
               <Routes>
-                <Route path="/" element={<Principal />} />
+                <Route path="/consultaclientes" element={<Principal />} />
+              </Routes>
+              <Routes>
+                <Route path="/" element={<Inicio />} />
               </Routes>
         </Router> 
           )
