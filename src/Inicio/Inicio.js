@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import consultas from '../imagenes/busqueda.png';
-import pagos from '../imagenes/pagos.png'
-import clientes from '../imagenes/contrato.png';
+import imgconsultas from '../imagenes/busqueda.png';
+import imgpagos from '../imagenes/pagos.png'
+import imgclientes from '../imagenes/contrato.png';
+import Consultas from '../componentes/Principal';
 
 function Inicio() {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -17,8 +18,6 @@ function Inicio() {
         setIsAdmin(false)
         }
     }
-    
-        
         useEffect(() => {
             checkAdmin()
           }, [])
@@ -29,26 +28,26 @@ function Inicio() {
                 (
                     <div className='row'>
                     <div className='col-md-3 col-sm-6'>
-                        <div className='acceso'>
-                        <Link to='../src/componentes/Principal'>
-                        <img src={consultas} alt='Consultas' className='img-fluid'/>
-                        <h3>Consultas</h3>
+                        <div className='border border-secondary'>
+                        <Link to='http://localhost:3000/consultaclientes'>
+                        <img src={imgconsultas} alt='Consultas' className='img-fluid'/>
+                        <h3 className='text-center'>Consultas</h3>
                         </Link>
                         </div>
                     </div>
                     <div className='col-md-3 col-sm-6'>
-                        <div className='acceso'>
+                        <div className='border border-secondary'>
                         <Link to='../src/componentes/Clientes'>
-                        <img src={clientes} alt='Clientes' className='img-fluid'/>
-                        <h3>Clientes</h3>
+                        <img src={imgclientes} alt='Clientes' className='img-fluid'/>
+                        <h3 className='text-center'>Clientes</h3>
                         </Link>
                         </div>
                     </div>
                     <div className='col-md-3 col-sm-6'>
-                        <div>
+                        <div className='border border-secondary'>
                         <Link to='../src/componentes/Consultapagos'>
-                        <img src={pagos} alt='Pagos' className='img-fluid'/>
-                        <h3>Pagos</h3>
+                        <img src={imgpagos} alt='Pagos' className='img-fluid'/>
+                        <h3 className='text-center'>Pagos</h3>
                         </Link>
                         </div>
                     </div>
@@ -58,10 +57,10 @@ function Inicio() {
                 (
                     <div className='row'>
                     <div className='col-md-3 col-sm-6'>
-                    <div className='acceso'>
+                    <div className='border border-secondary'>
                     <Link to='../src/componentes/Principal'>
-                    <img src={consultas} alt='Consultas' className='img-fluid'/>
-                    <h3>Consultas</h3>
+                    <img src={Consultas} alt='Consultas' className='img-fluid'/>
+                    <h3 className='text-center'>Consultas</h3>
                     </Link>
                     </div>
                     </div>

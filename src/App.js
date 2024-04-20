@@ -9,7 +9,7 @@ import Principal from '../src/componentes/Principal';
 import Consultapagos from '../src/componentes/Consultapagos';
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
-import Inicio from '../src/componentes/Inicio';
+import Inicio from './Inicio/Inicio';
 import {
   BrowserRouter as Router,
   Routes,
