@@ -32,8 +32,8 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
     const [precioplan, setPrecioplan] = useState();
     const [velocidadplan, setVelocidadplan] = useState();
     const [diapago, setDiapago] = useState();
-    const [nombrecaja, setNombrecaja] = useState();
-    const [localizacion, setLocalizacion] = useState();
+    // const [nombrecaja, setNombrecaja] = useState();   
+    // const [localizacion, setLocalizacion] = useState();
     const [fecha_instalacion, setFecha_instalacion] = useState();
     const [ubicacioninstalacion, setUbicacioninstalacion] = useState();
 
@@ -120,8 +120,8 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
         setDiapago(cliente.diapago);
         setDireccioncli(cliente.direccioncli);
         setDistritocli(cliente.distritocli);
-        setLocalizacion(cliente.localizacion);
-        setNombrecaja(cliente.nombrecaja);
+        // setLocalizacion(cliente.localizacion);
+        // setNombrecaja(cliente.nombrecaja);
         setNombreplan(cliente.nombreplan);
         setFechacontrato(cliente.fecha_contrato);
         setTelefonocli(cliente.telefonocli);
@@ -274,14 +274,14 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                         <div className='col-4'>Velocidad Plan:</div>
                         <div className="col-6">{velocidadplan}</div>
                     </div>
-                    <div className='row mb-2'>
+                    {/* <div className='row mb-2'>
                         <div className='col-4'>Nombre Caja:</div>
                         <div className="col-6">{nombrecaja}</div>
-                    </div>
-                    <div className='row mb-2'>
+                    </div> */}
+                    {/* <div className='row mb-2'>
                         <div className='col-4'>Ubicacion Caja:</div>
                         <div className="col-6"><Link to={localizacion} target='_blank'>{localizacion}</Link></div>
-                    </div>
+                    </div> */}
                     <div className='row mb-2'>
                         <div className='col-4'>Ubicacion Vivienda:</div>
                         <div className="col-6"><Link to={ubicacioninstalacion} target='_blank'>{ubicacioninstalacion}</Link></div>
