@@ -120,8 +120,6 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
         setDiapago(cliente.diapago);
         setDireccioncli(cliente.direccioncli);
         setDistritocli(cliente.distritocli);
-        // setLocalizacion(cliente.localizacion);
-        // setNombrecaja(cliente.nombrecaja);
         setNombreplan(cliente.nombreplan);
         setFechacontrato(cliente.fecha_contrato);
         setTelefonocli(cliente.telefonocli);
@@ -274,14 +272,6 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                         <div className='col-4'>Velocidad Plan:</div>
                         <div className="col-6">{velocidadplan}</div>
                     </div>
-                    {/* <div className='row mb-2'>
-                        <div className='col-4'>Nombre Caja:</div>
-                        <div className="col-6">{nombrecaja}</div>
-                    </div> */}
-                    {/* <div className='row mb-2'>
-                        <div className='col-4'>Ubicacion Caja:</div>
-                        <div className="col-6"><Link to={localizacion} target='_blank'>{localizacion}</Link></div>
-                    </div> */}
                     <div className='row mb-2'>
                         <div className='col-4'>Ubicacion Vivienda:</div>
                         <div className="col-6"><Link to={ubicacioninstalacion} target='_blank'>{ubicacioninstalacion}</Link></div>
@@ -332,20 +322,22 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                             <table className='table table-hover mt-5 shadow-lg'>
                                 <thead>
                                     <tr className='bg-curso text-white'>
-                                        <th>Fecha_Pago</th>
-                                        <th>Monto Pagado</th>
+                                        <th>Año</th>
+                                        <th>Mes Fact</th>
+                                        <th>Monto</th>
                                         <th>Medio pago</th>
-                                        <th>Mes Facturado</th>
+                                        <th>Fecha_Pago</th>
                                         <th>Obs</th>    
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {results2.map((pagos, key)=>(
                                         <tr key={pagos.idpago}>
-                                            <td>{pagos.fechapago}</td>
+                                            <td>{pagos.anio}</td>
+                                            <td>{pagos.mespago}</td>
                                             <td>{pagos.montopago}</td>
                                             <td>{pagos.mediopago}</td>
-                                            <td>{pagos.mespago}</td>
+                                            <td>{pagos.fechapago}</td>
                                             <td>{pagos.observacionpago}</td>
                                         </tr>
                                 ))}
@@ -421,7 +413,7 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
                           </label>
                           <input type="text" value={mediopago}
                           onChange={(event) => { setMediopago(event.target.value); }}
-                          className="form-control" id="Medio de pago" placeholder="Ingrese medio de pago" aria-describedby="basic-addon1"
+                          className="form-control" id="Medio de pago" placeholder="Ej. Yape/Plin/Transferencia/efectivo " aria-describedby="basic-addon1"
                         ></input>
                 </div>
                 <div className="mb-3">

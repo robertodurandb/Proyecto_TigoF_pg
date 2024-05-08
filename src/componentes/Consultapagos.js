@@ -1,11 +1,30 @@
 import React, { useState, useEffect } from 'react'
+import Axios from "axios";
 import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+
 function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
+    const [modalMostrar, setModalMostrar] = useState(false);
+    const [idpago, setIdpago] = useState("");
+    const [num_contrato, setNum_contrato] = useState("");
+    const [montopago, setMontopago] = useState("");
+    const [mespago, setMespago] = useState("");
+    const [anio, setAnio] = useState("");
+    const [observacion, setObservacion] = useState("");
+    const [mediopago, setMediopago] = useState("");
 
+    let token = sessionStorage.getItem("token");
     let ipbackend = "http://192.168.18.8:9100/";
+
+    const ventanaModal = () => setModalMostrar(!modalMostrar);
+
+    const mostrarPagos=()=>{
+        ventanaModal();
+    }
 
         function getPagos(){
             fetch(ipbackend+'pagos2')
@@ -13,6 +32,32 @@ function Consultapagos() {
                 .then(data => setListaPagos(data))
                 console.log(listaPagos[0]);
         }
+        const update = () => {
+          console.log(idpago)
+          Axios.put(ipbackend+"pago/"+idpago, {
+              montopago: montopago,
+              mespago: mespago,
+              anio: anio,
+              mediopago: mediopago,
+              observacion: observacion
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(() => {
+            limpiarcampos();
+            ventanaModal();
+            getPagos();
+            alert("Pago Actualizado con exito");
+          }).catch((error) => {
+            if (401 === error.response.status){
+            //sessionStorage.removeItem("token");
+            //window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+            return error;
+            });
+        };
     //Funcion de Busqueda
     const searcher = (e) =>{
         setBusqueda(e.target.value);
@@ -31,6 +76,30 @@ function Consultapagos() {
         results = newfilter;
     }
 
+
+    //CAPTURAR ID PAGO SELECCIONADO A EDITAR
+    const capturarID = (pago) =>{
+        setIdpago(pago.idpago)
+        setNum_contrato(pago.num_contrato);
+        setMontopago(pago.montopago);
+        setMespago(pago.mespago);
+        setAnio(pago.anio);
+        setMediopago(pago.mediopago);
+        setObservacion(pago.observacion);
+
+        mostrarPagos();   
+    }
+
+    const limpiarcampos = ()=>{
+      setIdpago("");
+      setNum_contrato("");
+      setMontopago("");
+      setMespago("");
+      setAnio("");
+      setMediopago("")
+      setObservacion("");
+      ventanaModal();
+    }
 
      useEffect(() =>{   
         getPagos()
@@ -58,26 +127,96 @@ function Consultapagos() {
                             <th>Medio de pago</th>
                             <th>Mes_Facturado</th>
                             <th>Año</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {results.map((pagos, key)=>(
-                            <tr>
-                                <td>{pagos.num_contrato}</td>
-                                <td>{pagos.cliente_dnicliente}</td>
-                                <td>{pagos.apellidocli}</td>
-                                <td>{pagos.nombrecli}</td>
-                                <td>{pagos.nombreplan}</td>
-                                <td>{pagos.precioplan}</td>
-                                <td>{pagos.fechapago}</td>
-                                <td>{pagos.montopago}</td>
-                                <td>{pagos.mediopago}</td>
-                                <td>{pagos.mespago}</td>
-                                <td>{pagos.anio}</td>
+                    {results.map((pago, key)=>(
+                            <tr key={pago.idpago}>
+                                <td>{pago.num_contrato}</td>
+                                <td>{pago.cliente_dnicliente}</td>
+                                <td>{pago.apellidocli}</td>
+                                <td>{pago.nombrecli}</td>
+                                <td>{pago.nombreplan}</td>
+                                <td>{pago.precioplan}</td>
+                                <td>{pago.fechapago}</td>
+                                <td>{pago.montopago}</td>
+                                <td>{pago.mediopago}</td>
+                                <td>{pago.mespago}</td>
+                                <td>{pago.anio}</td>
+                                <td><button type="button" className="btn btn-outline-success"
+                                onClick={()=>{capturarID(pago);
+                                }}>Editar</button></td>
                             </tr>
                     ))}
                     </tbody>
             </table>
+
+            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+                <ModalBody>
+                <div className='from-group'>
+                <h4 className=''>Modificar Pago:</h4>
+                <div className='mb-3'>
+                        <label for='num_contrato' className="form-label">Numero Contrato:</label>
+                        <input type="number" value={num_contrato}
+                                onChange={(event) => { setNum_contrato(event.target.value); }}
+                                className="form-control" id="num_contrato" placeholder="Número de Contrato" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='montopago' className="form-label">
+                          Monto pagado:
+                        </label>
+                        <input type="number" value={montopago}
+                          onChange={(event) => { setMontopago(event.target.value); }}
+                          className="form-control" id="montopago" placeholder="Monto Pago" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='mespago' className="form-label">
+                          Periodo/mes Facturado:
+                        </label>
+                        <input type="text" value={mespago}
+                          onChange={(event) => { setMespago(event.target.value); }}
+                          className="form-control" id="mespago" placeholder="Mes Facturado" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='aniofacturado' className="form-label">
+                          Año Facturado:
+                        </label>
+                        <input type="number" value={anio}
+                          onChange={(event) => { setAnio(event.target.value); }}
+                          className="form-control" id="aniofacturado" placeholder="Año Facturado" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='mediopago' className="form-label">
+                          Medio Pago:
+                        </label>
+                        <input type="text" value={mediopago}
+                          onChange={(event) => { setMediopago(event.target.value); }}
+                          className="form-control" id="mediopago" placeholder="Medio Pago" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                          <label for='observacion' className="form-label">
+                            Observacion:
+                          </label>
+                          <input type="number" value={observacion}
+                          onChange={(event) => { setObservacion(event.target.value); }}
+                          className="form-control" id="observacion" placeholder="Observacion" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                </div>
+                </ModalBody>
+                <ModalFooter>
+                    <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
+    
+                    <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
+                </ModalFooter>
+            </Modal>
+
         </div>
     )
 

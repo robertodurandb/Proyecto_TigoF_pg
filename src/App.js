@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
-import Pagos from '../src/componentes/Pagos';
+// import Pagos from '../src/componentes/Pagos';
 import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
@@ -78,9 +78,9 @@ function App() {
               {/* <Link to="/caja" className="btn btn-dark">
                 Caja
               </Link> */}
-              <Link to="/pagos" className="btn btn-dark">
+              {/* <Link to="/pagos" className="btn btn-dark">
                 Pagos
-              </Link>
+              </Link> */}
               <Link to="/instalacion" className="btn btn-dark">
                 Instalaciones
               </Link>
@@ -110,9 +110,9 @@ function App() {
               {/* <Routes>
                 <Route path="/caja" element={logged2?<Caja />:null} />
               </Routes> */}
-              <Routes>
+              {/* <Routes>
                 <Route path="/pagos" element={logged2?<Pagos />:null} />
-              </Routes>
+              </Routes> */}
               <Routes>
               <Route path="/usuario" element={logged2?<Usuarios />:null} />
             </Routes>     
