@@ -42,8 +42,10 @@ function Contrato() {
     const [telefonocli2, setTelefonocli2] = useState();
 
     const [modalMostrar, setModalMostrar] = React.useState(false);
+    const [modalMostrar2, setModalMostrar2] = React.useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
+    const ventanaModal2 = () => setModalMostrar2(!modalMostrar2);
 
     const agregarCliente=()=>{
       ventanaModal();
@@ -51,6 +53,10 @@ function Contrato() {
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://192.168.18.8:9100/";
+
+    const agregarContrato=()=>{
+      ventanaModal();
+  }
 
   const add = () => {
     Axios.post(ipbackend+"detallecontrato", {
@@ -117,6 +123,7 @@ function Contrato() {
       setContratos(response.data);
     });
   };
+
   const editarContrato = (val)=>{
     setEditar(true);
     setNum_contrato(val.num_contrato);
@@ -127,6 +134,7 @@ function Contrato() {
     setInstalacion(val.instalacion);
     setFecha_instalacion(val.fecha_instalacion);
     setDiapago(val.diapago);
+    ventanaModal();
   }
   const update = () => {
     Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
@@ -238,13 +246,16 @@ function datoscliente() {
   useEffect(() =>{
     getPlanes();
     getClientes();
+    getContratos();
 }, [])
 
   return (
     <div className="container">
-      <div className="card text-center">
-        <div className="card-header">Gestion de Contratos</div>
-        <div className="card-body" id="Editarcontrato">
+      <h1>Gestión de Contratos</h1>
+      <div className="container text-start">
+      <br/>
+        <button type="button" className="btn btn-info" onClick={agregarContrato}>Registrar Nuevo Contrato</button>
+        {/* <div className="card-body" id="">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
               Numero Contrato:
@@ -265,7 +276,7 @@ function datoscliente() {
           </div>
           <div className="fw-bold">{errordni}</div>
           {/* //BOTON VALIDAR Y CREAR NUEVO CLIENTE*/}
-          <button type="button" className="btn btn-secondary" onClick={datoscliente}>validar DNI</button> &nbsp;
+          {/* <button type="button" className="btn btn-secondary" onClick={datoscliente}>validar DNI</button> &nbsp;
           <button type="button" className="btn btn-secondary" onClick={agregarCliente}>Nuevo Cliente</button>
               <br/>
                 <span className="input-group-text" id="basic-addon1">
@@ -341,26 +352,18 @@ function datoscliente() {
               <option>16</option>
             </select>
           </div>
-          {
-            editar? 
+
             <div>
             <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
             <button className="btn btn-info m-2" onClick={limpiarcampos}>Cancelar</button>
             </div>
-            :<button className="btn btn-success" onClick={add}>Registrar</button>
-          }
-          
-        </div>
-        <div className="lista">
-          <button className="btn btn-info" onClick={getContratos}>
-            Editar Datos
-          </button>
-        </div>
+            <button className="btn btn-success" onClick={add}>Registrar</button>
+        </div> */}
+        
         <table className="table table-striped">
           <thead>
             <tr> 
-                <th scope="col">N° Contrato</th>
-                
+                <th scope="col">N° Contrato</th> 
                 <th scope="col">Plan</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Fecha Contrato</th>
@@ -387,7 +390,7 @@ function datoscliente() {
                     onClick={()=>{
                       editarContrato(val);
                     }}>
-                      <a href="#Editarcontrato">Editar</a>
+                      Editar
                     </button>
                     </td>
             </tr>
@@ -399,7 +402,108 @@ function datoscliente() {
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>
                 <div className='from-group'>
-                <h4 className=''>Agregar Nuevo Cliente:</h4>
+                <h4 className=''>Agregar/Modificar Contrato:</h4>
+                <div className='mb-3'>
+                        <label for='dnicliente' className="form-label">DNI Cliente:</label>
+                        <input type="text" value={cliente_dnicliente}
+                          onChange={(event) => { setCliente_dnicliente(event.target.value); }}
+                          className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='nombres' className="form-label">
+                          Nombres:
+                        </label>
+                        <input type="text" value={nombrecli}
+                          onChange={(event) => { setNombrecli(event.target.value); }}
+                          className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='apellidos' className="form-label">
+                          Apellidos:
+                        </label>
+                        <input type="text" value={apellidocli}
+                          onChange={(event) => { setApellidocli(event.target.value); }}
+                          className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='direccion' className="form-label">
+                          Direccion:
+                        </label>
+                        <input type="text" value={direccioncli}
+                          onChange={(event) => { setDireccioncli(event.target.value); }}
+                          className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='distrito' className="form-label">
+                          Distrito:
+                        </label>
+                        <input type="text" value={distritocli}
+                          onChange={(event) => { setDistritocli(event.target.value); }}
+                          className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='provincia' className="form-label">
+                          Provincia:
+                        </label>
+                        <input type="text" value={provinciacli}
+                          onChange={(event) => { setProvinciacli(event.target.value); }}
+                          className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                          <label for='nacionalidad' className="form-label">
+                            Nacionalidad:
+                          </label>
+                          <select value={nacionalidadcli}
+                          onChange={(event) => { setNacionalidadcli(event.target.value); }}
+                          className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
+                          >
+                            <option>Peruana</option>
+                            <option>Extranjera</option>
+                          </select>
+                </div>
+                <div className="mb-3">
+                        <label for='telefono1' className="form-label">
+                          Telefono 1:
+                        </label>
+                        <input type="number" value={telefonocli}
+                          onChange={(event) => { setTelefonocli(event.target.value); }}
+                          className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='telefono2' className="form-label">
+                          Telefono 2:
+                        </label>
+                        <input type="number" value={telefonocli2}
+                          onChange={(event) => { setTelefonocli(event.target.value); }}
+                          className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                </div>
+                </ModalBody>
+                <ModalFooter>
+                    {
+                            editar? 
+                            <div>
+                            <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
+                            </div>
+                            :<button className="btn btn-success" onClick={add}>Registrar</button>
+                          }
+                    <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
+                </ModalFooter>
+            </Modal>
+
+            /****************************************** */
+            <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
+                <ModalBody>
+                <div className='from-group'>
+                <h4 className=''>Agregar/Modificar Cliente:</h4>
                 <div className='mb-3'>
                         <label for='dnicliente' className="form-label">DNI Cliente:</label>
                         <input type="text" value={cliente_dnicliente}
@@ -488,7 +592,8 @@ function datoscliente() {
                     <button className="btn btn-success" onClick={addcliente}>Registrar</button>
                     <button className='btn btn-danger' onClick={cerrarModal}>Cerrar</button>
                 </ModalFooter>
-            </Modal>
+            </Modal> 
+
       </div>
     </div>
   );

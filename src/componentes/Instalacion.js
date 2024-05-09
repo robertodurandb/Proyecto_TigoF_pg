@@ -149,17 +149,7 @@ function Instalacion() {
                   className="form-control" placeholder="Ingrese número de contrato" aria-label="Numero Contrato" aria-describedby="basic-addon1"
                 ></input>
               </div>
-              {/* //BOTON VALIDAR */}
-              {/* <button onClick={datospagos}>validar</button>
-              <span className="input-group-text" id="basic-addon1">
-                  Apellidos Cliente:{apellidoscliente}
-                </span>
-                <span className="input-group-text" id="basic-addon1">
-                  Nombres Cliente:{nombrescliente}
-                </span>
-                <span className="input-group-text" id="basic-addon1">
-                  Plan Contratado:{plancliente}
-                </span> */}
+
               <div className="input-group mb-3">
                 <span className="input-group-text" id="basic-addon1">
                   Geolocalizacion:
