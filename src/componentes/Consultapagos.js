@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Axios from "axios";
 import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Consultapagos() {
@@ -12,6 +11,7 @@ function Consultapagos() {
     const [idpago, setIdpago] = useState("");
     const [num_contrato, setNum_contrato] = useState("");
     const [montopago, setMontopago] = useState("");
+    const [fechapago, setFechapago] = useState("");
     const [mespago, setMespago] = useState("");
     const [anio, setAnio] = useState("");
     const [observacion, setObservacion] = useState("");
@@ -37,6 +37,7 @@ function Consultapagos() {
           Axios.put(ipbackend+"pago/"+idpago, {
               montopago: montopago,
               mespago: mespago,
+              fechapago: fechapago,
               anio: anio,
               mediopago: mediopago,
               observacion: observacion
@@ -86,7 +87,8 @@ function Consultapagos() {
         setAnio(pago.anio);
         setMediopago(pago.mediopago);
         setObservacion(pago.observacion);
-
+        setFechapago(pago.fechapago);
+        
         mostrarPagos();   
     }
 
@@ -95,6 +97,7 @@ function Consultapagos() {
       setNum_contrato("");
       setMontopago("");
       setMespago("");
+      setFechapago("");
       setAnio("");
       setMediopago("")
       setObservacion("");
@@ -170,6 +173,15 @@ function Consultapagos() {
                         <input type="number" value={montopago}
                           onChange={(event) => { setMontopago(event.target.value); }}
                           className="form-control" id="montopago" placeholder="Monto Pago" aria-describedby="basic-addon1"
+                        ></input>
+                </div>
+                <div className="mb-3">
+                        <label for='fechapago' className="form-label">
+                          Fecha Pago:
+                        </label>
+                        <input type="text" value={fechapago}
+                          onChange={(event) => { setFechapago(event.target.value); }}
+                          className="form-control" id="fechapago" aria-describedby="basic-addon1"
                         ></input>
                 </div>
                 <div className="mb-3">

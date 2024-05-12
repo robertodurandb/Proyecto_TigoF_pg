@@ -10,10 +10,22 @@ function Principal() {
 //FUNCION PARA OBTENER FECHA ACTUAL
 let fechaactual = "";
 let fecha = new Date();
-let dia = fecha.getDate();
-let mes = (fecha.getMonth())+1;
+let dia = fecha.getDate("dd");
+let mes = (fecha.getMonth("mm"))+1;
 let anioactual = fecha.getFullYear();
-fechaactual = anioactual + "-" + mes + "-" + dia;
+let texdia = "";
+let texmes = "";
+if (dia < 10) {
+  texdia = "-0"
+}else{
+  texdia = "-"
+}
+if (mes < 10) {
+  texmes = "-0"
+}else{
+  texmes = "-"
+}
+fechaactual = anioactual + texmes + mes + texdia + dia;
 
     const [listaClientes, setListaClientes] = useState([]);
     const [busqueda, setBusqueda] = useState("");
@@ -32,13 +44,9 @@ fechaactual = anioactual + "-" + mes + "-" + dia;
     const [precioplan, setPrecioplan] = useState();
     const [velocidadplan, setVelocidadplan] = useState();
     const [diapago, setDiapago] = useState();
-    // const [nombrecaja, setNombrecaja] = useState();   
-    // const [localizacion, setLocalizacion] = useState();
     const [fecha_instalacion, setFecha_instalacion] = useState();
     const [ubicacioninstalacion, setUbicacioninstalacion] = useState();
 
-    // const [idpago, setIdpago] = useState();
-    // const [contrato, setContrato] = useState();
     const [montopago, setMontopago] = useState(0);
     const [fechapago, setFechapago] = useState(fechaactual);
     const [mespago, setMespago] = useState(mes);

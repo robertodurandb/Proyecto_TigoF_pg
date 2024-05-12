@@ -7,11 +7,25 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 //FUNCION PARA OBTENER FECHA ACTUAL
 let fechaactual = "";
 let fecha = new Date();
-let dia = fecha.getDate();
-let mes = (fecha.getMonth())+1;
-let anio = fecha.getFullYear();
-fechaactual = anio + "-" + mes + "-" + dia;
+let dia = fecha.getDate("dd");
+let mes = (fecha.getMonth("mm"))+1;
+let anioactual = fecha.getFullYear();
+let texdia = "";
+let texmes = "";
+if (dia < 10) {
+  texdia = "-0"
+}else{
+  texdia = "-"
+}
+if (mes < 10) {
+  texmes = "-0"
+}else{
+  texmes = "-"
+}
+fechaactual = anioactual + texmes + mes + texdia + dia;
 
+
+console.log(fechaactual)
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
@@ -40,9 +54,11 @@ function Contrato() {
 
     const [modalMostrar, setModalMostrar] = React.useState(false);
     const [modalMostrar2, setModalMostrar2] = React.useState(false);
+    const [modalMostrar3, setModalMostrar3] = React.useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModal2 = () => setModalMostrar2(!modalMostrar2);
+    const ventanaModal3 = () => setModalMostrar3(!modalMostrar3);
 
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://192.168.18.8:9100/";
@@ -70,7 +86,7 @@ function Contrato() {
       }
     }).then(() => {
         getContratos();
-        limpiarcamposcontrato();
+        cerrarModalContrato();
         alert("Contrato Registrado con exito");
     }).catch((error) => {
       if (401 === error.response.status){
@@ -100,7 +116,8 @@ function Contrato() {
         'Authorization': `Bearer ${token}`
       }
     }).then(() => {
-      limpiarcamposcliente();
+      getClientes();
+      cerrarModalCliente();
       alert("Cliente Registrado con exito");
     }).catch((error) => {
       if (401 === error.response.status){
@@ -148,7 +165,7 @@ function Contrato() {
       }
     }).then(() => {
       getContratos();
-      limpiarcamposcontrato();
+      cerrarModalContrato();
       alert("Contrato Actualizado con exito");
     }).catch((error) => {
       if (401 === error.response.status){
@@ -172,7 +189,6 @@ function getPlanes(){
 
 /** VALIDAR SI EXISTE EL DNI***/
 function validardnicliente() {
-  //limpiarcamposcliente();
   let index = listaclientes.findIndex(function(i){
     return i.dnicliente == cliente_dnicliente;
   });
@@ -186,17 +202,19 @@ function validardnicliente() {
     if (index == -1) {
       alert("El DNI ingresado no existe")
     } else {
+      ventanaModal3();
+      
       setApellidocli(listaclientes[index].apellidocli)
       setNombrecli(listaclientes[index].nombrecli)
       setDireccioncli(listaclientes[index].direccioncli)
-      setDistritocli(listaclientes[index].distritocli)      
+      setDistritocli(listaclientes[index].distritocli)
+      setTelefonocli(listaclientes[index].telefonocli)      
     }
   }
-  
-  
 }
+
   const limpiarcamposcontrato = ()=>{
-    setPlanes_idplanes("");
+    setPlanes_idplanes(1);
     setCliente_dnicliente("");
     setNum_contrato("");
     setFecha_contrato(fechaactual);
@@ -236,251 +254,430 @@ function validardnicliente() {
     <div className="container">
       <h1>Gestión de Contratos</h1>
       <div className="container text-start">
-      <br/>
-        <button type="button" className="btn btn-info" onClick={agregarContrato}>Registrar Nuevo Contrato</button>
-        
+        <br />
+        <button
+          type="button"
+          className="btn btn-info"
+          onClick={agregarContrato}
+        >
+          Registrar Nuevo Contrato
+        </button>
+
         <table className="table table-striped">
           <thead>
-            <tr> 
-                <th scope="col">N° Contrato</th> 
-                <th scope="col">Plan</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Fecha Contrato</th>
-                <th scope="col">Observacion</th>
-                <th scope="col">Fecha instalacion</th>
-                <th scope="col">Dia de pago</th>
-                <th scope="col">instalacion</th>
-                <th scope="col">Acciones</th>
+            <tr>
+              <th scope="col">N° Contrato</th>
+              <th scope="col">Plan</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Fecha Contrato</th>
+              <th scope="col">Observacion</th>
+              <th scope="col">Fecha instalacion</th>
+              <th scope="col">Dia de pago</th>
+              <th scope="col">instalacion</th>
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-          {contratos.map((val, key) => {
-            return <tr key={val.num_contrato}>
-                    <td>{val.num_contrato}</td>
-                    <td>{val.nombreplan}</td>
-                    <td>{val.cliente_dnicliente}</td>
-                    <td>{val.fecha_contrato}</td>
-                    <td>{val.observacion}</td>
-                    <td>{val.fecha_instalacion}</td>
-                    <td>{val.diapago}</td>
-                    <td>{val.instalacion}</td>
-                    <td>
-                    <button type="button" className="btn btn-info" 
-                    onClick={()=>{
-                      editarContrato(val);
-                    }}>
+            {contratos.map((val, key) => {
+              return (
+                <tr key={val.num_contrato}>
+                  <td>{val.num_contrato}</td>
+                  <td>{val.nombreplan}</td>
+                  <td>{val.cliente_dnicliente}</td>
+                  <td>{val.fecha_contrato}</td>
+                  <td>{val.observacion}</td>
+                  <td>{val.fecha_instalacion}</td>
+                  <td>{val.diapago}</td>
+                  <td>{val.instalacion}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-info"
+                      onClick={() => {
+                        editarContrato(val);
+                      }}
+                    >
                       Editar
                     </button>
-                    </td>
-            </tr>
-           
-          })}  
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
-                <ModalBody>
-                <div className='from-group'>
-                <h4 className=''>Agregar/Modificar Contrato:</h4>
-                <div className='mb-3'>
-                        <label for='num_contrato' className="form-label">Número de Contrato:</label>
-                        <input type="text" value={num_contrato}
-                          onChange={(event) => { setNum_contrato(event.target.value); }}
-                          className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='dnicliente' className="form-label">DNI:</label>
-                        <input type="text" value={cliente_dnicliente}
-                          onChange={(event) => { setCliente_dnicliente(event.target.value); }}
-                          className="form-control" id="dnicliente" placeholder="DNI del cliente" aria-describedby="basic-addon1"
-                        ></input>
-                        <div className="fw-bold">{errordni}</div>
-                        <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar DNI</button> &nbsp;
-                        <button type="button" className="btn btn-secondary" onClick={agregarCliente}>Nuevo Cliente</button>
-                            <br/>
-                              <span className="input-group-text" id="basic-addon1">
-                                Cliente: {apellidocli+" "+nombrecli}
-                              </span>
-                              <span className="input-group-text" id="basic-addon1">
-                                Direccion: {direccioncli+" "+distritocli}
-                              </span>
-                              <br/>
-                </div>
-                <div className="mb-3">
-                        <label for='planes' className="form-label">
-                          Planes:
-                        </label>
-                        <select className="form-control" aria-describedby="basic-addon1" key={planes_idplanes} value={planes_idplanes} 
-                        onChange={(event) => { setPlanes_idplanes(event.target.value); }}>
-                                { listaPlanes.map((planes)=>{
-                                    return(
-                                        <>
-                                            <option value={planes.idplanes}>{planes.nombreplan}</option>
-                                        </>
-                                    )
-                                })}
-                        </select>
-                </div>
-                <div className="mb-3">
-                        <label for='fecha_contrato' className="form-label">
-                          Fecha Contrato:
-                        </label>
-                        <input type="text" value={fecha_contrato}
-                          onChange={(event) => { setFecha_contrato(event.target.value); }}
-                          className="form-control" id="fecha_contrato" placeholder="Fecha Contrato" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='observacion' className="form-label">
-                          Observacion:
-                        </label>
-                        <input type="text" value={observacion}
-                          onChange={(event) => { setObservacion(event.target.value); }}
-                          className="form-control" id="observacion" placeholder="Ingrese Observacion" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='instalacion' className="form-label">
-                          Estado Instalacion:
-                        </label>
-                        <select value={instalacion}
-                        onChange={(event) => { setInstalacion(event.target.value); }}
-                        className="form-control" aria-describedby="basic-addon1"
-                        >
-                          <option>Pendiente</option>
-                          <option>Completada</option>
-                        </select>
-                </div>
-                <div className="mb-3">
-                          <label for='fecha_instalacion' className="form-label">
-                            Fecha Instalacion:
-                          </label>
-                          <input type="text" value={fecha_instalacion}
-                          onChange={(event) => { setFecha_instalacion(event.target.value); }}
-                          className="form-control" id="fecha_instalacion" placeholder="Por ejm. 2023-11-25" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='diapago' className="form-label">
-                          Dia Pago:
-                        </label>
-                        <select value={diapago}
-                        onChange={(event) => { setDiapago(event.target.value); }}
-                        className="form-control" id="diapago" aria-label="Dia Pago" aria-describedby="basic-addon1"
-                        >
-                          <option>1</option>
-                          <option>16</option>
-                        </select>
-                </div>
-                </div>
-                </ModalBody>
-                <ModalFooter>
-                    {
-                            editar? 
-                            <div>
-                            <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-                            </div>
-                            :<button className="btn btn-success" onClick={addcontrato}>Registrar</button>
-                          }
-                    <button className='btn btn-danger' onClick={cerrarModalContrato}>Cerrar</button>
-                </ModalFooter>
-            </Modal>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Agregar/Modificar Contrato:</h4>
+              <div className="mb-3">
+                <label for="num_contrato" className="form-label">
+                  Número de Contrato:
+                </label>
+                {editar ? (
+                  <span className="input-group-text" id="basic-addon1">
+                    {num_contrato}
+                  </span>
+                ) : (
+                  <input
+                    type="text"
+                    value={num_contrato}
+                    onChange={(event) => {
+                      setNum_contrato(event.target.value);
+                    }}
+                    className="form-control"
+                    id="num_contrato"
+                    placeholder="Ingrese numero de contrato"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                )}
+              </div>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">
+                  DNI:
+                </label>
+                <input
+                  type="text"
+                  value={cliente_dnicliente}
+                  onChange={(event) => {
+                    setCliente_dnicliente(event.target.value);
+                  }}
+                  className="form-control"
+                  id="dnicliente"
+                  placeholder="DNI del cliente"
+                  aria-describedby="basic-addon1"
+                ></input>
+                <div className="fw-bold">{errordni}</div>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={validardnicliente}
+                >
+                  validar DNI
+                </button>{" "}
+                &nbsp;
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={agregarCliente}
+                >
+                  Nuevo Cliente
+                </button>
+                <br />
+                
+              </div>
+              <div className="mb-3">
+                <label for="planes" className="form-label">
+                  Planes:
+                </label>
+                <select
+                  className="form-control"
+                  aria-describedby="basic-addon1"
+                  key={planes_idplanes}
+                  value={planes_idplanes}
+                  onChange={(event) => {
+                    setPlanes_idplanes(event.target.value);
+                  }}
+                >
+                  {listaPlanes.map((planes) => {
+                    return (
+                      <>
+                        <option value={planes.idplanes}>
+                          {planes.nombreplan}
+                        </option>
+                      </>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="fecha_contrato" className="form-label">
+                  Fecha Contrato:
+                </label>
+                <input
+                  type="date"
+                  value={fecha_contrato}
+                  onChange={(event) => {
+                    setFecha_contrato(event.target.value);
+                  }}
+                  className="form-control"
+                  id="fecha_contrato"
+                  placeholder="Fecha Contrato"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="observacion" className="form-label">
+                  Observacion:
+                </label>
+                <input
+                  type="text"
+                  value={observacion}
+                  onChange={(event) => {
+                    setObservacion(event.target.value);
+                  }}
+                  className="form-control"
+                  id="observacion"
+                  placeholder="Ingrese Observacion"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="instalacion" className="form-label">
+                  Estado Instalacion:
+                </label>
+                <select
+                  value={instalacion}
+                  onChange={(event) => {
+                    setInstalacion(event.target.value);
+                  }}
+                  className="form-control"
+                  aria-describedby="basic-addon1"
+                >
+                  <option>Pendiente</option>
+                  <option>Completada</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="fecha_instalacion" className="form-label">
+                  Fecha Instalacion:
+                </label>
+                <input
+                  type="date"
+                  value={fecha_instalacion}
+                  onChange={(event) => {
+                    setFecha_instalacion(event.target.value);
+                  }}
+                  className="form-control"
+                  id="fecha_instalacion"
+                  placeholder="fecha programada para instalar"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="diapago" className="form-label">
+                  Dia Pago:
+                </label>
+                <select
+                  value={diapago}
+                  onChange={(event) => {
+                    setDiapago(event.target.value);
+                  }}
+                  className="form-control"
+                  id="diapago"
+                  aria-label="Dia Pago"
+                  aria-describedby="basic-addon1"
+                >
+                  <option>1</option>
+                  <option>16</option>
+                </select>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            {editar ? (
+              <div>
+                <button className="btn btn-warning m-2" onClick={update}>
+                  Actualizar
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn-success" onClick={addcontrato}>
+                Registrar
+              </button>
+            )}
+            <button className="btn btn-danger" onClick={cerrarModalContrato}>
+              Cerrar
+            </button>
+          </ModalFooter>
+        </Modal>
 
-            <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
-                <ModalBody>
-                <div className='from-group'>
-                <h4 className=''>Agregar/Modificar Cliente:</h4>
-                <div className='mb-3'>
-                        <label for='dnicliente' className="form-label">DNI Cliente:</label>
-                        <input type="text" value={cliente_dnicliente}
-                          onChange={(event) => { setCliente_dnicliente(event.target.value); }}
-                          className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='nombres' className="form-label">
-                          Nombres:
-                        </label>
-                        <input type="text" value={nombrecli}
-                          onChange={(event) => { setNombrecli(event.target.value); }}
-                          className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='apellidos' className="form-label">
-                          Apellidos:
-                        </label>
-                        <input type="text" value={apellidocli}
-                          onChange={(event) => { setApellidocli(event.target.value); }}
-                          className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='direccion' className="form-label">
-                          Direccion:
-                        </label>
-                        <input type="text" value={direccioncli}
-                          onChange={(event) => { setDireccioncli(event.target.value); }}
-                          className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='distrito' className="form-label">
-                          Distrito:
-                        </label>
-                        <input type="text" value={distritocli}
-                          onChange={(event) => { setDistritocli(event.target.value); }}
-                          className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='provincia' className="form-label">
-                          Provincia:
-                        </label>
-                        <input type="text" value={provinciacli}
-                          onChange={(event) => { setProvinciacli(event.target.value); }}
-                          className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                          <label for='nacionalidad' className="form-label">
-                            Nacionalidad:
-                          </label>
-                          <select value={nacionalidadcli}
-                          onChange={(event) => { setNacionalidadcli(event.target.value); }}
-                          className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
-                          >
-                            <option>Peruana</option>
-                            <option>Extranjera</option>
-                          </select>
-                </div>
-                <div className="mb-3">
-                        <label for='telefono1' className="form-label">
-                          Telefono 1:
-                        </label>
-                        <input type="number" value={telefonocli}
-                          onChange={(event) => { setTelefonocli(event.target.value); }}
-                          className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='telefono2' className="form-label">
-                          Telefono 2:
-                        </label>
-                        <input type="number" value={telefonocli2}
-                          onChange={(event) => { setTelefonocli(event.target.value); }}
-                          className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                </div>
-                </ModalBody>
-                <ModalFooter>
-                    <button className="btn btn-success" onClick={addcliente}>Registrar</button>
-                    <button className='btn btn-danger' onClick={cerrarModalCliente}>Cerrar</button>
-                </ModalFooter>
-            </Modal> 
+        <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Agregar/Modificar Cliente:</h4>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">
+                  DNI Cliente:
+                </label>
+                <input type="text" value={cliente_dnicliente} onChange={(event) => {
+                    setCliente_dnicliente(event.target.value);
+                  }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="nombres" className="form-label">Nombres:</label>
+                <input type="text" value={nombrecli} onChange={(event) => {
+                    setNombrecli(event.target.value);
+                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="apellidos" className="form-label">Apellidos:</label>
+                <input type="text" value={apellidocli} onChange={(event) => {
+                    setApellidocli(event.target.value);
+                  }} className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="direccion" className="form-label">
+                  Direccion:
+                </label>
+                <input
+                  type="text"
+                  value={direccioncli}
+                  onChange={(event) => {
+                    setDireccioncli(event.target.value);
+                  }}
+                  className="form-control"
+                  id="direccion"
+                  placeholder="Dirección del Cliente"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="distrito" className="form-label">
+                  Distrito:
+                </label>
+                <input
+                  type="text"
+                  value={distritocli}
+                  onChange={(event) => {
+                    setDistritocli(event.target.value);
+                  }}
+                  className="form-control"
+                  id="distrito"
+                  placeholder="Ingrese Distrito"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="provincia" className="form-label">
+                  Provincia:
+                </label>
+                <input
+                  type="text"
+                  value={provinciacli}
+                  onChange={(event) => {
+                    setProvinciacli(event.target.value);
+                  }}
+                  className="form-control"
+                  id="provincia"
+                  placeholder="Ingrese Provincia"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="nacionalidad" className="form-label">
+                  Nacionalidad:
+                </label>
+                <select
+                  value={nacionalidadcli}
+                  onChange={(event) => {
+                    setNacionalidadcli(event.target.value);
+                  }}
+                  className="form-select"
+                  id="nacionalidad"
+                  aria-describedby="basic-addon1"
+                >
+                  <option>Peruana</option>
+                  <option>Extranjera</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="telefono1" className="form-label">
+                  Telefono 1:
+                </label>
+                <input
+                  type="number"
+                  value={telefonocli}
+                  onChange={(event) => {
+                    setTelefonocli(event.target.value);
+                  }}
+                  className="form-control"
+                  id="telefono1"
+                  placeholder="Telefono del Cliente"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="telefono2" className="form-label">
+                  Telefono 2:
+                </label>
+                <input
+                  type="number"
+                  value={telefonocli2}
+                  onChange={(event) => {
+                    setTelefonocli(event.target.value);
+                  }}
+                  className="form-control"
+                  id="telefono2"
+                  placeholder="Telefono 2 del Cliente"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button className="btn btn-success" onClick={addcliente}>
+              Registrar
+            </button>
+            <button className="btn btn-danger" onClick={cerrarModalCliente}>
+              Cerrar
+            </button>
+          </ModalFooter>
+        </Modal>
 
+        <Modal isOpen={modalMostrar3} toggle={ventanaModal3}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Datos del Cliente encontrado:</h4>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">
+                  DNI:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {cliente_dnicliente}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="nombres" className="form-label">
+                  Nombres:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {apellidocli+" "+nombrecli}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="direccioncli" className="form-label">
+                  Direccion:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {direccioncli}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="distritocli" className="form-label">
+                  Distrito:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {distritocli}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="telefonocli" className="form-label">
+                  Telefono:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {telefonocli}
+                  </span>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button className="btn btn-danger" onClick={ventanaModal3}>Cerrar</button>
+          </ModalFooter>
+        </Modal>
       </div>
     </div>
   );
