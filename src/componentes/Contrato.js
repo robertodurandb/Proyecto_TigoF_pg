@@ -24,8 +24,6 @@ if (mes < 10) {
 }
 fechaactual = anioactual + texmes + mes + texdia + dia;
 
-
-console.log(fechaactual)
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
@@ -52,9 +50,9 @@ function Contrato() {
     const [telefonocli, setTelefonocli] = useState();
     const [telefonocli2, setTelefonocli2] = useState();
 
-    const [modalMostrar, setModalMostrar] = React.useState(false);
-    const [modalMostrar2, setModalMostrar2] = React.useState(false);
-    const [modalMostrar3, setModalMostrar3] = React.useState(false);
+    const [modalMostrar, setModalMostrar] = useState(false);
+    const [modalMostrar2, setModalMostrar2] = useState(false);
+    const [modalMostrar3, setModalMostrar3] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModal2 = () => setModalMostrar2(!modalMostrar2);
@@ -144,7 +142,7 @@ function Contrato() {
     setCliente_dnicliente(val.cliente_dnicliente);
     setFecha_contrato(val.fecha_contrato);
     setObservacion(val.observacion);
-    setInstalacion(val.instalacion);
+    // setInstalacion(val.instalacion);
     setFecha_instalacion(val.fecha_instalacion);
     setDiapago(val.diapago);
     ventanaModal();
@@ -156,7 +154,7 @@ function Contrato() {
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
-        instalacion: instalacion,
+        // instalacion: instalacion,
         fecha_instalacion: fecha_instalacion,
         diapago: diapago,
     }, {
@@ -219,7 +217,7 @@ function validardnicliente() {
     setNum_contrato("");
     setFecha_contrato(fechaactual);
     setObservacion("");
-    setInstalacion("Pendiente");
+    // setInstalacion("Pendiente");
     setFecha_instalacion("");
     setDiapago("1");
     setEditar(false); 
@@ -319,16 +317,10 @@ function validardnicliente() {
                     {num_contrato}
                   </span>
                 ) : (
-                  <input
-                    type="text"
-                    value={num_contrato}
-                    onChange={(event) => {
+                  <input type="text" value={num_contrato} onChange={(event) => {
                       setNum_contrato(event.target.value);
                     }}
-                    className="form-control"
-                    id="num_contrato"
-                    placeholder="Ingrese numero de contrato"
-                    aria-describedby="basic-addon1"
+                    className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"
                   ></input>
                 )}
               </div>
@@ -422,22 +414,7 @@ function validardnicliente() {
                   aria-describedby="basic-addon1"
                 ></input>
               </div>
-              <div className="mb-3">
-                <label for="instalacion" className="form-label">
-                  Estado Instalacion:
-                </label>
-                <select
-                  value={instalacion}
-                  onChange={(event) => {
-                    setInstalacion(event.target.value);
-                  }}
-                  className="form-control"
-                  aria-describedby="basic-addon1"
-                >
-                  <option>Pendiente</option>
-                  <option>Completada</option>
-                </select>
-              </div>
+              
               <div className="mb-3">
                 <label for="fecha_instalacion" className="form-label">
                   Fecha Instalacion:
@@ -520,100 +497,54 @@ function validardnicliente() {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="direccion" className="form-label">
-                  Direccion:
-                </label>
-                <input
-                  type="text"
-                  value={direccioncli}
-                  onChange={(event) => {
+                <label for="direccion" className="form-label">Direccion: </label>
+                <input type="text" value={direccioncli} onChange={(event) => {
                     setDireccioncli(event.target.value);
                   }}
-                  className="form-control"
-                  id="direccion"
-                  placeholder="Dirección del Cliente"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="distrito" className="form-label">
-                  Distrito:
-                </label>
-                <input
-                  type="text"
-                  value={distritocli}
-                  onChange={(event) => {
+                <label for="distrito" className="form-label"> Distrito:</label>
+                <input type="text" value={distritocli} onChange={(event) => {
                     setDistritocli(event.target.value);
                   }}
-                  className="form-control"
-                  id="distrito"
-                  placeholder="Ingrese Distrito"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="provincia" className="form-label">
-                  Provincia:
-                </label>
-                <input
-                  type="text"
-                  value={provinciacli}
-                  onChange={(event) => {
+                <label for="provincia" className="form-label">Provincia: </label>
+                <input type="text" value={provinciacli} onChange={(event) => {
                     setProvinciacli(event.target.value);
                   }}
-                  className="form-control"
-                  id="provincia"
-                  placeholder="Ingrese Provincia"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="nacionalidad" className="form-label">
-                  Nacionalidad:
-                </label>
-                <select
-                  value={nacionalidadcli}
-                  onChange={(event) => {
+                <label for="nacionalidad" className="form-label">Nacionalidad:</label>
+                <select value={nacionalidadcli} onChange={(event) => {
                     setNacionalidadcli(event.target.value);
                   }}
-                  className="form-select"
-                  id="nacionalidad"
-                  aria-describedby="basic-addon1"
+                  className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
                 >
                   <option>Peruana</option>
                   <option>Extranjera</option>
                 </select>
               </div>
               <div className="mb-3">
-                <label for="telefono1" className="form-label">
-                  Telefono 1:
-                </label>
-                <input
-                  type="number"
-                  value={telefonocli}
-                  onChange={(event) => {
+                <label for="telefono1" className="form-label">Telefono 1:</label>
+                <input type="number" value={telefonocli} onChange={(event) => {
                     setTelefonocli(event.target.value);
                   }}
-                  className="form-control"
-                  id="telefono1"
-                  placeholder="Telefono del Cliente"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="telefono2" className="form-label">
-                  Telefono 2:
-                </label>
-                <input
-                  type="number"
-                  value={telefonocli2}
-                  onChange={(event) => {
+                <label for="telefono2" className="form-label">Telefono 2:</label>
+                <input type="number" value={telefonocli2} onChange={(event) => {
                     setTelefonocli(event.target.value);
                   }}
-                  className="form-control"
-                  id="telefono2"
-                  placeholder="Telefono 2 del Cliente"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
             </div>

@@ -4,6 +4,27 @@ import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
+//FUNCION PARA OBTENER FECHA ACTUAL
+let fechaactual = "";
+let fecha = new Date();
+let dia = fecha.getDate("dd");
+let mes = (fecha.getMonth("mm"))+1;
+let anioactual = fecha.getFullYear();
+let texdia = "";
+let texmes = "";
+if (dia < 10) {
+  texdia = "-0"
+}else{
+  texdia = "-"
+}
+if (mes < 10) {
+  texmes = "-0"
+}else{
+  texmes = "-"
+}
+fechaactual = anioactual + texmes + mes + texdia + dia;
+
+
 function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
@@ -11,7 +32,7 @@ function Consultapagos() {
     const [idpago, setIdpago] = useState("");
     const [num_contrato, setNum_contrato] = useState("");
     const [montopago, setMontopago] = useState("");
-    const [fechapago, setFechapago] = useState("");
+    const [fechapago, setFechapago] = useState(fechaactual);
     const [mespago, setMespago] = useState("");
     const [anio, setAnio] = useState("");
     const [observacion, setObservacion] = useState("");
@@ -35,6 +56,7 @@ function Consultapagos() {
         const update = () => {
           console.log(idpago)
           Axios.put(ipbackend+"pago/"+idpago, {
+              num_contrato: num_contrato,
               montopago: montopago,
               mespago: mespago,
               fechapago: fechapago,
@@ -97,7 +119,7 @@ function Consultapagos() {
       setNum_contrato("");
       setMontopago("");
       setMespago("");
-      setFechapago("");
+      setFechapago(fechaactual);
       setAnio("");
       setMediopago("")
       setObservacion("");
@@ -114,6 +136,7 @@ function Consultapagos() {
 
     return(
         <div className='App'>
+          <h1>Reporte de Pagos</h1>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control'/>
             <CSVLink data={results}>Exportar CSV</CSVLink>
             <table className='table table-striped table-hover mt-5 shadow-lg'>
@@ -179,7 +202,7 @@ function Consultapagos() {
                         <label for='fechapago' className="form-label">
                           Fecha Pago:
                         </label>
-                        <input type="text" value={fechapago}
+                        <input type="date" value={fechapago}
                           onChange={(event) => { setFechapago(event.target.value); }}
                           className="form-control" id="fechapago" aria-describedby="basic-addon1"
                         ></input>

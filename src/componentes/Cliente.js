@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Cliente() {
-    const [dnicliente, setDnicliente] = useState("");
+    const [cliente_dnicliente, setCliente_dnicliente] = useState("");
     const [nombrecli, setNombrecli] = useState("");
     const [apellidocli, setApellidocli] = useState("");
     const [direccioncli, setDireccioncli] = useState("");
@@ -14,15 +15,21 @@ function Cliente() {
     const [telefonocli2, setTelefonocli2] = useState();
     const [clientes, setClientes] = useState([]);
     const [editar, setEditar] = useState(false);
+
+    const [busqueda, setBusqueda] = useState("");
+
+    const [modalMostrar, setModalMostrar] = useState(false);
+
+    const ventanaModal = () => setModalMostrar(!modalMostrar);
    
     let token = sessionStorage.getItem("token");
     let ipbackend = "http://192.168.18.8:9100/";
    
-  const add = () => {
-    if (dnicliente.length>7) {
+  const addcliente = () => {
+    if (cliente_dnicliente.length>7) {
     Axios.post(ipbackend+"cliente", 
     {  
-        dnicliente: dnicliente,
+        dnicliente: cliente_dnicliente,
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
@@ -41,7 +48,7 @@ function Cliente() {
       alert("Cliente Registrado con exito");
     }).catch((error) => {
       if (401 === error.response.status){
-      sessionStorage.removeItem("token");
+      //sessionStorage.removeItem("token");
       window.location.reload();
       alert("Sesión expirada, vuelva a iniciar sesión");
       }
@@ -59,7 +66,7 @@ function Cliente() {
   const editarClientes = (val)=>{
     setEditar(true);
 
-    setDnicliente(val.dnicliente);
+    setCliente_dnicliente(val.dnicliente);
     setNombrecli(val.nombrecli);
     setApellidocli(val.apellidocli);
     setDireccioncli(val.direccioncli);
@@ -68,10 +75,10 @@ function Cliente() {
     setNacionalidadcli(val.nacionalidadcli);
     setTelefonocli(val.telefonocli);
     setTelefonocli2(val.telefonocli2);
+    ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"cliente/"+dnicliente, {
-        dnicliente: dnicliente,
+    Axios.put(ipbackend+"cliente/"+cliente_dnicliente, {
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
@@ -86,7 +93,7 @@ function Cliente() {
       }
     }).then(() => {
       getClientes();
-      limpiarcampos();
+      cerrarModalCliente();
       alert("Cliente Actualizado con exito");
     }).catch((error) => {
       if (401 === error.response.status){
@@ -97,8 +104,16 @@ function Cliente() {
       return error;
       });
   };
+  const agregarcliente = ()=>{
+    setEditar(false);
+    ventanaModal();
+  }
+  const cerrarModalCliente = ()=>{
+    limpiarcampos();
+    ventanaModal();
+  }
   const limpiarcampos = ()=>{
-    setDnicliente("");
+    setCliente_dnicliente("");
     setNombrecli("");
     setApellidocli("");
     setDireccioncli("");
@@ -111,111 +126,42 @@ function Cliente() {
     setEditar(false);
   }
 
+  //Funcion de Busqueda
+  const searcher = (e) =>{
+    setBusqueda(e.target.value);
+    }
+//Funcion de Filtrado
+ const newfilter = clientes.filter(dato => {
+    return (
+dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
+dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
+)
+});
+
+let results = [];
+
+if (busqueda === "") {
+    results = clientes;
+} else {
+    results = newfilter;
+}
+
+  useEffect(() =>{
+    getClientes();
+}, [])
+
   return (
     <div className="container">
-      <div className="card text-center">
-        <div className="card-header">Registrar Cliente Nuevo</div>
-        <div className="card-body">
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              DNI Cliente:
-            </span>
-            <input type="text" value={dnicliente}
-              onChange={(event) => { setDnicliente(event.target.value); }}
-              className="form-control" placeholder="Ingrese Documento de Identidad" aria-label="Dni Cliente" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Nombres:
-            </span>
-            <input type="text" value={nombrecli}
-              onChange={(event) => { setNombrecli(event.target.value); }}
-              className="form-control" placeholder="Nombres del Cliente" aria-label="Nombres" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Apellidos:
-            </span>
-            <input type="text" value={apellidocli}
-              onChange={(event) => { setApellidocli(event.target.value); }}
-              className="form-control" placeholder="Apellidos del Cliente" aria-label="Apellidos" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Dirección:
-            </span>
-            <input type="text" value={direccioncli}
-              onChange={(event) => { setDireccioncli(event.target.value); }}
-              className="form-control" placeholder="Dirección del Cliente" aria-label="Direccion" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Distrito:
-            </span>
-            <input type="text" value={distritocli}
-              onChange={(event) => { setDistritocli(event.target.value); }}
-              className="form-control" placeholder="Ingrese Distrito" aria-label="Distrito" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Provincia:
-            </span>
-            <input type="text" value={provinciacli}
-              onChange={(event) => { setProvinciacli(event.target.value); }}
-              className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Nacionalidad:
-            </span>
-            <select value={nacionalidadcli}
-            onChange={(event) => { setNacionalidadcli(event.target.value); }}
-            className="form-control" aria-label="Nacionalidad" aria-describedby="basic-addon1"
-            >
-              <option>Peruana</option>
-              <option>Extranjera</option>
-            </select>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Telefono 1:
-            </span>
-            <input type="number" value={telefonocli}
-              onChange={(event) => { setTelefonocli(event.target.value); }}
-              className="form-control" placeholder="Telefono del Cliente" aria-label="Telefono1" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Telefono 2:
-            </span>
-            <input type="number" value={telefonocli2}
-              onChange={(event) => { setTelefonocli2(event.target.value); }}
-              className="form-control" placeholder="Telefono (opcional)" aria-label="Telefono2" aria-describedby="basic-addon1"
-            ></input>
-          </div>
-          
-          {
-            editar? 
-            <div>
-            <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-            <button className="btn btn-info m-2" onClick={limpiarcampos}>Cancelar</button>
-            </div>
-            :<button className="btn btn-success" onClick={add}>Registrar</button>
-          }
-          
-        </div>
-        <div className="lista">
-          <button className="btn btn-info" onClick={getClientes}>
-            Modificar Clientes
-          </button>
-        </div>
+      <h1>Agregar / Modificar Clientes</h1>
+      <div className="container text-start">
+        
+        <button type="button" className="btn btn-info" onClick={agregarcliente}>
+          Registrar Nuevo Cliente
+        </button>
+        <br />
+        <br />
+        <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control'/>
+        
         <table className="table table-striped">
           <thead>
             <tr>
@@ -254,6 +200,117 @@ function Cliente() {
             
           </tbody>
         </table>
+
+        <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Agregar/Modificar Cliente:</h4>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">
+                  DNI Cliente:
+                </label>
+                {editar ? (
+                  <span className="input-group-text" id="basic-addon1">
+                    {cliente_dnicliente}
+                  </span>
+                ) : (
+                  <input type="text" value={cliente_dnicliente} onChange={(event) => {
+                      setCliente_dnicliente(event.target.value);
+                    }}
+                    className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
+                  ></input>
+                )}
+              </div>
+              <div className="mb-3">
+                <label for="nombres" className="form-label">Nombres:</label>
+                <input type="text" value={nombrecli} onChange={(event) => {
+                    setNombrecli(event.target.value);
+                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="apellidos" className="form-label">Apellidos:</label>
+                <input type="text" value={apellidocli} onChange={(event) => {
+                    setApellidocli(event.target.value);
+                  }} className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="direccion" className="form-label">Direccion: </label>
+                <input type="text" value={direccioncli} onChange={(event) => {
+                    setDireccioncli(event.target.value);
+                  }}
+                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="distrito" className="form-label"> Distrito:</label>
+                <input type="text" value={distritocli} onChange={(event) => {
+                    setDistritocli(event.target.value);
+                  }}
+                  className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="provincia" className="form-label">Provincia: </label>
+                <input type="text" value={provinciacli} onChange={(event) => {
+                    setProvinciacli(event.target.value);
+                  }}
+                  className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="nacionalidad" className="form-label">Nacionalidad:</label>
+                <select value={nacionalidadcli} onChange={(event) => {
+                    setNacionalidadcli(event.target.value);
+                  }}
+                  className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
+                >
+                  <option>Peruana</option>
+                  <option>Extranjera</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="telefono1" className="form-label">Telefono 1:</label>
+                <input type="number" value={telefonocli} onChange={(event) => {
+                    setTelefonocli(event.target.value);
+                  }}
+                  className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="telefono2" className="form-label">Telefono 2:</label>
+                <input type="number" value={telefonocli2} onChange={(event) => {
+                    setTelefonocli(event.target.value);
+                  }}
+                  className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            {/* <button className="btn btn-success" onClick={addcliente}>
+              Registrar
+            </button>
+            <button className="btn btn-danger" onClick={cerrarModalCliente}>
+              Cerrar
+            </button> */}
+            {editar ? (
+              <div>
+                <button className="btn btn-warning m-2" onClick={update}>
+                  Actualizar
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn-success" onClick={addcliente}>
+                Registrar
+              </button>
+            )}
+            <button className="btn btn-danger" onClick={cerrarModalCliente}>
+              Cerrar
+            </button>
+          </ModalFooter>
+        </Modal>
       </div>
     </div>
   );

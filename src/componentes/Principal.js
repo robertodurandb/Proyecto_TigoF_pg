@@ -54,9 +54,9 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [mediopago, setMediopago] = useState();
     const [observacion, setObservacion] = useState();
 
-    const [modalMostrar, setModalMostrar] = React.useState(false);
-    const [modalPagos, setModalPagos] = React.useState(false);
-    const [modalPagar, setModalPagar] = React.useState(false);
+    const [modalMostrar, setModalMostrar] = useState(false);
+    const [modalPagos, setModalPagos] = useState(false);
+    const [modalPagar, setModalPagar] = useState(false);
 
     //Datos para el modal de pagos
     const [verPagos, setVerPagos] = useState(false);
@@ -194,6 +194,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
     return(
         <div className="App">
+            <h1>Búsqueda de Información de Clientes</h1>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control'/>
               <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
