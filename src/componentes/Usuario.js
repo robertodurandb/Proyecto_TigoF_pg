@@ -13,7 +13,7 @@ function Usuarios() {
     const [editar, setEditar] = useState(false);
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://michel.zapto.org:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"usuario",{

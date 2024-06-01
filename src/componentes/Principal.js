@@ -45,7 +45,6 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [velocidadplan, setVelocidadplan] = useState();
     const [diapago, setDiapago] = useState();
     const [fecha_instalacion, setFecha_instalacion] = useState();
-    const [ubicacioninstalacion, setUbicacioninstalacion] = useState();
 
     const [montopago, setMontopago] = useState(0);
     const [fechapago, setFechapago] = useState(fechaactual);
@@ -62,7 +61,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
     
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://michel.zapto.org:9100/";
     let token = sessionStorage.getItem("token");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
@@ -134,7 +133,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         setVelocidadplan(cliente.velocidadplan);
         setPrecioplan(cliente.precioplan);
         setFecha_instalacion(cliente.fecha_instalacion);
-        setUbicacioninstalacion(cliente.ubicacioninstalacion);
+        //setUbicacioninstalacion(cliente.ubicacioninstalacion);
 
         mostrarCliente();
     }
@@ -282,11 +281,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                         <div className="col-6">{velocidadplan}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Ubicacion Vivienda:</div>
-                        <div className="col-6"><Link to={ubicacioninstalacion} target='_blank'>{ubicacioninstalacion}</Link></div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Fecha Instalacion:</div>
+                        <div className='col-4'>Fecha Instalacion programada:</div>
                         <div className="col-6">{fecha_instalacion}</div>
                     </div>
                 </div>

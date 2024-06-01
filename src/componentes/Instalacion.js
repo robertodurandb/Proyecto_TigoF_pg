@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 
 //FUNCION PARA OBTENER FECHA ACTUAL
 let fechaactual = "";
 let fecha = new Date();
-let dia = fecha.getDate();
-let mes = (fecha.getMonth())+1;
+let dia = fecha.getDate("dd");
+let mes = (fecha.getMonth("mm"))+1;
 let anioactual = fecha.getFullYear();
-fechaactual = anioactual + "-" + mes + "-" + dia;
+let texdia = "";
+let texmes = "";
+if (dia < 10) {
+  texdia = "-0"
+}else{
+  texdia = "-"
+}
+if (mes < 10) {
+  texmes = "-0"
+}else{
+  texmes = "-"
+}
+fechaactual = anioactual + texmes + mes + texdia + dia;
 
 function Instalacion() {
     const [idinstalacion, setIdinstalacion] = useState();
@@ -25,11 +38,15 @@ function Instalacion() {
     // const [dnicliente, setDnicliente] = useState();
     // const [listacontratos, setListacontratos] = useState();
 
+    const [modalMostrar, setModalMostrar] = useState(false);
+
+    const ventanaModal = () => setModalMostrar(!modalMostrar);
+
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
-    let ipbackend = "http://192.168.18.8:9100/";
+    let ipbackend = "http://michel.zapto.org:9100/";
 
-    const add = () => {
+    const addinstalaciones = () => {
         Axios.post(ipbackend+"instalacion", {
             fechainstalacion: fechainstalacion,
             numcontrato: numcontrato,
@@ -110,26 +127,18 @@ function Instalacion() {
         // setUsuarioactualiza("");
         setEditar(false);
       }
-//************ACA ESTAMOS***/
-
-    // function datosinstalacion() {
-    //   let index = listacontratos.findIndex(function(i){
-    //     return i.num_contrato == contrato;
-    //   });
-    //   setApellidoscliente(listaclientes[index].apellidocli)
-    //   setPlancliente(listaclientes[index].nombreplan)
-    //   setMontopago(listaclientes[index].precioplan)
-    //   setNombrescliente(listaclientes[index].nombrecli)
-    // }
-
-    //   useEffect(() =>{   
-    //     getContratos();
-    // }, [])
+    
+        useEffect(() =>{
+          getInstalaciones();
+          //getClientes();
+          //getContratos();
+      }, [])
 
       return (
         <div className="container">
-          <div className="card text-center">
-            <div className="card-header">Gestion de Instalaciones</div>
+          <h1>Instalaciones Pendientes</h1>
+          <div className="container text-center">
+            {/* <div className="card-header">Gestion de Instalaciones</div>
             <div className="card-body" id="Editarpago">
                 <div className="input-group mb-3">
                     <span className="input-group-text" id="basic-addon1">
@@ -182,7 +191,9 @@ function Instalacion() {
               <button className="btn btn-info" onClick={getInstalaciones}>
                 Editar Datos
               </button>
-            </div>
+            </div> */}
+
+
             <table className="table table-striped">
               <thead>
                 <tr> 
@@ -216,11 +227,175 @@ function Instalacion() {
                         </td>
                 </tr>
                
-              })}
-              
-                
+              })}      
               </tbody>
             </table>
+
+            {/* <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Agregar/Modificar Contrato:</h4>
+              <div className="mb-3">
+                <label for="num_contrato" className="form-label">
+                  Número de Contrato:
+                </label>
+                {editar ? (
+                  <span className="input-group-text" id="basic-addon1">
+                    {num_contrato}
+                  </span>
+                ) : (
+                  <input type="text" value={num_contrato} onChange={(event) => {
+                      setNum_contrato(event.target.value);
+                    }}
+                    className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"
+                  ></input>
+                )}
+              </div>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">
+                  DNI:
+                </label>
+                <input
+                  type="text"
+                  value={cliente_dnicliente}
+                  onChange={(event) => {
+                    setCliente_dnicliente(event.target.value);
+                  }}
+                  className="form-control"
+                  id="dnicliente"
+                  placeholder="DNI del cliente"
+                  aria-describedby="basic-addon1"
+                ></input>
+                <div className="fw-bold">{errordni}</div>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={validardnicliente}
+                >
+                  validar DNI
+                </button>{" "}
+                &nbsp;
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={agregarCliente}
+                >
+                  Nuevo Cliente
+                </button>
+                <br />
+                
+              </div>
+              <div className="mb-3">
+                <label for="planes" className="form-label">
+                  Planes:
+                </label>
+                <select
+                  className="form-control"
+                  aria-describedby="basic-addon1"
+                  key={planes_idplanes}
+                  value={planes_idplanes}
+                  onChange={(event) => {
+                    setPlanes_idplanes(event.target.value);
+                  }}
+                >
+                  {listaPlanes.map((planes) => {
+                    return (
+                      <>
+                        <option value={planes.idplanes}>
+                          {planes.nombreplan}
+                        </option>
+                      </>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="fecha_contrato" className="form-label">
+                  Fecha Contrato:
+                </label>
+                <input
+                  type="date"
+                  value={fecha_contrato}
+                  onChange={(event) => {
+                    setFecha_contrato(event.target.value);
+                  }}
+                  className="form-control"
+                  id="fecha_contrato"
+                  placeholder="Fecha Contrato"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="observacion" className="form-label">
+                  Observacion:
+                </label>
+                <input
+                  type="text"
+                  value={observacion}
+                  onChange={(event) => {
+                    setObservacion(event.target.value);
+                  }}
+                  className="form-control"
+                  id="observacion"
+                  placeholder="Ingrese Observacion"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              
+              <div className="mb-3">
+                <label for="fecha_instalacion" className="form-label">
+                  Fecha Instalacion:
+                </label>
+                <input
+                  type="date"
+                  value={fecha_instalacion}
+                  onChange={(event) => {
+                    setFecha_instalacion(event.target.value);
+                  }}
+                  className="form-control"
+                  id="fecha_instalacion"
+                  placeholder="fecha programada para instalar"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="diapago" className="form-label">
+                  Dia Pago:
+                </label>
+                <select
+                  value={diapago}
+                  onChange={(event) => {
+                    setDiapago(event.target.value);
+                  }}
+                  className="form-control"
+                  id="diapago"
+                  aria-label="Dia Pago"
+                  aria-describedby="basic-addon1"
+                >
+                  <option>1</option>
+                  <option>16</option>
+                </select>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            {editar ? (
+              <div>
+                <button className="btn btn-warning m-2" onClick={update}>
+                  Actualizar
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn-success" onClick={addcontrato}>
+                Registrar
+              </button>
+            )}
+            <button className="btn btn-danger" onClick={cerrarModalContrato}>
+              Cerrar
+            </button>
+          </ModalFooter>
+        </Modal> */}
+
           </div>
         </div>
       );
