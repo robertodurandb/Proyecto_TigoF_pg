@@ -13,7 +13,7 @@ function Usuarios() {
     const [editar, setEditar] = useState(false);
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "http://michel.zapto.org:9100/";
+    let ipbackend = "https://michel.zapto.org:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"usuario",{
@@ -94,11 +94,11 @@ function Usuarios() {
         <div className="card-body">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
-              DNI Usuario:
+              Usuario:
             </span>
             <input type="text" value={dniuser}
               onChange={(event) => { setDniuser(event.target.value); }}
-              className="form-control" placeholder="Ingrese DNI Usuario" aria-label="dni" aria-describedby="basic-addon1"
+              className="form-control" placeholder="Ingrese Usuario" aria-label="dni" aria-describedby="basic-addon1"
             ></input>
           </div>
           <div className="input-group mb-3">
@@ -170,7 +170,7 @@ function Usuarios() {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">DNI</th>
+              <th scope="col">Usuario</th>
               <th scope="col">Nombres</th>
               <th scope="col">Apellidos</th>
               <th scope="col">Perfil</th>

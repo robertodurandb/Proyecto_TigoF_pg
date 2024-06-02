@@ -61,7 +61,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
     
-    let ipbackend = "http://michel.zapto.org:9100/";
+    let ipbackend = "https://michel.zapto.org:9100/";
     let token = sessionStorage.getItem("token");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
@@ -281,7 +281,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                         <div className="col-6">{velocidadplan}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Fecha Instalacion programada:</div>
+                        <div className='col-4'>Instalacion programada:</div>
                         <div className="col-6">{fecha_instalacion}</div>
                     </div>
                 </div>

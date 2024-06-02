@@ -44,7 +44,7 @@ function Instalacion() {
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
-    let ipbackend = "http://michel.zapto.org:9100/";
+    let ipbackend = "https://michel.zapto.org:9100/";
 
     const addinstalaciones = () => {
         Axios.post(ipbackend+"instalacion", {
@@ -194,7 +194,7 @@ function Instalacion() {
             </div> */}
 
 
-            <table className="table table-striped">
+            {/* <table className="table table-striped">
               <thead>
                 <tr> 
                     <th scope="col">ID Instalación</th>
@@ -229,7 +229,7 @@ function Instalacion() {
                
               })}      
               </tbody>
-            </table>
+            </table> */}
 
             {/* <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
