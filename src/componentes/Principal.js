@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Axios from "axios";
-//import '../estilos/style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Principal() {
@@ -193,20 +191,17 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
     return(
         <div className="App">
-            <h1>Búsqueda de Información de Clientes</h1>
-            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control'/>
+            <h1 className='mb-3'>Búsqueda de Información de Clientes</h1>
+            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
               <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
                             <th>DNI</th>
-                            <th>N° Contrato</th>
-                            <th>Nombres</th>
                             <th>Apellidos</th>
-                            <th>Direccion</th>
+                            <th>Nombres</th>
                             <th>Distrito</th>
+                            <th>Direccion</th>
                             <th>Instalacion</th>
-                            <th>Plan</th>
-                            
                             <th></th>
                         </tr>
                     </thead>
@@ -214,13 +209,11 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                     {results.map((cliente, key)=>(
                             <tr key={cliente.num_contrato} value={num_contrato}>
                                 <td>{cliente.dnicliente}</td>
-                                <td>{cliente.num_contrato}</td>
-                                <td>{cliente.nombrecli}</td>
                                 <td>{cliente.apellidocli}</td>
-                                <td>{cliente.direccioncli}</td>
+                                <td>{cliente.nombrecli}</td>
                                 <td>{cliente.distritocli}</td>
+                                <td>{cliente.direccioncli}</td>
                                 <td>{cliente.instalacion}</td>
-                                <td>{cliente.nombreplan}</td>
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
                                 }}>Detalles</button></td>
@@ -237,16 +230,20 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                 <div className='container'>
                     <h3 className=''>Detalle del Contrato</h3>
                     <div className='row mb-2'>
+                        <div className='col-4'>Num_Contrato:</div>
+                        <div className='col-6'>{num_contrato}</div>
+                    </div>
+                    <div className='row mb-2'>
                         <div className='col-4'>DNI Cliente:</div>
                         <div className='col-6'>{dnicli}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Nombre Cliente:</div>
-                        <div className="col-6">{nombrecli}</div>
-                    </div>
-                    <div className='row mb-2'>
                         <div className='col-4'>Apellido Cliente:</div>
                         <div className="col-6">{apellidocli}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Nombre Cliente:</div>
+                        <div className="col-6">{nombrecli}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Telefono Cliente:</div>

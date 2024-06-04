@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 function Cliente() {
-    const [cliente_dnicliente, setCliente_dnicliente] = useState("");
+    const [dnicliente, setDnicliente] = useState("");
     const [nombrecli, setNombrecli] = useState("");
     const [apellidocli, setApellidocli] = useState("");
     const [direccioncli, setDireccioncli] = useState("");
@@ -13,7 +13,7 @@ function Cliente() {
     const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
     const [telefonocli, setTelefonocli] = useState();
     const [telefonocli2, setTelefonocli2] = useState();
-    const [clientes, setClientes] = useState([]);
+    const [listaClientes, setListaClientes] = useState([]);
     const [editar, setEditar] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
@@ -23,15 +23,13 @@ function Cliente() {
     const ventanaModal = () => setModalMostrar(!modalMostrar);
    
     let token = sessionStorage.getItem("token");
-    //"http://192.168.18.8:9100/"
-    //"https://michel.zapto.org:9100/"
     let ipbackend = "https://michel.zapto.org:9100/";
    
   const addcliente = () => {
-    if (cliente_dnicliente.length>7) {
+    if (dnicliente.length>7) {
     Axios.post(ipbackend+"cliente", 
     {  
-        dnicliente: cliente_dnicliente,
+        dnicliente: dnicliente,
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
@@ -60,15 +58,16 @@ function Cliente() {
       alert("El Documento de Identidad debe tener mas de 7 caracteres")
   }
   };
-  const getClientes = () => {
-    Axios.get(ipbackend+"clientes").then((response) => {
-      setClientes(response.data);
-    });
-  };
+  function getClientes(){
+    fetch(ipbackend+"clientes")
+    .then(response => response.json())
+    .then(data => setListaClientes(data))
+    }
+  
   const editarClientes = (val)=>{
     setEditar(true);
 
-    setCliente_dnicliente(val.dnicliente);
+    setDnicliente(val.dnicliente);
     setNombrecli(val.nombrecli);
     setApellidocli(val.apellidocli);
     setDireccioncli(val.direccioncli);
@@ -80,7 +79,7 @@ function Cliente() {
     ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"cliente/"+cliente_dnicliente, {
+    Axios.put(ipbackend+"cliente/"+dnicliente, {
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
@@ -106,6 +105,7 @@ function Cliente() {
       return error;
       });
   };
+  
   const agregarcliente = ()=>{
     setEditar(false);
     ventanaModal();
@@ -115,7 +115,7 @@ function Cliente() {
     ventanaModal();
   }
   const limpiarcampos = ()=>{
-    setCliente_dnicliente("");
+    setDnicliente("");
     setNombrecli("");
     setApellidocli("");
     setDireccioncli("");
@@ -133,7 +133,7 @@ function Cliente() {
     setBusqueda(e.target.value);
     }
 //Funcion de Filtrado
- const newfilter = clientes.filter(dato => {
+ const newfilter = listaClientes.filter(dato => {
     return (
 dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
 dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
@@ -143,26 +143,26 @@ dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
 let results = [];
 
 if (busqueda === "") {
-    results = clientes;
+    results = listaClientes;
 } else {
     results = newfilter;
 }
 
   useEffect(() =>{
     getClientes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
     <div className="container">
-      <h1>Agregar / Modificar Clientes</h1>
+      <h1 className="mb-5">Gestión de Clientes</h1>
       <div className="container text-start">
-        
         <button type="button" className="btn btn-info" onClick={agregarcliente}>
           Registrar Nuevo Cliente
         </button>
         <br />
         <br />
-        <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control'/>
+        <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
         
         <table className="table table-striped">
           <thead>
@@ -179,7 +179,7 @@ if (busqueda === "") {
             </tr>
           </thead>
           <tbody>
-          {clientes.map((val, key) => {
+          {results.map((val, key) => {
             return <tr key={val.dnicliente}>
                     <th>{val.dnicliente}</th>
                     <td>{val.nombrecli}</td>
@@ -213,11 +213,11 @@ if (busqueda === "") {
                 </label>
                 {editar ? (
                   <span className="input-group-text" id="basic-addon1">
-                    {cliente_dnicliente}
+                    {dnicliente}
                   </span>
                 ) : (
-                  <input type="text" value={cliente_dnicliente} onChange={(event) => {
-                      setCliente_dnicliente(event.target.value);
+                  <input type="text" value={dnicliente} onChange={(event) => {
+                      setDnicliente(event.target.value);
                     }}
                     className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
                   ></input>
@@ -291,12 +291,6 @@ if (busqueda === "") {
             </div>
           </ModalBody>
           <ModalFooter>
-            {/* <button className="btn btn-success" onClick={addcliente}>
-              Registrar
-            </button>
-            <button className="btn btn-danger" onClick={cerrarModalCliente}>
-              Cerrar
-            </button> */}
             {editar ? (
               <div>
                 <button className="btn btn-warning m-2" onClick={update}>

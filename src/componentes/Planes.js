@@ -20,8 +20,6 @@ function Planes() {
     const agregarPlan=()=>{
       ventanaModal();
   }
-
-
     let token = sessionStorage.getItem("token");
     let ipbackend = "https://michel.zapto.org:9100/";
 
@@ -49,11 +47,13 @@ function Planes() {
       return error;
       });
   };
-  const getPlanes = () => {
-    Axios.get(ipbackend+"planes").then((response) => {
-      setPlanes(response.data);
-    });
-  };
+
+  function getPlanes(){
+    fetch(ipbackend+'planes')
+        .then(response => response.json())
+        .then(data => setPlanes(data))    
+}
+
   const editarPlan = (val)=>{
     setEditar(true);
     setIdplanes(val.idplanes);
@@ -65,6 +65,8 @@ function Planes() {
     console.log("el id plan capturado es "+idplanes);
     ventanaModal();
     }
+
+  
   const update = () => {
     Axios.put(ipbackend+"plan/"+idplanes, {
         nombreplan: nombreplan,

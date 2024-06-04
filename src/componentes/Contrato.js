@@ -30,11 +30,12 @@ function Contrato() {
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [observacion, setObservacion] = useState("");
-    const [instalacion, setInstalacion] = useState("Pendiente");
     const [fecha_instalacion, setFecha_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
+
+    const [busqueda, setBusqueda] = useState("");
 
     //VALIDAR SI EXISTE EL DNI
     const [listaPlanes, setListaPlanes] = useState([]);
@@ -75,7 +76,6 @@ function Contrato() {
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
-        instalacion: instalacion,
         fecha_instalacion: fecha_instalacion,
         diapago: diapago,
     },{
@@ -129,20 +129,21 @@ function Contrato() {
       alert("El Documento de Identidad debe tener mas de 7 caracteres")
   }
   };
-  const getContratos = () => {
-    Axios.get(ipbackend+"detallecontratos").then((response) => {
-      setContratos(response.data);
-    });
-  };
+
+  function getContratos(){
+    fetch(ipbackend+"detallecontratos")
+    .then(response => response.json())
+    .then(data => setContratos(data))
+    }
 
   const editarContrato = (val)=>{
     setEditar(true);
+
     setNum_contrato(val.num_contrato);
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
     setFecha_contrato(val.fecha_contrato);
     setObservacion(val.observacion);
-    // setInstalacion(val.instalacion);
     setFecha_instalacion(val.fecha_instalacion);
     setDiapago(val.diapago);
     ventanaModal();
@@ -151,10 +152,8 @@ function Contrato() {
     Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
-        num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
-        // instalacion: instalacion,
         fecha_instalacion: fecha_instalacion,
         diapago: diapago,
     }, {
@@ -214,10 +213,9 @@ function validardnicliente() {
   const limpiarcamposcontrato = ()=>{
     setPlanes_idplanes(1);
     setCliente_dnicliente("");
-    setNum_contrato("");
+    setNum_contrato();
     setFecha_contrato(fechaactual);
     setObservacion("");
-    // setInstalacion("Pendiente");
     setFecha_instalacion("");
     setDiapago("1");
     setEditar(false); 
@@ -241,52 +239,68 @@ function validardnicliente() {
     limpiarcamposcliente();
     ventanaModal2();
   }
+
+  //Funcion de Busqueda
+  const searcher = (e) =>{
+    setBusqueda(e.target.value);
+    }
+//Funcion de Filtrado
+const newfilter = contratos.filter(dato => {
+  return (
+    dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
+)
+});
+
+let results = [];
+
+if (busqueda === "") {
+  results = contratos;
+} else {
+  results = newfilter;
+}
+
     
   useEffect(() =>{
     getPlanes();
     getClientes();
     getContratos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
     <div className="container">
-      <h1>Gestión de Contratos</h1>
+      <h1 className="mb-5">Gestión de Contratos</h1>
       <div className="container text-start">
-        <br />
-        <button
-          type="button"
-          className="btn btn-info"
-          onClick={agregarContrato}
-        >
+        <button type="button" className="btn btn-info" onClick={agregarContrato}>
           Registrar Nuevo Contrato
         </button>
-
+        <br />
+        <br />
+        <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'/>
         <table className="table table-striped">
           <thead>
             <tr>
               <th scope="col">N° Contrato</th>
+              <th scope="col">dni_Cliente</th>
               <th scope="col">Plan</th>
-              <th scope="col">Cliente</th>
               <th scope="col">Fecha Contrato</th>
               <th scope="col">Observacion</th>
               <th scope="col">Fecha instalacion</th>
               <th scope="col">Dia de pago</th>
-              <th scope="col">instalacion</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {contratos.map((val, key) => {
+            {results.map((val, key) => {
               return (
                 <tr key={val.num_contrato}>
                   <td>{val.num_contrato}</td>
-                  <td>{val.nombreplan}</td>
                   <td>{val.cliente_dnicliente}</td>
+                  <td>{val.nombreplan}</td>
                   <td>{val.fecha_contrato}</td>
                   <td>{val.observacion}</td>
                   <td>{val.fecha_instalacion}</td>
                   <td>{val.diapago}</td>
-                  <td>{val.instalacion}</td>
                   <td>
                     <button
                       type="button"
@@ -317,7 +331,7 @@ function validardnicliente() {
                     {num_contrato}
                   </span>
                 ) : (
-                  <input type="text" value={num_contrato} onChange={(event) => {
+                  <input type="number" value={num_contrato} onChange={(event) => {
                       setNum_contrato(event.target.value);
                     }}
                     className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"

@@ -51,10 +51,8 @@ function Consultapagos() {
             fetch(ipbackend+'pagos2')
                 .then(response => response.json())
                 .then(data => setListaPagos(data))
-                console.log(listaPagos[0]);
         }
         const update = () => {
-          console.log(idpago)
           Axios.put(ipbackend+"pago/"+idpago, {
               num_contrato: num_contrato,
               montopago: montopago,
@@ -74,8 +72,8 @@ function Consultapagos() {
             alert("Pago Actualizado con exito");
           }).catch((error) => {
             if (401 === error.response.status){
-            //sessionStorage.removeItem("token");
-            //window.location.reload();
+            sessionStorage.removeItem("token");
+            window.location.reload();
             alert("Sesión expirada, vuelva a iniciar sesión");
             }
             return error;
@@ -92,13 +90,14 @@ function Consultapagos() {
     dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
     )
     });
+    
     let results = [];
+
     if (busqueda === "") {
         results = listaPagos;
     } else {
         results = newfilter;
     }
-
 
     //CAPTURAR ID PAGO SELECCIONADO A EDITAR
     const capturarID = (pago) =>{
@@ -131,15 +130,14 @@ function Consultapagos() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) 
 
-    
-    
-
     return(
         <div className='App'>
-          <h1>Reporte de Pagos</h1>
-            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control'/>
-            <CSVLink data={results}>Exportar CSV</CSVLink>
-            <table className='table table-striped table-hover mt-5 shadow-lg'>
+          <h1 className='mb-3'>Registro de Pagos</h1>
+            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control border border-success'/>
+
+            <CSVLink data={results}><button className='btn btn-success mt-2'>Exportar CSV</button></CSVLink>
+            
+            <table className='table table-striped table-hover mt-3 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
                             <th>N°Contrato</th>
