@@ -268,9 +268,8 @@ if (busqueda === "") {
 }, [])
 
   return (
-    <div className="container">
-      <h1 className="mb-5">Gestión de Contratos</h1>
-      <div className="container text-start">
+    <div className="App">
+      <h1 className="mb-3">Gestión de Contratos</h1>
         <button type="button" className="btn btn-info" onClick={agregarContrato}>
           Registrar Nuevo Contrato
         </button>
@@ -623,7 +622,6 @@ if (busqueda === "") {
             <button className="btn btn-danger" onClick={ventanaModal3}>Cerrar</button>
           </ModalFooter>
         </Modal>
-      </div>
     </div>
   );
 }

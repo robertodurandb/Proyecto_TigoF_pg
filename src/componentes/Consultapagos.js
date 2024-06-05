@@ -140,16 +140,15 @@ function Consultapagos() {
             <table className='table table-striped table-hover mt-3 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
-                            <th>N°Contrato</th>
+                            <th>N° Contrato</th>
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
                             <th>Plan contratado</th>
-                            <th>Monto a pagar</th>
                             <th>Fecha_pago</th>
                             <th>Monto pagado</th>
                             <th>Medio de pago</th>
-                            <th>Mes_Facturado</th>
+                            <th>Mes Facturado</th>
                             <th>Año</th>
                             <th>Acción</th>
                         </tr>
@@ -162,7 +161,6 @@ function Consultapagos() {
                                 <td>{pago.apellidocli}</td>
                                 <td>{pago.nombrecli}</td>
                                 <td>{pago.nombreplan}</td>
-                                <td>{pago.precioplan}</td>
                                 <td>{pago.fechapago}</td>
                                 <td>{pago.montopago}</td>
                                 <td>{pago.mediopago}</td>

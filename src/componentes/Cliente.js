@@ -154,9 +154,9 @@ if (busqueda === "") {
 }, [])
 
   return (
-    <div className="container">
-      <h1 className="mb-5">Gestión de Clientes</h1>
-      <div className="container text-start">
+    <div className="App">
+      <h1 className="mb-3">Gestión de Clientes</h1>
+      {/* <div className="container text-start"> */}
         <button type="button" className="btn btn-info" onClick={agregarcliente}>
           Registrar Nuevo Cliente
         </button>
@@ -307,7 +307,7 @@ if (busqueda === "") {
             </button>
           </ModalFooter>
         </Modal>
-      </div>
+      {/* </div> */}
     </div>
   );
 }

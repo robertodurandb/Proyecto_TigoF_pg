@@ -135,9 +135,8 @@ function Instalacion() {
       }, [])
 
       return (
-        <div className="container">
-          <h1>Instalaciones Pendientes</h1>
-          <div className="container text-center">
+        <div className="App">
+          <h1 className="mb3">Gestión de Instalaciones</h1>
             {/* <div className="card-header">Gestion de Instalaciones</div>
             <div className="card-body" id="Editarpago">
                 <div className="input-group mb-3">
@@ -396,7 +395,6 @@ function Instalacion() {
           </ModalFooter>
         </Modal> */}
 
-          </div>
         </div>
       );
 }

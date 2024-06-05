@@ -107,10 +107,8 @@ function Planes() {
     }, [])
 
   return (
-    <div className="container">
-      <h1>Gestion de Planes</h1>
-      <div className="container text-start">
-        <br/>
+    <div className="App">
+      <h1 className="mb-3">Gestion de Planes</h1>
         <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Plan</button>
         <table className="table table-striped">
           <thead>
@@ -209,7 +207,6 @@ function Planes() {
                     <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
                 </ModalFooter>
             </Modal>
-      </div>
     </div>
   );
 }

@@ -380,7 +380,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                         <label for='fechapago' className="form-label">
                           Fecha Pago:
                         </label>
-                        <input type="text" value={fechapago}
+                        <input type="date" value={fechapago}
                           onChange={(event) => { setFechapago(event.target.value); }}
                           className="form-control" id="fechapago" aria-describedby="basic-addon1"
                         ></input>
