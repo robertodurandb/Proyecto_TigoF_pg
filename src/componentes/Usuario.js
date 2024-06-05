@@ -88,9 +88,9 @@ function Usuarios() {
   }
 
   return (
-    <div className="container">
+    <div className="Container">
       <div className="card text-center">
-        <div className="card-header">Gestion de Usuarios</div>
+        <h1 className="card-header">Gestion de Usuarios</h1>
         <div className="card-body">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
