@@ -36,7 +36,10 @@ function App() {
       setLogged2(false)
     }
   }
-
+  function isAdmin() {
+    let role = sessionStorage.getItem("role");
+    return role == "Admin";
+}
   useEffect(() => {
     checkLogin()
   }, [])
@@ -66,34 +69,37 @@ function App() {
                 <Link to="/reportepagos" className="btn btn-dark">
                   Reporte Pagos
                 </Link>
-                <Link to="/contrato" className="btn btn-dark">
-                  Contrato
-                </Link>
                 <Link to="/cliente" className="btn btn-dark">
                   Cliente
                 </Link>
+                {isAdmin()?(
+                  <>
+                  <Link to="/contrato" className="btn btn-dark">
+                  Contrato
+                </Link>
                 <Link to="/planes" className="btn btn-dark">
                 Planes
-              </Link>
+                </Link>
+                <Link to="/usuario" className="btn btn-dark">
+                  Usuario
+                </Link>
+                  </>
+                ):null}
+                
               {/* <Link to="/caja" className="btn btn-dark">
                 Caja
-              </Link> */}
-              {/* <Link to="/pagos" className="btn btn-dark">
-                Pagos
               </Link> */}
               <Link to="/instalacion" className="btn btn-dark">
                 Instalaciones
               </Link>
-              <Link to="/usuario" className="btn btn-dark">
-                Usuario
-              </Link>  
+                
                 
                 <button onClick={signOut}>Cerrar Sesion</button>
               </div>
               <hr />
 
             <Routes>
-                <Route path="/contrato" element={<Contratos />} />
+                <Route path="/contrato" element={ isAdmin() ?(<Contratos />):null} />
             </Routes>
             <Routes>
                 <Route path="/reportepagos" element={<Reportepagos />} />
@@ -105,20 +111,14 @@ function App() {
                 <Route path="/instalacion" element={<Instalacion />} />
               </Routes>
               <Routes>
-                <Route path="/planes" element={logged2?<Planes />:alert("Acesso Restringido")} />
+                <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
               </Routes>
               {/* <Routes>
                 <Route path="/caja" element={logged2?<Caja />:null} />
               </Routes> */}
-              {/* <Routes>
-                <Route path="/pagos" element={logged2?<Pagos />:null} />
-              </Routes> */}
               <Routes>
-              <Route path="/usuario" element={logged2?<Usuarios />:null} />
+              <Route path="/usuario" element={ isAdmin() ?(<Usuarios />):null} />
             </Routes>     
-              {/* <Routes>
-                <Route path="/consultaclientes" element={<Principal />} />
-              </Routes> */}
               <Routes>
                 <Route path="/" element={<Inicio />} />
               </Routes>

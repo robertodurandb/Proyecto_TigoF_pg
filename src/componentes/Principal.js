@@ -55,6 +55,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [modalPagos, setModalPagos] = useState(false);
     const [modalPagar, setModalPagar] = useState(false);
 
+
     //Datos para el modal de pagos
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
@@ -76,6 +77,11 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         fetch(ipbackend+'todolist')
             .then(response => response.json())
             .then(data => setListaClientes(data))
+    }
+
+    function isAdmin() {
+        let role = sessionStorage.getItem("role");
+        return role == "Admin";
     }
 
     const mostrarCliente=()=>{
@@ -316,7 +322,10 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                     </div>
 
                     <button onClick={Verpagos} className='btn btn-outline-success'>Ver Pagos</button>
-                    <button onClick={Registrarpago} className='btn btn-outline-success'>Registrar Pago</button>
+                    { isAdmin() ? (
+                        <button onClick={Registrarpago} className='btn btn-outline-success'>Registrar Pago</button>
+                    ): null}
+                    
                     <div>
                     {
                         verPagos ? 

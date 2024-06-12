@@ -47,6 +47,11 @@ function Consultapagos() {
         ventanaModal();
     }
 
+    function isAdmin() {
+      let role = sessionStorage.getItem("role");
+      return role == "Admin";
+  }
+
         function getPagos(){
             fetch(ipbackend+'pagos2')
                 .then(response => response.json())
@@ -134,8 +139,12 @@ function Consultapagos() {
         <div className='App'>
           <h1 className='mb-3'>Registro de Pagos</h1>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control border border-success'/>
-
-            <CSVLink data={results}><button className='btn btn-success mt-2'>Exportar CSV</button></CSVLink>
+            {
+              isAdmin() ?(
+                <CSVLink data={results}><button className='btn btn-success mt-2'>Exportar CSV</button></CSVLink>
+              ):null
+            }
+            
             
             <table className='table table-striped table-hover mt-3 shadow-lg'>
                     <thead>
@@ -150,7 +159,10 @@ function Consultapagos() {
                             <th>Medio de pago</th>
                             <th>Mes Facturado</th>
                             <th>Año</th>
-                            <th>Acción</th>
+                            {isAdmin() ?(
+                              <th>Acción</th>
+                            ):null}
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -166,9 +178,12 @@ function Consultapagos() {
                                 <td>{pago.mediopago}</td>
                                 <td>{pago.mespago}</td>
                                 <td>{pago.anio}</td>
-                                <td><button type="button" className="btn btn-outline-success"
-                                onClick={()=>{capturarID(pago);
-                                }}>Editar</button></td>
+                                {isAdmin() ?(
+                                  <td><button type="button" className="btn btn-outline-success"
+                                  onClick={()=>{capturarID(pago);
+                                  }}>Editar</button></td>
+                                ):null}
+                                
                             </tr>
                     ))}
                     </tbody>
