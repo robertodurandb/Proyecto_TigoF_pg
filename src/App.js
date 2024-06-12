@@ -3,13 +3,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
-// import Pagos from '../src/componentes/Pagos';
 import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
-//import Inicio from './Inicio/Inicio';
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,21 +18,17 @@ import React, { useEffect } from 'react';
 
 function App() {
   const [logged, setLogged] = React.useState(false)
-  const [logged2, setLogged2] = React.useState(false)
+  const [User, setUser] = React.useState("")
 
   function checkLogin() {
     let token = sessionStorage.getItem('token')
-    let role = sessionStorage.getItem('role')
+
     if (token) {
         setLogged(true)
       }else {
         setLogged(false)
       }
-    if (role == "Admin"){
-      setLogged2(true)
-    }else{
-      setLogged2(false)
-    }
+      setUser(sessionStorage.getItem('currentUser'));
   }
   function isAdmin() {
     let role = sessionStorage.getItem("role");
@@ -59,43 +53,45 @@ function App() {
         (
        
         <Router>
-              <div className="btn-group">
-              <Link to="/" className="btn btn-dark">
-                  Inicio
+              <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <div className='container'>
+                  <Link to="/" className="btn navbar-brand">
+                    Inicio
+                  </Link>
+                  <Link to="/reportepagos" className="btn navbar-brand">
+                    Reporte Pagos
+                  </Link>
+                  <Link to="/cliente" className="btn navbar-brand">
+                    Cliente
+                  </Link>
+                  {isAdmin()?(
+                    <>
+                    <Link to="/contrato" className="btn navbar-brand">
+                    Contrato
+                  </Link>
+                  <Link to="/planes" className="btn navbar-brand">
+                  Planes
+                  </Link>
+                  <Link to="/usuario" className="btn navbar-brand">
+                    Usuario
+                  </Link>
+                    </>
+                  ):null}
+                <Link to="/instalacion" className="btn navbar-brand" role='button'>
+                  Instalaciones
                 </Link>
-              {/* <Link to="/consultaclientes" className="btn btn-dark">
-                  Consulta Clientes
-                </Link> */}
-                <Link to="/reportepagos" className="btn btn-dark">
-                  Reporte Pagos
-                </Link>
-                <Link to="/cliente" className="btn btn-dark">
-                  Cliente
-                </Link>
-                {isAdmin()?(
-                  <>
-                  <Link to="/contrato" className="btn btn-dark">
-                  Contrato
-                </Link>
-                <Link to="/planes" className="btn btn-dark">
-                Planes
-                </Link>
-                <Link to="/usuario" className="btn btn-dark">
-                  Usuario
-                </Link>
-                  </>
-                ):null}
-                
-              {/* <Link to="/caja" className="btn btn-dark">
-                Caja
-              </Link> */}
-              <Link to="/instalacion" className="btn btn-dark">
-                Instalaciones
-              </Link>
-                
-                
-                <button onClick={signOut}>Cerrar Sesion</button>
-              </div>
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    {User}
+                  </button>
+                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><button className="dropdown-item" >Cambiar Contraseña</button></li>
+                    <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
+                  </ul>
+                </div>
+                  </div>
+              
+              </nav>
               <hr />
 
             <Routes>
