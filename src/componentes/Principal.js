@@ -197,7 +197,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
     return(
         <div className="App">
-            <h1 className='mb-3'>Búsqueda de Información de Clientes</h1>
+            <h1 className='mb-3'>Contratos y Clientes Activos</h1>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
               <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>

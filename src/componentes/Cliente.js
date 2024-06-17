@@ -63,6 +63,10 @@ function Cliente() {
     .then(response => response.json())
     .then(data => setListaClientes(data))
     }
+    function isAdmin() {
+      let role = sessionStorage.getItem("role");
+      return role == "Admin";
+  }
   
   const editarClientes = (val)=>{
     setEditar(true);
@@ -155,12 +159,14 @@ if (busqueda === "") {
 
   return (
     <div className="App">
-      <h1 className="mb-3">Gestión de Clientes</h1>
+      <h1 className="mb-3">Información de Clientes</h1>
       {/* <div className="container text-start"> */}
-        <button type="button" className="btn btn-info" onClick={agregarcliente}>
-          Registrar Nuevo Cliente
-        </button>
-        <br />
+      {
+       isAdmin() ?(
+        <button type="button" className="btn btn-info" onClick={agregarcliente}>Registrar Nuevo Cliente</button> 
+      ):null
+    }
+    <br />
         <br />
         <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
         
@@ -174,8 +180,11 @@ if (busqueda === "") {
               <th scope="col">Distrito</th>
               <th scope="col">Telefono</th>
               <th scope="col">Ubicacion</th>
-              <th scope="col">Accion</th>
-
+             { 
+              isAdmin() ? (
+                <th scope="col">Accion</th>
+              ):null
+            }
             </tr>
           </thead>
           <tbody>
@@ -189,12 +198,14 @@ if (busqueda === "") {
                     <td>{val.telefonocli}</td>
                     <td>{val.ubicacion_cli}</td>
                     <td>
-                    <button type="button" className="btn btn-info" 
-                    onClick={()=>{
-                      editarClientes(val);
-                    }}>
+                     { 
+                      isAdmin() ? (
+                        <button type="button" className="btn btn-info" 
+                    onClick={()=>{ editarClientes(val) }}>
                       Editar
                     </button>
+                      ):null 
+                      }
                     </td>
             </tr>
            
