@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 function Principal() {
 
@@ -37,12 +38,22 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [direccioncli, setDireccioncli] = useState();
     const [distritocli, setDistritocli] = useState();
     const [telefonocli, setTelefonocli] = useState();
+    const [fecha_nacimiento, setFecha_nacimiento] = useState();
     const [nombreplan, setNombreplan] = useState();
     const [fechacontrato, setFechacontrato] = useState();
     const [precioplan, setPrecioplan] = useState();
     const [velocidadplan, setVelocidadplan] = useState();
     const [diapago, setDiapago] = useState();
-    const [fecha_instalacion, setFecha_instalacion] = useState();
+    const [fechaprog_instalacion, setFechaprog_instalacion] = useState();
+    //TABLA INSTALACION
+    const [user_create, setUser_create] = useState();
+    const [geolocalizacion, setGeolocalizacion] = useState();
+    const [estadodc_instalacion, setEstadodc_instalacion] = useState();
+    const [fechainstalacion, setFechainstalacion] = useState();
+    const [imagencasa, setImagencasa] = useState();
+    const [observacion_instalacion, setObservacion_instalacion] = useState();
+
+
 
     const [montopago, setMontopago] = useState(0);
     const [fechapago, setFechapago] = useState(fechaactual);
@@ -77,6 +88,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         fetch(ipbackend+'todolist')
             .then(response => response.json())
             .then(data => setListaClientes(data))
+            console.log(listaClientes[0])
     }
 
     function isAdmin() {
@@ -134,10 +146,16 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         setNombreplan(cliente.nombreplan);
         setFechacontrato(cliente.fecha_contrato);
         setTelefonocli(cliente.telefonocli);
+        setFecha_nacimiento(cliente.fecha_nacimiento);
         setVelocidadplan(cliente.velocidadplan);
         setPrecioplan(cliente.precioplan);
-        setFecha_instalacion(cliente.fecha_instalacion);
-        //setUbicacioninstalacion(cliente.ubicacioninstalacion);
+        setFechaprog_instalacion(cliente.fechaprog_instalacion);
+        setUser_create(cliente.user_create);
+        setGeolocalizacion(cliente.geolocalizacion);
+        setEstadodc_instalacion(cliente.estadodc_instalacion);
+        setFechainstalacion(cliente.fechainstalacion);
+        setImagencasa(cliente.imagencasa);
+        setObservacion_instalacion(cliente.observacion_instalacion);
 
         mostrarCliente();
     }
@@ -177,7 +195,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
      const newfilter = listaClientes.filter(dato => {
         return (
     dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
-    dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
+    dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
+    dato.direccioncli.toLowerCase().includes(busqueda.toLocaleLowerCase())
     )
     });
 
@@ -198,7 +217,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     return(
         <div className="App">
             <h1 className='mb-3'>Contratos y Clientes Activos</h1>
-            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
+            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
               <table className='table table-striped table-hover mt-5 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
@@ -252,6 +271,10 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                         <div className="col-6">{nombrecli}</div>
                     </div>
                     <div className='row mb-2'>
+                        <div className='col-4'>Fecha nacimiento:</div>
+                        <div className="col-6">{fecha_nacimiento}</div>
+                    </div>
+                    <div className='row mb-2'>
                         <div className='col-4'>Telefono Cliente:</div>
                         <div className="col-6">{telefonocli}</div>
                     </div>
@@ -285,7 +308,27 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Instalacion programada:</div>
-                        <div className="col-6">{fecha_instalacion}</div>
+                        <div className="col-6">{fechaprog_instalacion}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Tecnico:</div>
+                        <div className="col-6">{user_create}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Ubicación Casa:</div>
+                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>abrir Maps</a></Link></div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Instalación ejecutada:</div>
+                        <div className="col-6">{fechainstalacion}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Imagen de la casa:</div>
+                        <div className="col-6">{imagencasa}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Observación instalación:</div>
+                        <div className="col-6">{observacion_instalacion}</div>
                     </div>
                 </div>
                 </ModalBody>

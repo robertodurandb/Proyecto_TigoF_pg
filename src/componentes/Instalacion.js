@@ -4,7 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 
 
-//FUNCION PARA OBTENER FECHA ACTUAL
+function Instalacion() {
+
+  //FUNCION PARA OBTENER FECHA ACTUAL
 let fechaactual = "";
 let fecha = new Date();
 let dia = fecha.getDate("dd");
@@ -24,10 +26,14 @@ if (mes < 10) {
 }
 fechaactual = anioactual + texmes + mes + texdia + dia;
 
-function Instalacion() {
+    const [listaClientes, setListaClientes] = useState([]);
+    const [busqueda, setBusqueda] = useState("");
+
+    const [num_contrato, setNum_contrato] = useState();
+    const [nombrecli, setNombrecli] = useState();
+    const [dnicliente, setDnicliente] = useState();
     const [idinstalacion, setIdinstalacion] = useState();
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
-    const [numcontrato, setNumcontrato] = useState();
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
     const [editar, setEditar] = useState(false);
@@ -49,7 +55,7 @@ function Instalacion() {
     const addinstalaciones = () => {
         Axios.post(ipbackend+"instalacion", {
             fechainstalacion: fechainstalacion,
-            numcontrato: numcontrato,
+            num_contrato: num_contrato,
             geolocalizacion: geolocalizacion,
             observacion: observacion,
             tecnico: user,
@@ -58,7 +64,6 @@ function Instalacion() {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
-            getInstalaciones();
             limpiarcampos();
             alert("Instalacion Registrada con exito");
         }).catch((error) => {
@@ -71,31 +76,30 @@ function Instalacion() {
           });
       };
 
-     
-    //   const getContratos = () => {
-    //     Axios.get(ipbackend+"todolist").then((response) => {
-    //       setListacontratos(response.data);
-    //     });
-    //   };
-
-    function getInstalaciones(){
-      fetch(ipbackend+'instalaciones')
+    function getClientes(){
+      fetch(ipbackend+'todolist')
           .then(response => response.json())
-          .then(data => setInstalaciones(data))
+          .then(data => setListaClientes(data))
   }
+
+  //   function getInstalaciones(){
+  //     fetch(ipbackend+'instalaciones')
+  //         .then(response => response.json())
+  //         .then(data => setInstalaciones(data))
+  // }
 
       const editarInstalacion = (val)=>{
         setEditar(true);
         setIdinstalacion(val.idinstalacion)
         setFechainstalacion(val.fechainstalacion);
-        setNumcontrato(val.numcontrato);
+        setNum_contrato(val.num_contrato);
         setGeolocalizacion(val.geolocalizacion);
         setObservacion(val.observacion);
       }
       const update = () => {
         Axios.put(ipbackend+"instalacion/"+idinstalacion, {
             fechainstalacion: fechainstalacion,
-            numcontrato: numcontrato,
+            num_contrato: num_contrato,
             geolocalizacion: geolocalizacion,
             observacion: observacion,
             user_update: user,
@@ -104,7 +108,6 @@ function Instalacion() {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
-          getInstalaciones();
           limpiarcampos();
           alert("Instalacion actualizada con exito");
         }).catch((error) => {
@@ -120,115 +123,74 @@ function Instalacion() {
       const limpiarcampos = ()=>{
         setIdinstalacion();
         setFechainstalacion(fechaactual);
-        setNumcontrato("");
+        setNum_contrato("");
         setGeolocalizacion("");
         setObservacion("");
         // setTecnico("");
         // setUsuarioactualiza("");
         setEditar(false);
       }
+
+      //Funcion de Busqueda
+    const searcher = (e) =>{
+      setBusqueda(e.target.value);
+      }
+  //Funcion de Filtrado
+   const newfilter = listaClientes.filter(dato => {
+      return (
+  dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
+  )
+  });
+
+  let results = [];
+  
+  if (busqueda === "") {
+      results = listaClientes;
+  } else {
+      results = newfilter;
+  }
     
         useEffect(() =>{
-          getInstalaciones();
-          //getClientes();
-          //getContratos();
+          // getInstalaciones();
+          getClientes();
+          // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
 
       return (
         <div className="App">
           <h1 className="mb3">Gestión de Instalaciones</h1>
-            {/* <div className="card-header">Gestion de Instalaciones</div>
-            <div className="card-body" id="Editarpago">
-                <div className="input-group mb-3">
-                    <span className="input-group-text" id="basic-addon1">
-                    Fecha Instalacion:
-                    </span>
-                    <input type="text" value={fechainstalacion}
-                    onChange={(event) => { setFechainstalacion(event.target.value); }}
-                    className="form-control" placeholder="Fecha instalacion" aria-label="fecha instalacion" aria-describedby="basic-addon1"
-                    ></input>
-                </div>
-              <div className="input-group mb-3">
-                <span className="input-group-text" id="basic-addon1">
-                  Numero Contrato:
-                </span>
-                <input type="text" value={numcontrato}
-                  onChange={(event) => { setNumcontrato(event.target.value); }}
-                  className="form-control" placeholder="Ingrese número de contrato" aria-label="Numero Contrato" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-
-              <div className="input-group mb-3">
-                <span className="input-group-text" id="basic-addon1">
-                  Geolocalizacion:
-                </span>
-                <input type="text" value={geolocalizacion}
-                  onChange={(event) => { setGeolocalizacion(event.target.value); }}
-                  className="form-control" placeholder="Ingrese ubicacion Maps" aria-label="" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="input-group mb-3">
-                <span className="input-group-text" id="basic-addon1">
-                  Observación:
-                </span>
-                <input type="text" value={observacion}
-                  onChange={(event) => { setObservacion(event.target.value); }}
-                  className="form-control" placeholder="ejemplo: " aria-label="observacion" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              {
-                editar? 
-                <div>
-                <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-                <button className="btn btn-info m-2" onClick={limpiarcampos}>Cancelar</button>
-                </div>
-                :<button className="btn btn-success" onClick={add}>Registrar</button>
-              }
-              
-            </div>
-            <div className="lista">
-              <button className="btn btn-info" onClick={getInstalaciones}>
-                Editar Datos
-              </button>
-            </div> */}
-
-
-            {/* <table className="table table-striped">
+          <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
+            <table className="table table-striped table-hover mt-5 shadow-lg">
               <thead>
-                <tr> 
-                    <th scope="col">ID Instalación</th>
-                    <th scope="col">N° Contrato</th>
-                    <th scope="col">Fecha instalación</th>
-                    <th scope="col">Geolocalización</th>
-                    <th scope="col">Observación</th>
-                    <th scope="col">Técnico</th>
-                    <th scope="col">Usuario Actualiza</th>
-                    <th scope="col">Acciones</th>
+                <tr className="bg-curso text-white"> 
+                            <th>DNI</th>
+                            <th>Apellidos</th>
+                            <th>Nombres</th>
+                            <th>Distrito</th>
+                            <th>Direccion</th>
+                            {/* <th>Instalacion</th>
+                            <th></th> */}
                 </tr>
               </thead>
               <tbody>
-              {instalaciones.map((val, key) => {
-                return <tr key={val.idinstalacion}>
-                        <td>{val.idinstalacion}</td>
-                        <td>{val.numcontrato}</td>
-                        <td>{val.fechainstalacion}</td>
-                        <td>{val.geolocalizacion}</td>
-                        <td>{val.observacion}</td>
-                        <td>{val.tecnico}</td>
-                        <td>{val.user_update}</td>
-                        <td>
-                        <button type="button" className="btn btn-info" 
-                        onClick={()=>{
-                          editarInstalacion(val);
-                        }}>
-                          <a href="#Editarinstalacion">Editar</a>
-                        </button>
-                        </td>
-                </tr>
-               
-              })}      
+              {listaClientes.map((cliente, key)=>(
+                            <tr key={cliente.num_contrato} value={num_contrato}>
+                                <td>{cliente.dnicliente}</td>
+                                <td>{cliente.apellidocli}</td>
+                                <td>{cliente.nombrecli}</td>
+                                <td>{cliente.distritocli}</td>
+                                <td>{cliente.direccioncli}</td>
+                                {/* <td>{cliente.instalacion}</td>
+                                <td><button type="button" className="btn btn-outline-success" 
+                                onClick={()=>{capturarID(cliente);
+                                }}>Detalles</button></td>
+                                <td><button type='button' className='btn btn-outline-success'
+                                onClick={()=>{capturarIDpago(cliente);
+                                }}>Pagos</button></td> */}
+                            </tr>
+                    ))}  
               </tbody>
-            </table> */}
+            </table>
 
             {/* <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
@@ -396,6 +358,6 @@ function Instalacion() {
         </Modal> */}
 
         </div>
-      );
+      )
 }
 export default Instalacion;

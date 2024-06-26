@@ -1,12 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.css';
 // import Caja from '../src/componentes/Caja';
-import Planes from '../src/componentes/Planes';
+// import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
-import Usuarios from '../src/componentes/Usuario';
+//import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
 import {
   BrowserRouter as Router,
@@ -69,12 +69,12 @@ function App() {
                     <Link to="/contrato" className="btn navbar-brand">
                     Contrato
                   </Link>
-                  <Link to="/planes" className="btn navbar-brand">
+                  {/* <Link to="/planes" className="btn navbar-brand">
                   Planes
-                  </Link>
-                  <Link to="/usuario" className="btn navbar-brand">
+                  </Link> */}
+                  {/* <Link to="/usuario" className="btn navbar-brand">
                     Usuario
-                  </Link>
+                  </Link> */}
                     </>
                   ):null}
                 <Link to="/instalacion" className="btn navbar-brand" role='button'>
@@ -106,15 +106,15 @@ function App() {
               <Routes>
                 <Route path="/instalacion" element={<Instalacion />} />
               </Routes>
-              <Routes>
+              {/* <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
-              </Routes>
+              </Routes> */}
               {/* <Routes>
                 <Route path="/caja" element={logged2?<Caja />:null} />
               </Routes> */}
-              <Routes>
+              {/* <Routes>
               <Route path="/usuario" element={ isAdmin() ?(<Usuarios />):null} />
-            </Routes>     
+            </Routes>      */}
               <Routes>
                 <Route path="/" element={<Inicio />} />
               </Routes>
