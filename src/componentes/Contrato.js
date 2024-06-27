@@ -30,9 +30,11 @@ function Contrato() {
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [observacion, setObservacion] = useState("");
-    const [fecha_instalacion, setFecha_instalacion] = useState("");
+    const [fechaprog_instalacion, setFechaprog_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
     const [contratos, setContratos] = useState([]);
+    // const [instalacion, setInstalacion] = useState([]);
+    // const [estado_instalacion, setEstadoinstalacion] = useState([]);
     const [editar, setEditar] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
@@ -76,7 +78,7 @@ function Contrato() {
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
-        fecha_instalacion: fecha_instalacion,
+        fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
     },{
       headers: {
@@ -144,7 +146,7 @@ function Contrato() {
     setCliente_dnicliente(val.cliente_dnicliente);
     setFecha_contrato(val.fecha_contrato);
     setObservacion(val.observacion);
-    setFecha_instalacion(val.fecha_instalacion);
+    setFechaprog_instalacion(val.fechaprog_instalacion);
     setDiapago(val.diapago);
     ventanaModal();
   }
@@ -154,7 +156,7 @@ function Contrato() {
         cliente_dnicliente: cliente_dnicliente,
         fecha_contrato: fecha_contrato,
         observacion: observacion,
-        fecha_instalacion: fecha_instalacion,
+        fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
     }, {
       headers: {
@@ -216,7 +218,7 @@ function validardnicliente() {
     setNum_contrato();
     setFecha_contrato(fechaactual);
     setObservacion("");
-    setFecha_instalacion("");
+    setFechaprog_instalacion("");
     setDiapago("1");
     setEditar(false); 
   }
@@ -298,7 +300,7 @@ if (busqueda === "") {
                   <td>{val.nombreplan}</td>
                   <td>{val.fecha_contrato}</td>
                   <td>{val.observacion}</td>
-                  <td>{val.fecha_instalacion}</td>
+                  <td>{val.fechaprog_instalacion}</td>
                   <td>{val.diapago}</td>
                   <td>
                     <button
@@ -434,9 +436,9 @@ if (busqueda === "") {
                 </label>
                 <input
                   type="date"
-                  value={fecha_instalacion}
+                  value={fechaprog_instalacion}
                   onChange={(event) => {
-                    setFecha_instalacion(event.target.value);
+                    setFechaprog_instalacion(event.target.value);
                   }}
                   className="form-control"
                   id="fecha_instalacion"
