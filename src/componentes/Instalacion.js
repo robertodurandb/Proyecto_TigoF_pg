@@ -25,40 +25,41 @@ if (mes < 10) {
   texmes = "-"
 }
 fechaactual = anioactual + texmes + mes + texdia + dia;
+let user = "";
 
     const [listaClientes, setListaClientes] = useState([]);
     const [busqueda, setBusqueda] = useState("");
 
     const [num_contrato, setNum_contrato] = useState();
-    const [nombrecli, setNombrecli] = useState();
     const [dnicliente, setDnicliente] = useState();
+    const [plan, setPlan] = useState();
+    //Datos Instalacion
     const [idinstalacion, setIdinstalacion] = useState();
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
+    const [user_create, setUser_create] = useState(user);
+    const [fecha_create, setFecha_create] = useState(fechaactual);
+    const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
     const [instalaciones, setInstalaciones] = useState([]);
-
-    // const [apellidoscliente, setApellidoscliente] = useState();
-    // const [nombrescliente, setNombrescliente] = useState();
-    // const [dnicliente, setDnicliente] = useState();
-    // const [listacontratos, setListacontratos] = useState();
 
     const [modalMostrar, setModalMostrar] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
 
     let token = sessionStorage.getItem("token");
-    let user = sessionStorage.getItem("currentUser")
+    user = sessionStorage.getItem("currentUser")
     let ipbackend = "https://michel.zapto.org:9100/";
 
-    const addinstalaciones = () => {
+    const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {
             fechainstalacion: fechainstalacion,
-            num_contrato: num_contrato,
             geolocalizacion: geolocalizacion,
             observacion: observacion,
-            tecnico: user,
+            user_create: user_create,
+            fecha_create: fecha_create,
+            estado: estado
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -77,9 +78,10 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
       };
 
     function getClientes(){
-      fetch(ipbackend+'todolist')
+      fetch(ipbackend+'list')
           .then(response => response.json())
           .then(data => setListaClientes(data))
+          console.log(listaClientes);
   }
 
   //   function getInstalaciones(){
@@ -120,6 +122,13 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
           });
       };
 
+      const capturarID = (cliente) =>{
+        setNum_contrato(cliente.num_contrato);
+        setDnicliente(cliente.dnicliente);
+        setPlan(cliente.nombreplan);
+        ventanaModal();   
+    }
+
       const limpiarcampos = ()=>{
         setIdinstalacion();
         setFechainstalacion(fechaactual);
@@ -130,25 +139,29 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         // setUsuarioactualiza("");
         setEditar(false);
       }
-
-      //Funcion de Busqueda
-    const searcher = (e) =>{
-      setBusqueda(e.target.value);
+      const cerrarModal = ()=>{
+        limpiarcampos();
+        ventanaModal();
       }
-  //Funcion de Filtrado
-   const newfilter = listaClientes.filter(dato => {
-      return (
-  dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
-  )
-  });
 
-  let results = [];
+  //     //Funcion de Busqueda
+  //   const searcher = (e) =>{
+  //     setBusqueda(e.target.value);
+  //     }
+  // //Funcion de Filtrado
+  //  const newfilter = listaClientes.filter(dato => {
+  //     return (
+  // dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
+  // )
+  // });
+
+  // let results = [];
   
-  if (busqueda === "") {
-      results = listaClientes;
-  } else {
-      results = newfilter;
-  }
+  // if (busqueda === "") {
+  //     results = listaClientes;
+  // } else {
+  //     results = newfilter;
+  // }
     
         useEffect(() =>{
           // getInstalaciones();
@@ -159,7 +172,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
       return (
         <div className="App">
           <h1 className="mb3">Gestión de Instalaciones</h1>
-          <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
+          {/* <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/> */}
             <table className="table table-striped table-hover mt-5 shadow-lg">
               <thead>
                 <tr className="bg-curso text-white"> 
@@ -168,8 +181,11 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                             <th>Nombres</th>
                             <th>Distrito</th>
                             <th>Direccion</th>
-                            {/* <th>Instalacion</th>
-                            <th></th> */}
+                            <th>Telefono</th>
+                            <th>Plan</th>
+                            <th>Dia pago</th>
+                            <th>Instalar</th>
+                            <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,163 +196,70 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                                 <td>{cliente.nombrecli}</td>
                                 <td>{cliente.distritocli}</td>
                                 <td>{cliente.direccioncli}</td>
-                                {/* <td>{cliente.instalacion}</td>
+                                <td>{cliente.telefonocli}</td>
+                                <td>{cliente.nombreplan}</td>
+                                <td>{cliente.diapago}</td>
+                                <td>{cliente.fechaprog_instalacion}</td>
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
-                                }}>Detalles</button></td>
-                                <td><button type='button' className='btn btn-outline-success'
-                                onClick={()=>{capturarIDpago(cliente);
-                                }}>Pagos</button></td> */}
+                                }}>Registrar</button></td>
                             </tr>
                     ))}  
               </tbody>
             </table>
 
-            {/* <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Agregar/Modificar Contrato:</h4>
+              <h4 className="">Registrar Instalación:</h4>
               <div className="mb-3">
                 <label for="num_contrato" className="form-label">
                   Número de Contrato:
                 </label>
-                {editar ? (
                   <span className="input-group-text" id="basic-addon1">
                     {num_contrato}
                   </span>
-                ) : (
-                  <input type="text" value={num_contrato} onChange={(event) => {
-                      setNum_contrato(event.target.value);
-                    }}
-                    className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"
-                  ></input>
-                )}
               </div>
               <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI:
+                <label for="num_contrato" className="form-label">
+                  DNI Cliente:
                 </label>
-                <input
-                  type="text"
-                  value={cliente_dnicliente}
-                  onChange={(event) => {
-                    setCliente_dnicliente(event.target.value);
-                  }}
-                  className="form-control"
-                  id="dnicliente"
-                  placeholder="DNI del cliente"
-                  aria-describedby="basic-addon1"
-                ></input>
-                <div className="fw-bold">{errordni}</div>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={validardnicliente}
-                >
-                  validar DNI
-                </button>{" "}
-                &nbsp;
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={agregarCliente}
-                >
-                  Nuevo Cliente
-                </button>
-                <br />
-                
+                  <span className="input-group-text" id="basic-addon1">
+                    {dnicliente}
+                  </span>
               </div>
               <div className="mb-3">
-                <label for="planes" className="form-label">
-                  Planes:
+                <label for="num_contrato" className="form-label">
+                  Plan Contratado:
                 </label>
-                <select
-                  className="form-control"
-                  aria-describedby="basic-addon1"
-                  key={planes_idplanes}
-                  value={planes_idplanes}
-                  onChange={(event) => {
-                    setPlanes_idplanes(event.target.value);
-                  }}
-                >
-                  {listaPlanes.map((planes) => {
-                    return (
-                      <>
-                        <option value={planes.idplanes}>
-                          {planes.nombreplan}
-                        </option>
-                      </>
-                    );
-                  })}
-                </select>
+                  <span className="input-group-text" id="basic-addon1">
+                    {plan}
+                  </span>
               </div>
               <div className="mb-3">
-                <label for="fecha_contrato" className="form-label">
-                  Fecha Contrato:
+                <label for="geolocalización" className="form-label">
+                  Geolocalización:
                 </label>
-                <input
-                  type="date"
-                  value={fecha_contrato}
+                <input type="text" value={geolocalizacion}
                   onChange={(event) => {
-                    setFecha_contrato(event.target.value);
+                    setGeolocalizacion(event.target.value);
                   }}
-                  className="form-control"
-                  id="fecha_contrato"
-                  placeholder="Fecha Contrato"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="geolocalizacion" placeholder="Ingrese Geolocalización de Maps" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="observacion" className="form-label">
-                  Observacion:
+                <label for="geolocalización" className="form-label">
+                  Observación:
                 </label>
-                <input
-                  type="text"
-                  value={observacion}
+                <input type="text" value={observacion}
                   onChange={(event) => {
                     setObservacion(event.target.value);
                   }}
-                  className="form-control"
-                  id="observacion"
-                  placeholder="Ingrese Observacion"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
               </div>
               
-              <div className="mb-3">
-                <label for="fecha_instalacion" className="form-label">
-                  Fecha Instalacion:
-                </label>
-                <input
-                  type="date"
-                  value={fecha_instalacion}
-                  onChange={(event) => {
-                    setFecha_instalacion(event.target.value);
-                  }}
-                  className="form-control"
-                  id="fecha_instalacion"
-                  placeholder="fecha programada para instalar"
-                  aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="diapago" className="form-label">
-                  Dia Pago:
-                </label>
-                <select
-                  value={diapago}
-                  onChange={(event) => {
-                    setDiapago(event.target.value);
-                  }}
-                  className="form-control"
-                  id="diapago"
-                  aria-label="Dia Pago"
-                  aria-describedby="basic-addon1"
-                >
-                  <option>1</option>
-                  <option>16</option>
-                </select>
-              </div>
+              
             </div>
           </ModalBody>
           <ModalFooter>
@@ -347,15 +270,15 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                 </button>
               </div>
             ) : (
-              <button className="btn btn-success" onClick={addcontrato}>
+              <button className="btn btn-success" onClick={addinstalacion}>
                 Registrar
               </button>
             )}
-            <button className="btn btn-danger" onClick={cerrarModalContrato}>
+            <button className="btn btn-danger" onClick={cerrarModal}>
               Cerrar
             </button>
           </ModalFooter>
-        </Modal> */}
+        </Modal>
 
         </div>
       )
