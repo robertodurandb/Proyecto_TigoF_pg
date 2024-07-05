@@ -25,7 +25,6 @@ if (mes < 10) {
   texmes = "-"
 }
 fechaactual = anioactual + texmes + mes + texdia + dia;
-let user = "";
 
     const [listaClientes, setListaClientes] = useState([]);
     const [busqueda, setBusqueda] = useState("");
@@ -38,35 +37,40 @@ let user = "";
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
-    const [user_create, setUser_create] = useState(user);
+    const [user_create, setUser_create] = useState();
     const [fecha_create, setFecha_create] = useState(fechaactual);
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
     const [instalaciones, setInstalaciones] = useState([]);
 
     const [modalMostrar, setModalMostrar] = useState(false);
+    const [modalConfirmar, setModalConfirmar] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
+    const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
 
     let token = sessionStorage.getItem("token");
-    user = sessionStorage.getItem("currentUser")
+    let user = sessionStorage.getItem("currentUser")
     let ipbackend = "https://michel.zapto.org:9100/";
 
     const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {
             fechainstalacion: fechainstalacion,
             geolocalizacion: geolocalizacion,
-            observacion: observacion,
+            observacion_instalacion: observacion,
             user_create: user_create,
             fecha_create: fecha_create,
-            estado: estado
+            estado: estado,
+            contratoinstalacion: num_contrato,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
-            limpiarcampos();
-            alert("Instalacion Registrada con exito");
+            ventanaModal();
+            ventanaModalConfirmar();
+            console.log("prueba")
+            console.log(idinstalacion)
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -81,37 +85,30 @@ let user = "";
       fetch(ipbackend+'list')
           .then(response => response.json())
           .then(data => setListaClientes(data))
-          console.log(listaClientes);
+          setUser_create(user)
   }
 
-  //   function getInstalaciones(){
-  //     fetch(ipbackend+'instalaciones')
-  //         .then(response => response.json())
-  //         .then(data => setInstalaciones(data))
-  // }
+    function getInstalaciones(){
+      fetch(ipbackend+'instalaciones')
+          .then(response => response.json())
+          .then(data => setInstalaciones(data))
+          console.log(instalaciones)
+  }
 
-      const editarInstalacion = (val)=>{
-        setEditar(true);
+      const editarContrato = (val)=>{
         setIdinstalacion(val.idinstalacion)
-        setFechainstalacion(val.fechainstalacion);
-        setNum_contrato(val.num_contrato);
-        setGeolocalizacion(val.geolocalizacion);
-        setObservacion(val.observacion);
       }
-      const update = () => {
-        Axios.put(ipbackend+"instalacion/"+idinstalacion, {
-            fechainstalacion: fechainstalacion,
-            num_contrato: num_contrato,
-            geolocalizacion: geolocalizacion,
-            observacion: observacion,
-            user_update: user,
+      const confirmarinstalacion = () => {
+        Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
+            estadodc_instalacion: "instalado",
+            instalacion_idinstalacion: idinstalacion
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
           limpiarcampos();
-          alert("Instalacion actualizada con exito");
+          alert("Instalacion registrada con exito");
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -164,7 +161,7 @@ let user = "";
   // }
     
         useEffect(() =>{
-          // getInstalaciones();
+          getInstalaciones();
           getClientes();
           // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
@@ -257,15 +254,13 @@ let user = "";
                   }}
                   className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
-              </div>
-              
-              
+              </div> 
             </div>
           </ModalBody>
           <ModalFooter>
             {editar ? (
               <div>
-                <button className="btn btn-warning m-2" onClick={update}>
+                <button className="btn btn-warning m-2" onClick="">
                   Actualizar
                 </button>
               </div>
@@ -277,6 +272,52 @@ let user = "";
             <button className="btn btn-danger" onClick={cerrarModal}>
               Cerrar
             </button>
+          </ModalFooter>
+        </Modal>
+
+        <Modal isOpen={modalConfirmar} toggle={ventanaModalConfirmar}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Confirmar Instalación:</h4>
+              <div className="mb-3">
+                <label for="num_contrato" className="form-label">
+                  Número de Contrato:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {num_contrato}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="num_contrato" className="form-label">
+                  DNI Cliente:
+                </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {dnicliente}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="geolocalización" className="form-label">
+                  Observación:
+                </label>
+                <input type="text" value={observacion}
+                  onChange={(event) => {
+                    setObservacion(event.target.value);
+                  }}
+                  className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
+                ></input>
+              </div> 
+            </div>
+          </ModalBody>
+          <ModalFooter>    
+              <div>
+                <button className="btn btn-warning m-2" onClick={confirmarinstalacion}>
+                  Confirmar
+                </button>
+                <button className="btn btn-danger" onClick={ventanaModalConfirmar}>
+                  Cancelar
+                </button>
+              </div>
+            
           </ModalFooter>
         </Modal>
 

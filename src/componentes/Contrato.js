@@ -136,6 +136,7 @@ function Contrato() {
     fetch(ipbackend+"detallecontratos")
     .then(response => response.json())
     .then(data => setContratos(data))
+    console.log(contratos[1])
     }
 
   const editarContrato = (val)=>{
@@ -233,6 +234,16 @@ function validardnicliente() {
     setTelefonocli("");
     setTelefonocli2("");
   }
+  const limpiarcamposclienteencontrado = () => {
+    setNombrecli("");
+    setApellidocli("");
+    setDireccioncli("");
+    setDistritocli("");
+    setProvinciacli("");
+    setNacionalidadcli("Peruana");
+    setTelefonocli("");
+    setTelefonocli2("");
+  }
   const cerrarModalContrato = ()=>{
     limpiarcamposcontrato();
     ventanaModal();
@@ -240,6 +251,10 @@ function validardnicliente() {
   const cerrarModalCliente = ()=>{
     limpiarcamposcliente();
     ventanaModal2();
+  }
+  const cerrarModalClienteEncontrado = ()=>{
+    limpiarcamposclienteencontrado();
+    ventanaModal3();
   }
 
   //Funcion de Busqueda
@@ -621,7 +636,7 @@ if (busqueda === "") {
             </div>
           </ModalBody>
           <ModalFooter>
-            <button className="btn btn-danger" onClick={ventanaModal3}>Cerrar</button>
+            <button className="btn btn-danger" onClick={cerrarModalClienteEncontrado}>Cerrar</button>
           </ModalFooter>
         </Modal>
     </div>
