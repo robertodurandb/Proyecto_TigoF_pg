@@ -34,6 +34,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [plan, setPlan] = useState();
     //Datos Instalacion
     const [idinstalacion, setIdinstalacion] = useState();
+    const [idinstalacion2, setIdinstalacion2] = useState();
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
@@ -41,7 +42,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [fecha_create, setFecha_create] = useState(fechaactual);
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
-    const [instalaciones, setInstalaciones] = useState([]);
+    const [instalaciones, setInstalaciones] = useState();
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
@@ -66,11 +67,16 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
           headers: {
             'Authorization': `Bearer ${token}`
           }
-        }).then(() => {
+        })
+        .then((response) => {
             ventanaModal();
-            ventanaModalConfirmar();
-            console.log("prueba")
-            console.log(idinstalacion)
+            ventanaModalConfirmar(); 
+            let id = "";
+            id = response.data
+            let id2 = id.split(',')
+            setIdinstalacion2(id2[1])
+                 
+            
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -89,19 +95,15 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
   }
 
     function getInstalaciones(){
-      fetch(ipbackend+'instalaciones')
+      fetch(ipbackend+'instalacion/'+num_contrato)
           .then(response => response.json())
           .then(data => setInstalaciones(data))
-          console.log(instalaciones)
   }
 
-      const editarContrato = (val)=>{
-        setIdinstalacion(val.idinstalacion)
-      }
       const confirmarinstalacion = () => {
         Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
             estadodc_instalacion: "instalado",
-            instalacion_idinstalacion: idinstalacion
+            instalacion_idinstalacion: idinstalacion2
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -109,6 +111,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         }).then(() => {
           limpiarcampos();
           alert("Instalacion registrada con exito");
+          console.log("el id capturado es: "+idinstalacion2)
+          ventanaModalConfirmar();
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -120,10 +124,14 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
       };
 
       const capturarID = (cliente) =>{
+        let idinst = instalaciones[0].idinstalacion;
         setNum_contrato(cliente.num_contrato);
         setDnicliente(cliente.dnicliente);
         setPlan(cliente.nombreplan);
-        ventanaModal();   
+        ventanaModal();  
+        setIdinstalacion(instalaciones[0].idinstalacion)
+        console.log("id inst es "+idinst);
+ 
     }
 
       const limpiarcampos = ()=>{
