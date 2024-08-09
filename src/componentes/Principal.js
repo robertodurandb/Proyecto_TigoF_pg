@@ -71,7 +71,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
     
-    let ipbackend = "https://michel.zapto.org:9100/";
+    //let ipbackend = "https://michel.zapto.org:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
     let token = sessionStorage.getItem("token");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
@@ -226,7 +227,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                             <th>Nombres</th>
                             <th>Distrito</th>
                             <th>Direccion</th>
-                            <th>Instalacion</th>
+                            <th>Tecnico</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -238,7 +239,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                                 <td>{cliente.nombrecli}</td>
                                 <td>{cliente.distritocli}</td>
                                 <td>{cliente.direccioncli}</td>
-                                <td>{cliente.instalacion}</td>
+                                <td>{cliente.user_create}</td>
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
                                 }}>Detalles</button></td>
@@ -316,7 +317,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Ubicación Casa:</div>
-                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>abrir Maps</a></Link></div>
+                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Instalación ejecutada:</div>

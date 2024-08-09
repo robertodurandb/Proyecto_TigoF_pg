@@ -39,7 +39,8 @@ function Consultapagos() {
     const [mediopago, setMediopago] = useState("");
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "https://michel.zapto.org:9100/";
+    //let ipbackend = "https://michel.zapto.org:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
 

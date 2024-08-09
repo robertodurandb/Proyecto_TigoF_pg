@@ -62,7 +62,8 @@ function Contrato() {
     const ventanaModal3 = () => setModalMostrar3(!modalMostrar3);
 
     let token = sessionStorage.getItem("token");
-    let ipbackend = "https://michel.zapto.org:9100/";
+    //let ipbackend = "https://michel.zapto.org:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
     const agregarContrato=()=>{
       setEditar(false);

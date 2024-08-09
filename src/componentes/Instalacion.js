@@ -27,7 +27,9 @@ if (mes < 10) {
 fechaactual = anioactual + texmes + mes + texdia + dia;
 
     const [listaClientes, setListaClientes] = useState([]);
+    const [instalaciones, setInstalaciones] = useState([]);
     const [busqueda, setBusqueda] = useState("");
+    const [controlbusqueda, setControlbusqueda] = useState(false)
 
     const [num_contrato, setNum_contrato] = useState();
     const [dnicliente, setDnicliente] = useState();
@@ -42,7 +44,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [fecha_create, setFecha_create] = useState(fechaactual);
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
-    const [instalaciones, setInstalaciones] = useState();
+
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
@@ -52,7 +54,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
-    let ipbackend = "https://michel.zapto.org:9100/";
+    //let ipbackend = "https://michel.zapto.org:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
 
     const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {
@@ -75,8 +78,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
             id = response.data
             let id2 = id.split(',')
             setIdinstalacion2(id2[1])
-                 
-            
+                  
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -92,13 +94,17 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
           .then(response => response.json())
           .then(data => setListaClientes(data))
           setUser_create(user)
+          //console.log("los clientes son:")
+         // console.log(listaClientes[1])
   }
 
-    function getInstalaciones(){
-      fetch(ipbackend+'instalacion/'+num_contrato)
-          .then(response => response.json())
-          .then(data => setInstalaciones(data))
-  }
+  function getInstalaciones(){
+    fetch(ipbackend+'todolist')
+        .then(response => response.json())
+        .then(data => setInstalaciones(data))
+       // console.log("los clientes con instalacion son")
+        //console.log(instalaciones[1])
+}
 
       const confirmarinstalacion = () => {
         Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
@@ -113,6 +119,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
           alert("Instalacion registrada con exito");
           console.log("el id capturado es: "+idinstalacion2)
           ventanaModalConfirmar();
+          getClientes();
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -149,52 +156,63 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
         ventanaModal();
       }
 
-  //     //Funcion de Busqueda
-  //   const searcher = (e) =>{
-  //     setBusqueda(e.target.value);
-  //     }
-  // //Funcion de Filtrado
-  //  const newfilter = listaClientes.filter(dato => {
-  //     return (
-  // dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
-  // )
-  // });
 
-  // let results = [];
-  
-  // if (busqueda === "") {
-  //     results = listaClientes;
-  // } else {
-  //     results = newfilter;
-  // }
+       //****************Funcion de Busqueda
+       const searcher = (e) =>{
+        setBusqueda(e.target.value);
+        getClientes();
+        getInstalaciones();
+        if(e.target.value=="instalados"){
+          console.log("instalados")
+          setControlbusqueda(true)
+        }
+        if(e.target.value=="pendientes"){
+          console.log("pendientes")
+          setControlbusqueda(false)
+        }
+        }
+        let results = listaClientes
+        if (busqueda === "instalados") {
+          results = instalaciones
+            
+          } else{
+            results = listaClientes
+          
+          }
+        
+      
     
         useEffect(() =>{
-          getInstalaciones();
           getClientes();
+          getInstalaciones();
           // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
 
       return (
         <div className="App">
           <h1 className="mb3">Gestión de Instalaciones</h1>
-          {/* <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/> */}
+          <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
+            <option value="pendientes">Pendientes</option>
+            <option value="instalados">Instalados</option>
+          </select>
+
             <table className="table table-striped table-hover mt-5 shadow-lg">
               <thead>
-                <tr className="bg-curso text-white"> 
+                <tr className="bg-curso text-white">
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
                             <th>Distrito</th>
                             <th>Direccion</th>
                             <th>Telefono</th>
-                            <th>Plan</th>
-                            <th>Dia pago</th>
-                            <th>Instalar</th>
+                            <th>Fecha programada</th>
+                            <th>Técnico</th>
+                            <th>Fecha Instalacion</th>
                             <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
-              {listaClientes.map((cliente, key)=>(
+              {results.map((cliente, key)=>(
                             <tr key={cliente.num_contrato} value={num_contrato}>
                                 <td>{cliente.dnicliente}</td>
                                 <td>{cliente.apellidocli}</td>
@@ -202,12 +220,19 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                                 <td>{cliente.distritocli}</td>
                                 <td>{cliente.direccioncli}</td>
                                 <td>{cliente.telefonocli}</td>
-                                <td>{cliente.nombreplan}</td>
-                                <td>{cliente.diapago}</td>
                                 <td>{cliente.fechaprog_instalacion}</td>
-                                <td><button type="button" className="btn btn-outline-success" 
-                                onClick={()=>{capturarID(cliente);
-                                }}>Registrar</button></td>
+                                <td>{cliente.user_create}</td>
+                                <td>{cliente.fechainstalacion}</td>
+                                {controlbusqueda?(
+                                  <td><button type="button" className="btn btn-outline-success" 
+                                  >Editar
+                                  </button></td>
+                                ):(
+                                  <td><button type="button" className="btn btn-outline-success" 
+                                  onClick={()=>{capturarID(cliente)}}>Registrar
+                                  </button></td>
+                                )}
+                                
                             </tr>
                     ))}  
               </tbody>
