@@ -55,8 +55,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
     //let ipbackend = "https://michel.zapto.org:9100/";
-    //let ipbackend = "http://192.168.18.8:9100/";
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
+    //let ipbackend = "http://10.0.28.60:9100/";
 
     const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {

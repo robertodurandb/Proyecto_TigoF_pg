@@ -5,9 +5,9 @@ class UploadService {
     getImages() {
         return axios.get(`${API.URL}/imagenes`)
     }
-    sendImages(name, file) {
+    sendImages(file) {
         const form = new FormData()
-        form.append('name', name)
+        //form.append('name', name)
         form.append('file', file, 'form-data')
 
         return axios.post(`${API.URL}/imagen`, form)

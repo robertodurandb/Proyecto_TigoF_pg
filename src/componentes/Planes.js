@@ -22,8 +22,8 @@ function Planes() {
   }
     let token = sessionStorage.getItem("token");
     //let ipbackend = "https://michel.zapto.org:9100/";
-    //let ipbackend = "http://192.168.18.8:9100/";
-    let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = "http://192.168.18.8:9100/";
+    //let ipbackend = "http://10.0.28.60:9100/";
 
   const add = () => {
     Axios.post(ipbackend+"plan", {

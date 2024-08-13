@@ -5,19 +5,19 @@ import UploadService from '../services/uploadservice';
 
 const Upload = ({setImages, images}) => {
 
-    const [ name, setName ] = useState("")
+    //const [ name, setName ] = useState("")
     const [file, setFile] = useState()
     const [pathImage, setPathImage] = useState("http://192.168.18.8:9100/upload.jpg")
 
     const sendImage = (e) => {
         e.preventDefault()
-        UploadService.sendImages(name, file).then((result) => {
+        UploadService.sendImages(file).then((result) => {
             console.log("el resultado es: "+result)
         })
     }
 
     const onFileChange = (e) => {
-        if(e.target.files && e.target.files.lenth > 0) {
+        if(e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0]
             if(file.type.includes("image")){
                 const reader = new FileReader()
@@ -43,8 +43,21 @@ const Upload = ({setImages, images}) => {
                 placeholder='file'
                 onChange={onFileChange}
                 />
-
+                <img className='img-fluid img-thumbnail' src={pathImage} alt='Image'/>
             </div>
+
+            {/* <input
+                type='text'
+                placeholder='enter a name'
+                className='name-picture mt-2'
+                onChange={(e) => setName(e.target.value)}
+            /> */}
+            <br/>
+
+            <button type='submit' className='btn btn-outline-primary btn-lg btn-block'
+            onClick={sendImage}>
+                Send Image
+            </button>
         </form>
     )
 }
