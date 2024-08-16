@@ -83,7 +83,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     }
 
     function getClientes(){
-        fetch(ipbackend+'todolist')
+        fetch(ipbackend+'todoinstacli')
             .then(response => response.json())
             .then(data => setListaClientes(data))
             console.log(listaClientes[0])
@@ -389,7 +389,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                                             <td>{pagos.montopago}</td>
                                             <td>{pagos.mediopago}</td>
                                             <td>{pagos.fechapago}</td>
-                                            <td>{pagos.observacionpago}</td>
+                                            <td>{pagos.observacion}</td>
                                         </tr>
                                 ))}
                                 </tbody>

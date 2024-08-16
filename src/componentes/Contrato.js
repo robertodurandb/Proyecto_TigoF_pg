@@ -33,8 +33,6 @@ function Contrato() {
     const [fechaprog_instalacion, setFechaprog_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
     const [contratos, setContratos] = useState([]);
-    // const [instalacion, setInstalacion] = useState([]);
-    // const [estado_instalacion, setEstadoinstalacion] = useState([]);
     const [editar, setEditar] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
@@ -133,7 +131,7 @@ function Contrato() {
   };
 
   function getContratos(){
-    fetch(ipbackend+"detallecontratos")
+    fetch(ipbackend+"todocontratosactiv")
     .then(response => response.json())
     .then(data => setContratos(data))
     console.log(contratos[1])
@@ -152,7 +150,7 @@ function Contrato() {
     ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
+    Axios.put(ipbackend+"todocontratosactiv/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
         fecha_contrato: fecha_contrato,
@@ -301,7 +299,7 @@ if (busqueda === "") {
               <th scope="col">Plan</th>
               <th scope="col">Fecha Contrato</th>
               <th scope="col">Observacion</th>
-              <th scope="col">Fecha instalacion</th>
+              <th scope="col">Fec. Instalacion Programada</th>
               <th scope="col">Dia de pago</th>
               <th scope="col">Acciones</th>
             </tr>
@@ -358,25 +356,17 @@ if (busqueda === "") {
                 <label for="dnicliente" className="form-label">
                   DNI:
                 </label>
-                <input
-                  type="text"
-                  value={cliente_dnicliente}
-                  onChange={(event) => {
-                    setCliente_dnicliente(event.target.value);
-                  }}
+                  <input type="text" value={cliente_dnicliente} onChange={(event) => {
+                    setCliente_dnicliente(event.target.value);}}
                   className="form-control"
                   id="dnicliente"
                   placeholder="DNI del cliente"
                   aria-describedby="basic-addon1"
                 ></input>
                 <div className="fw-bold">{errordni}</div>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={validardnicliente}
-                >
+                <button type="button" className="btn btn-secondary" onClick={validardnicliente}>
                   validar DNI
-                </button>{" "}
+                </button>
                 &nbsp;
                 <button
                   type="button"
@@ -386,6 +376,8 @@ if (busqueda === "") {
                   Nuevo Cliente
                 </button>
                 <br />
+
+                
                 
               </div>
               <div className="mb-3">

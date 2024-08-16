@@ -5,27 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
 
-//FUNCION PARA OBTENER FECHA ACTUAL
-let fechaactual = "";
-let fecha = new Date();
-let dia = fecha.getDate("dd");
-let mes = (fecha.getMonth("mm"))+1;
-let anioactual = fecha.getFullYear();
-let texdia = "";
-let texmes = "";
-if (dia < 10) {
-  texdia = "-0"
-}else{
-  texdia = "-"
-}
-if (mes < 10) {
-  texmes = "-0"
-}else{
-  texmes = "-"
-}
-fechaactual = anioactual + texmes + mes + texdia + dia;
-
-
 function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
@@ -33,7 +12,7 @@ function Consultapagos() {
     const [idpago, setIdpago] = useState("");
     const [num_contrato, setNum_contrato] = useState("");
     const [montopago, setMontopago] = useState("");
-    const [fechapago, setFechapago] = useState(fechaactual);
+    const [fechapago, setFechapago] = useState("");
     const [mespago, setMespago] = useState("");
     const [anio, setAnio] = useState("");
     const [observacion, setObservacion] = useState("");
@@ -124,7 +103,7 @@ function Consultapagos() {
       setNum_contrato("");
       setMontopago("");
       setMespago("");
-      setFechapago(fechaactual);
+      setFechapago("");
       setAnio("");
       setMediopago("")
       setObservacion("");
@@ -196,10 +175,34 @@ function Consultapagos() {
                 <h4 className=''>Modificar Pago:</h4>
                 <div className='mb-3'>
                         <label for='num_contrato' className="form-label">Numero Contrato:</label>
-                        <input type="number" value={num_contrato}
-                                onChange={(event) => { setNum_contrato(event.target.value); }}
-                                className="form-control" id="num_contrato" placeholder="Número de Contrato" aria-describedby="basic-addon1"
-                        ></input>
+                        <span className="input-group-text" id="basic-addon1">
+                        {num_contrato}
+                        </span>
+                </div>
+                
+                <div className="mb-3">
+                        <label for='fechapago' className="form-label">
+                          Fecha Pago:
+                        </label>
+                        <span className="input-group-text" id="basic-addon1">
+                        {fechapago}
+                        </span>
+                </div>
+                <div className="mb-3">
+                        <label for='mespago' className="form-label">
+                          Periodo/mes Facturado:
+                        </label>
+                        <span className="input-group-text" id="basic-addon1">
+                        {mespago}
+                        </span>
+                </div>
+                <div className="mb-3">
+                        <label for='aniofacturado' className="form-label">
+                          Año Facturado:
+                        </label>
+                        <span className="input-group-text" id="basic-addon1">
+                        {anio}
+                        </span>
                 </div>
                 <div className="mb-3">
                         <label for='montopago' className="form-label">
@@ -208,33 +211,6 @@ function Consultapagos() {
                         <input type="number" value={montopago}
                           onChange={(event) => { setMontopago(event.target.value); }}
                           className="form-control" id="montopago" placeholder="Monto Pago" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='fechapago' className="form-label">
-                          Fecha Pago:
-                        </label>
-                        <input type="date" value={fechapago}
-                          onChange={(event) => { setFechapago(event.target.value); }}
-                          className="form-control" id="fechapago" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='mespago' className="form-label">
-                          Periodo/mes Facturado:
-                        </label>
-                        <input type="text" value={mespago}
-                          onChange={(event) => { setMespago(event.target.value); }}
-                          className="form-control" id="mespago" placeholder="Mes Facturado" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='aniofacturado' className="form-label">
-                          Año Facturado:
-                        </label>
-                        <input type="number" value={anio}
-                          onChange={(event) => { setAnio(event.target.value); }}
-                          className="form-control" id="aniofacturado" placeholder="Año Facturado" aria-describedby="basic-addon1"
                         ></input>
                 </div>
                 <div className="mb-3">
@@ -250,7 +226,7 @@ function Consultapagos() {
                           <label for='observacion' className="form-label">
                             Observacion:
                           </label>
-                          <input type="number" value={observacion}
+                          <input type="text" value={observacion}
                           onChange={(event) => { setObservacion(event.target.value); }}
                           className="form-control" id="observacion" placeholder="Observacion" aria-describedby="basic-addon1"
                         ></input>

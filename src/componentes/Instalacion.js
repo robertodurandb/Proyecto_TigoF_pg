@@ -88,7 +88,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
       };
 
     function getClientes(){
-      fetch(ipbackend+'list')
+      fetch(ipbackend+'pendinstacli')
           .then(response => response.json())
           .then(data => setListaClientes(data))
           setUser_create(user)
@@ -97,7 +97,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
   }
 
   function getInstalaciones(){
-    fetch(ipbackend+'todolist')
+    fetch(ipbackend+'todoinstacli')
         .then(response => response.json())
         .then(data => setInstalaciones(data))
        // console.log("los clientes con instalacion son")

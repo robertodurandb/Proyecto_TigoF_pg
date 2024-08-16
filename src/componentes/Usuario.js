@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import API from '../utils/const'
 
 function Usuarios() {
     const [dniuser, setDniuser] = useState("");
@@ -13,9 +14,7 @@ function Usuarios() {
     const [editar, setEditar] = useState(false);
 
     let token = sessionStorage.getItem("token");
-    //let ipbackend = "https://michel.zapto.org:9100/";
-    let ipbackend = "http://192.168.18.8:9100/";
-    //let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = `${API.URL}`;
 
   const add = () => {
     Axios.post(ipbackend+"usuario",{
