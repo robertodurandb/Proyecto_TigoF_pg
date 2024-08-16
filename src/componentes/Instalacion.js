@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-
+import API from '../utils/const'
 
 function Instalacion() {
 
@@ -45,7 +45,6 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
 
-
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
 
@@ -54,9 +53,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
-    //let ipbackend = "https://michel.zapto.org:9100/";
-    let ipbackend = "http://192.168.18.8:9100/";
-    //let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = `${API.URL}`;
 
     const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {

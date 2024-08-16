@@ -3,6 +3,7 @@ import Axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import API from '../utils/const'
 
 function Principal() {
 
@@ -53,8 +54,6 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [imagencasa, setImagencasa] = useState();
     const [observacion_instalacion, setObservacion_instalacion] = useState();
 
-
-
     const [montopago, setMontopago] = useState(0);
     const [fechapago, setFechapago] = useState(fechaactual);
     const [mespago, setMespago] = useState(mes);
@@ -66,15 +65,11 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [modalPagos, setModalPagos] = useState(false);
     const [modalPagar, setModalPagar] = useState(false);
 
-
     //Datos para el modal de pagos
     const [verPagos, setVerPagos] = useState(false);
     const [results2, setResults2] = useState([]);
-    
-    //let ipbackend = "https://michel.zapto.org:9100/";
-    let ipbackend = "http://192.168.18.8:9100/";
-    //let ipbackend = "http://10.0.28.60:9100/";
 
+    let ipbackend = `${API.URL}`
     let token = sessionStorage.getItem("token");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);

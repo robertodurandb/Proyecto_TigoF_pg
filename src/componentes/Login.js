@@ -2,6 +2,7 @@ import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../estilos/style.css'
 import Tigo from '../imagenes/tigo1.png'
+import API from '../utils/const'
 
 function Login(props){
 
@@ -10,9 +11,7 @@ const [password, setPassword] = React.useState("")
 const [hashError, setHashError] = React.useState(false)
 
 const {loginCallback} = props
-//let ipbackend = "https://michel.zapto.org:9100/";
-let ipbackend = "http://192.168.18.8:9100/";
-//let ipbackend = "http://10.0.28.60:9100/";
+let ipbackend = `${API.URL}`;
 
 function doLogin() {
     fetch(ipbackend+'login', {

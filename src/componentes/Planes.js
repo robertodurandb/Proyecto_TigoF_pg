@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import API from '../utils/const'
 
 function Planes() {
     const [idplanes, setIdplanes] = useState();
@@ -21,9 +22,7 @@ function Planes() {
       ventanaModal();
   }
     let token = sessionStorage.getItem("token");
-    //let ipbackend = "https://michel.zapto.org:9100/";
-    let ipbackend = "http://192.168.18.8:9100/";
-    //let ipbackend = "http://10.0.28.60:9100/";
+    let ipbackend = `${API.URL}`;
 
   const add = () => {
     Axios.post(ipbackend+"plan", {

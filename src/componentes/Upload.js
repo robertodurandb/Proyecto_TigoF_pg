@@ -1,65 +1,42 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import UploadService from '../services/uploadservice';
+import API from '../utils/const'
 
-const Upload = ({setImages, images}) => {
+function Upload (){
 
-    //const [ name, setName ] = useState("")
-    const [file, setFile] = useState()
-    const [pathImage, setPathImage] = useState("http://192.168.18.8:9100/upload.jpg")
+    const [selectedImage, setSelectedImage] = useState(null);
 
-    const sendImage = (e) => {
-        e.preventDefault()
-        UploadService.sendImages(file).then((result) => {
-            console.log("el resultado es: "+result)
-        })
-    }
+    let ipbackend = `${API.URL}`;
 
-    const onFileChange = (e) => {
-        if(e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0]
-            if(file.type.includes("image")){
-                const reader = new FileReader()
-                reader.readAsDataURL(file)
+    const handleImageChange = (event) => {
+        setSelectedImage(event.target.files[0]);
+    };
 
-                reader.onload = function load() {
-                    setPathImage(reader.result)
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('image', selectedImage);
+
+        try {
+            const response = await axios.post(ipbackend+'imagen', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 }
-
-                setFile(file)
-            }else {
-                console.log("there was an error")
-            }
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
         }
-    }
+    };
 
     return (
-     
-        <form>
-            <div className='input-file'>
-                <input
-                type='file'
-                placeholder='file'
-                onChange={onFileChange}
-                />
-                <img className='img-fluid img-thumbnail' src={pathImage} alt='Image'/>
-            </div>
-
-            {/* <input
-                type='text'
-                placeholder='enter a name'
-                className='name-picture mt-2'
-                onChange={(e) => setName(e.target.value)}
-            /> */}
-            <br/>
-
-            <button type='submit' className='btn btn-outline-primary btn-lg btn-block'
-            onClick={sendImage}>
-                Send Image
-            </button>
+        <form onSubmit={handleSubmit}> 
+            <input type="file" onChange={handleImageChange}/>
+            <button type="submit">Subir imagen</button>
         </form>
-    )
+    );    
 }
 
 export default Upload
