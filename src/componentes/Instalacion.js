@@ -20,7 +20,6 @@ let fechaactual = `${API.DATENOW}`
     const [plan, setPlan] = useState();
     //Datos Instalacion
     const [idinstalacion, setIdinstalacion] = useState();
-    //const [idinstalacion2, setIdinstalacion2] = useState();
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
@@ -77,8 +76,7 @@ let fechaactual = `${API.DATENOW}`
             observacion_instalacion: observacion,
             user_create: user_create,
             fecha_create: fecha_create,
-            estado: estado,
-            contratoinstalacion: num_contrato,
+            estado: estado
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -147,16 +145,12 @@ let fechaactual = `${API.DATENOW}`
       };
 
       const capturarID = (cliente) =>{
-        //let idinst = instalaciones[0].idinstalacion;
         setNum_contrato(cliente.num_contrato);
         setDnicliente(cliente.dnicliente);
         setPlan(cliente.nombreplan);
         setApellidocliente(cliente.apellidocli);
         setNombrecliente(cliente.nombrecli);
-        ventanaModal();  
-       // setIdinstalacion(instalaciones[0].idinstalacion)
-        //console.log("id inst es "+idinst);
- 
+        ventanaModal();   
     }
 
       const limpiarcampos = ()=>{
@@ -165,6 +159,7 @@ let fechaactual = `${API.DATENOW}`
         setNum_contrato("");
         setGeolocalizacion("");
         setObservacion("");
+        setIdImagenServer();
         // setTecnico("");
         // setUsuarioactualiza("");
         setEditar(false);
