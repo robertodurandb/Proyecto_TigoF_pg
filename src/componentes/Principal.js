@@ -3,29 +3,14 @@ import Axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import API from '../utils/const'
+import API from '../utils/const';
 
 function Principal() {
 
-//FUNCION PARA OBTENER FECHA ACTUAL
-let fechaactual = "";
-let fecha = new Date();
-let dia = fecha.getDate("dd");
-let mes = (fecha.getMonth("mm"))+1;
-let anioactual = fecha.getFullYear();
-let texdia = "";
-let texmes = "";
-if (dia < 10) {
-  texdia = "-0"
-}else{
-  texdia = "-"
-}
-if (mes < 10) {
-  texmes = "-0"
-}else{
-  texmes = "-"
-}
-fechaactual = anioactual + texmes + mes + texdia + dia;
+//FECHA ACTUAL
+let fechaactual = `${API.DATENOW}`
+let anioactual = `${API.ANIO}`
+let mes = `${API.MES}`
 
     const [listaClientes, setListaClientes] = useState([]);
     const [busqueda, setBusqueda] = useState("");

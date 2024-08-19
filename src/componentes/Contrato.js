@@ -2,27 +2,10 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import API from '../utils/const'
+import API from '../utils/const';
 
-//FUNCION PARA OBTENER FECHA ACTUAL
-let fechaactual = "";
-let fecha = new Date();
-let dia = fecha.getDate("dd");
-let mes = (fecha.getMonth("mm"))+1;
-let anioactual = fecha.getFullYear();
-let texdia = "";
-let texmes = "";
-if (dia < 10) {
-  texdia = "-0"
-}else{
-  texdia = "-"
-}
-if (mes < 10) {
-  texmes = "-0"
-}else{
-  texmes = "-"
-}
-fechaactual = anioactual + texmes + mes + texdia + dia;
+//OBTENER FECHA ACTUAL
+let fechaactual = `${API.DATENOW}`
 
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
@@ -152,8 +135,8 @@ function Contrato() {
   const update = () => {
     Axios.put(ipbackend+"todocontratosactiv/"+num_contrato, {
         planes_idplanes: planes_idplanes,
-        cliente_dnicliente: cliente_dnicliente,
-        fecha_contrato: fecha_contrato,
+        // cliente_dnicliente: cliente_dnicliente,
+        // fecha_contrato: fecha_contrato,
         observacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
@@ -356,6 +339,11 @@ if (busqueda === "") {
                 <label for="dnicliente" className="form-label">
                   DNI:
                 </label>
+                { editar ? (
+                  <span className="input-group-text" id="basic-addon1">
+                  {cliente_dnicliente}
+                </span>
+                ) : (
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);}}
                   className="form-control"
@@ -363,8 +351,14 @@ if (busqueda === "") {
                   placeholder="DNI del cliente"
                   aria-describedby="basic-addon1"
                 ></input>
+                )}
+                  
                 <div className="fw-bold">{errordni}</div>
-                <button type="button" className="btn btn-secondary" onClick={validardnicliente}>
+                { editar ? (
+                  null
+                ) : (
+                  <>
+                  <button type="button" className="btn btn-secondary" onClick={validardnicliente}>
                   validar DNI
                 </button>
                 &nbsp;
@@ -375,10 +369,8 @@ if (busqueda === "") {
                 >
                   Nuevo Cliente
                 </button>
-                <br />
-
-                
-                
+                  </>
+                )}
               </div>
               <div className="mb-3">
                 <label for="planes" className="form-label">
@@ -408,7 +400,12 @@ if (busqueda === "") {
                 <label for="fecha_contrato" className="form-label">
                   Fecha Contrato:
                 </label>
-                <input
+                {editar ?(
+                  <span className="input-group-text" id="basic-addon1">
+                    {fecha_contrato}
+                  </span>
+                ):(
+                  <input
                   type="date"
                   value={fecha_contrato}
                   onChange={(event) => {
@@ -419,6 +416,18 @@ if (busqueda === "") {
                   placeholder="Fecha Contrato"
                   aria-describedby="basic-addon1"
                 ></input>
+                )}
+                {/* <input
+                  type="date"
+                  value={fecha_contrato}
+                  onChange={(event) => {
+                    setFecha_contrato(event.target.value);
+                  }}
+                  className="form-control"
+                  id="fecha_contrato"
+                  placeholder="Fecha Contrato"
+                  aria-describedby="basic-addon1"
+                ></input> */}
               </div>
               <div className="mb-3">
                 <label for="observacion" className="form-label">
@@ -441,6 +450,9 @@ if (busqueda === "") {
                 <label for="fecha_instalacion" className="form-label">
                   Fecha Instalacion programada:
                 </label>
+                <span className="input-group-text" id="basic-addon1">
+                    {fechaprog_instalacion}
+                  </span>
                 <input
                   type="date"
                   value={fechaprog_instalacion}

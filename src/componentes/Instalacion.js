@@ -2,29 +2,13 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import API from '../utils/const'
+import API from '../utils/const';
+import axios from "axios";
 
 function Instalacion() {
 
-  //FUNCION PARA OBTENER FECHA ACTUAL
-let fechaactual = "";
-let fecha = new Date();
-let dia = fecha.getDate("dd");
-let mes = (fecha.getMonth("mm"))+1;
-let anioactual = fecha.getFullYear();
-let texdia = "";
-let texmes = "";
-if (dia < 10) {
-  texdia = "-0"
-}else{
-  texdia = "-"
-}
-if (mes < 10) {
-  texmes = "-0"
-}else{
-  texmes = "-"
-}
-fechaactual = anioactual + texmes + mes + texdia + dia;
+  //FECHA ACTUAL
+let fechaactual = `${API.DATENOW}`
 
     const [listaClientes, setListaClientes] = useState([]);
     const [instalaciones, setInstalaciones] = useState([]);
@@ -36,14 +20,19 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     const [plan, setPlan] = useState();
     //Datos Instalacion
     const [idinstalacion, setIdinstalacion] = useState();
-    const [idinstalacion2, setIdinstalacion2] = useState();
+    //const [idinstalacion2, setIdinstalacion2] = useState();
     const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [observacion, setObservacion] = useState();
+    const [apellidocliente, setApellidocliente] = useState();
+    const [nombrecliente, setNombrecliente] = useState();
     const [user_create, setUser_create] = useState();
     const [fecha_create, setFecha_create] = useState(fechaactual);
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
+
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [idImagenServer, setIdImagenServer] = useState();
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
@@ -54,6 +43,32 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
     let ipbackend = `${API.URL}`;
+
+    //***************** CODIGO PARA SUBIR IMAGEN **********/
+    const handleImageChange = (event) => {
+      setSelectedImage(event.target.files[0]);
+  };
+
+  const handleSubmit = async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+
+      try {
+          const response = await axios.post(ipbackend+'imagen', formData, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          });
+          let idimagen = response.data
+            let newidimagen = idimagen.split(',')
+            setIdImagenServer(newidimagen[1])
+            alert("Se cargó con éxito ")
+      } catch (error) {
+          console.error(error);
+      }
+  };
 
     const addinstalacion = () => {
         Axios.post(ipbackend+"instalacion", {
@@ -75,7 +90,8 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
             let id = "";
             id = response.data
             let id2 = id.split(',')
-            setIdinstalacion2(id2[1])
+            setIdinstalacion(id2[1])
+            console.log(idinstalacion)
                   
         }).catch((error) => {
           if (401 === error.response.status){
@@ -92,30 +108,32 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
           .then(response => response.json())
           .then(data => setListaClientes(data))
           setUser_create(user)
-          //console.log("los clientes son:")
-         // console.log(listaClientes[1])
   }
 
   function getInstalaciones(){
     fetch(ipbackend+'todoinstacli')
         .then(response => response.json())
         .then(data => setInstalaciones(data))
-       // console.log("los clientes con instalacion son")
-        //console.log(instalaciones[1])
 }
 
       const confirmarinstalacion = () => {
-        Axios.put(ipbackend+"detallecontrato/"+num_contrato, {
+        Axios.put(ipbackend+"pendinstacli/"+num_contrato, {
             estadodc_instalacion: "instalado",
-            instalacion_idinstalacion: idinstalacion2
+            instalacion_idinstalacion: idinstalacion
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
+          axios.put(ipbackend+"instalacion/"+idinstalacion,{
+            imagen_idimagen: idImagenServer
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          }).then(() =>{
           limpiarcampos();
-          alert("Instalacion registrada con exito");
-          console.log("el id capturado es: "+idinstalacion2)
           ventanaModalConfirmar();
           getClientes();
         }).catch((error) => {
@@ -129,13 +147,15 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
       };
 
       const capturarID = (cliente) =>{
-        let idinst = instalaciones[0].idinstalacion;
+        //let idinst = instalaciones[0].idinstalacion;
         setNum_contrato(cliente.num_contrato);
         setDnicliente(cliente.dnicliente);
         setPlan(cliente.nombreplan);
+        setApellidocliente(cliente.apellidocli);
+        setNombrecliente(cliente.nombrecli);
         ventanaModal();  
-        setIdinstalacion(instalaciones[0].idinstalacion)
-        console.log("id inst es "+idinst);
+       // setIdinstalacion(instalaciones[0].idinstalacion)
+        //console.log("id inst es "+idinst);
  
     }
 
@@ -275,6 +295,7 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                   className="form-control" id="geolocalizacion" placeholder="Ingrese Geolocalización de Maps" aria-describedby="basic-addon1"
                 ></input>
               </div>
+
               <div className="mb-3">
                 <label for="geolocalización" className="form-label">
                   Observación:
@@ -285,7 +306,13 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
                   }}
                   className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
-              </div> 
+              </div>
+              <label className="form-label">Cargar imagen de la casa:</label>
+              <form className="input-group mb-3" onSubmit={handleSubmit}>
+            <input type="file" className="form-control" onChange={handleImageChange}/>
+            <br/>
+            <button type="submit" className="btn btn-secondary">Cargar</button>
+              </form>
             </div>
           </ModalBody>
           <ModalFooter>
@@ -308,35 +335,11 @@ fechaactual = anioactual + texmes + mes + texdia + dia;
 
         <Modal isOpen={modalConfirmar} toggle={ventanaModalConfirmar}>
           <ModalBody>
-            <div className="from-group">
-              <h4 className="">Confirmar Instalación:</h4>
-              <div className="mb-3">
-                <label for="num_contrato" className="form-label">
-                  Número de Contrato:
-                </label>
-                  <span className="input-group-text" id="basic-addon1">
-                    {num_contrato}
+            <div className="from-group h3">
+                  Desea confirmar la instalación para el Cliente:
+                  <span>
+                    {" "+apellidocliente + " " + nombrecliente}
                   </span>
-              </div>
-              <div className="mb-3">
-                <label for="num_contrato" className="form-label">
-                  DNI Cliente:
-                </label>
-                  <span className="input-group-text" id="basic-addon1">
-                    {dnicliente}
-                  </span>
-              </div>
-              <div className="mb-3">
-                <label for="geolocalización" className="form-label">
-                  Observación:
-                </label>
-                <input type="text" value={observacion}
-                  onChange={(event) => {
-                    setObservacion(event.target.value);
-                  }}
-                  className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
-                ></input>
-              </div> 
             </div>
           </ModalBody>
           <ModalFooter>    
