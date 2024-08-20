@@ -6,7 +6,7 @@ import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
-import Upload from '../src/componentes/Upload';
+// import Upload from '../src/componentes/Upload';
 //import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
 import {
@@ -81,9 +81,6 @@ function App() {
                 <Link to="/instalacion" className="btn navbar-brand" role='button'>
                   Instalaciones
                 </Link>
-                <Link to="/upload" className="btn navbar-brand" role='button'>
-                  Upload
-                </Link>
                 <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     {User}
@@ -109,9 +106,6 @@ function App() {
               </Routes>
               <Routes>
                 <Route path="/instalacion" element={<Instalacion />} />
-              </Routes>
-              <Routes>
-                <Route path="/upload" element={<Upload />} />
               </Routes>
               {/* <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />

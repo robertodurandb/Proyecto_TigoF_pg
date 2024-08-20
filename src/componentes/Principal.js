@@ -74,6 +74,10 @@ let mes = `${API.MES}`
             console.log(listaClientes[0])
     }
 
+    const verimagen=()=>{
+        window.open(ipbackend+imagencasa,"_blank");
+    }
+
     function isAdmin() {
         let role = sessionStorage.getItem("role");
         return role == "Admin";
@@ -137,7 +141,7 @@ let mes = `${API.MES}`
         setGeolocalizacion(cliente.geolocalizacion);
         setEstadodc_instalacion(cliente.estadodc_instalacion);
         setFechainstalacion(cliente.fechainstalacion);
-        setImagencasa(cliente.imagencasa);
+        setImagencasa(cliente.nombreimg);
         setObservacion_instalacion(cliente.observacion_instalacion);
 
         mostrarCliente();
@@ -307,7 +311,7 @@ let mes = `${API.MES}`
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Imagen de la casa:</div>
-                        <div className="col-6">{imagencasa}</div>
+                        <div className="col-6">{imagencasa}<button onClick={verimagen}>Ver imagen</button></div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Observación instalación:</div>
