@@ -303,7 +303,7 @@ let mes = `${API.MES}`
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Ubicación Casa:</div>
-                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
+                        <div className="col-6"><Link to={"https://www.google.com/maps/search/?api=1&query="+geolocalizacion+"&zoom=20"} target="_blank"><a>{geolocalizacion}</a></Link></div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Instalación ejecutada:</div>
