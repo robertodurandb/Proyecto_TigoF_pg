@@ -26,7 +26,8 @@ let fechaactual = `${API.DATENOW}`
     const [apellidocliente, setApellidocliente] = useState();
     const [nombrecliente, setNombrecliente] = useState();
     const [user_create, setUser_create] = useState();
-    const [fecha_create, setFecha_create] = useState(fechaactual);
+    const [fecha_actual, setFecha_actual] = useState(fechaactual);
+    const [user_update, setUser_update] = useState();
     const [estado, setEstado] = useState("Instalado");
     const [editar, setEditar] = useState(false);
 
@@ -75,7 +76,7 @@ let fechaactual = `${API.DATENOW}`
             geolocalizacion: geolocalizacion,
             observacion_instalacion: observacion,
             user_create: user_create,
-            fecha_create: fecha_create,
+            fecha_create: fecha_actual,
             estado: estado
         },{
           headers: {
@@ -101,11 +102,39 @@ let fechaactual = `${API.DATENOW}`
           });
       };
 
+      const updateinstalacion = () => {
+        Axios.put(ipbackend+"instalacion/"+idinstalacion, {
+            geolocalizacion: geolocalizacion,
+            observacion_instalacion: observacion,
+            user_update: user_update,
+            fecha_update: fecha_actual,
+            imagen_idimagen: idImagenServer
+        },{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(() => {
+          limpiarcampos();
+          ventanaModal();
+          getClientes();
+          getInstalaciones();
+          alert("Instalacion Actualizada con exito");
+        }).catch((error) => {
+          if (401 === error.response.status){
+          sessionStorage.removeItem("token");
+          window.location.reload();
+          alert("Sesión expirada, vuelva a iniciar sesión");
+          }
+          return error;
+          });
+      };
+
     function getClientes(){
       fetch(ipbackend+'pendinstacli')
           .then(response => response.json())
           .then(data => setListaClientes(data))
           setUser_create(user)
+          setUser_update(user)
   }
 
   function getInstalaciones(){
@@ -152,10 +181,25 @@ let fechaactual = `${API.DATENOW}`
         setNombrecliente(cliente.nombrecli);
         ventanaModal();   
     }
+    const capturarIDinstalacion = (cliente) =>{
+      setEditar(true);
+      setNum_contrato(cliente.num_contrato);
+      setDnicliente(cliente.dnicliente);
+      setPlan(cliente.nombreplan);
+      setApellidocliente(cliente.apellidocli);
+      setNombrecliente(cliente.nombrecli);
+      setIdinstalacion(cliente.instalacion_idinstalacion);
+      setObservacion(cliente.observacion_instalacion);
+      setGeolocalizacion(cliente.geolocalizacion);
+      
+      ventanaModal();   
+      console.log(cliente.instalacion_idinstalacion)
+  }
 
       const limpiarcampos = ()=>{
         setIdinstalacion();
         setFechainstalacion(fechaactual);
+        setFecha_actual(fechaactual);
         setNum_contrato("");
         setGeolocalizacion("");
         setObservacion("");
@@ -238,7 +282,7 @@ let fechaactual = `${API.DATENOW}`
                                 <td>{cliente.fechainstalacion}</td>
                                 {controlbusqueda?(
                                   <td><button type="button" className="btn btn-outline-success" 
-                                  >Editar
+                                  onClick={()=>{capturarIDinstalacion(cliente)}}>Editar
                                   </button></td>
                                 ):(
                                   <td><button type="button" className="btn btn-outline-success" 
@@ -313,7 +357,7 @@ let fechaactual = `${API.DATENOW}`
           <ModalFooter>
             {editar ? (
               <div>
-                <button className="btn btn-warning m-2" onClick="">
+                <button className="btn btn-warning m-2" onClick={updateinstalacion}>
                   Actualizar
                 </button>
               </div>
