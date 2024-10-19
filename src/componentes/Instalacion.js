@@ -130,7 +130,11 @@ let fechaactual = `${API.DATENOW}`
       };
 
     function getClientes(){
-      fetch(ipbackend+'pendinstacli')
+      fetch(ipbackend+'pendinstacli', {
+        headers:{
+          'Authorization': `Bearer ${token}`
+        }
+      })
           .then(response => response.json())
           .then(data => setListaClientes(data))
           setUser_create(user)
@@ -138,7 +142,11 @@ let fechaactual = `${API.DATENOW}`
   }
 
   function getInstalaciones(){
-    fetch(ipbackend+'todoinstacli')
+    fetch(ipbackend+'todoinstacli', {
+      headers:{
+        'Authorization': `Bearer ${token}`
+      }
+    })
         .then(response => response.json())
         .then(data => setInstalaciones(data))
 }

@@ -1,69 +1,61 @@
 import React, { useState, useEffect } from 'react'
-import Axios from "axios";
+import axios from "axios";
 import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
 
 function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
-    const [modalMostrar, setModalMostrar] = useState(false);
-    const [idpago, setIdpago] = useState("");
-    const [num_contrato, setNum_contrato] = useState("");
-    const [montopago, setMontopago] = useState("");
-    const [fechapago, setFechapago] = useState("");
-    const [mespago, setMespago] = useState("");
-    const [anio, setAnio] = useState("");
-    const [observacion, setObservacion] = useState("");
-    const [mediopago, setMediopago] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
 
-    let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
-
-    const ventanaModal = () => setModalMostrar(!modalMostrar);
-
-    const mostrarPagos=()=>{
-        ventanaModal();
-    }
+    let token = sessionStorage.getItem("token");
 
     function isAdmin() {
       let role = sessionStorage.getItem("role");
       return role == "Admin";
   }
 
+  //***************** CODIGO PARA SUBIR EXCEL **********/
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+};
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData();
+  formData.append('excel', selectedFile);
+
+  try {
+      const response = await axios.post(ipbackend+'importar', formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+      });
+      //  let idfile = response.data
+      //   let newidfile = idpago2.split(',')
+      //   setIdImagenServer(newidfile[1])
+      // console.log(response.data)
+        alert("Se cargó con éxito ")
+        getPagos();
+        setSelectedFile(null);
+  } catch (error) {
+      console.error(error);
+  }
+};
+
         function getPagos(){
-            fetch(ipbackend+'pagos2')
+            fetch(ipbackend+'getpagosall', {
+              headers:{
+                'Authorization': `Bearer ${token}`
+              }
+            })
                 .then(response => response.json())
                 .then(data => setListaPagos(data))
         }
-        const update = () => {
-          Axios.put(ipbackend+"pago/"+idpago, {
-              num_contrato: num_contrato,
-              montopago: montopago,
-              mespago: mespago,
-              fechapago: fechapago,
-              anio: anio,
-              mediopago: mediopago,
-              observacion: observacion
-          },{
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }).then(() => {
-            limpiarcampos();
-            ventanaModal();
-            getPagos();
-            alert("Pago Actualizado con exito");
-          }).catch((error) => {
-            if (401 === error.response.status){
-            sessionStorage.removeItem("token");
-            window.location.reload();
-            alert("Sesión expirada, vuelva a iniciar sesión");
-            }
-            return error;
-            });
-        };
+  
     //Funcion de Busqueda
     const searcher = (e) =>{
         setBusqueda(e.target.value);
@@ -71,7 +63,7 @@ function Consultapagos() {
     
      const newfilter = listaPagos.filter(dato => {
         return (
-    dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
+    dato.dnipago.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
     dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
     )
     });
@@ -84,32 +76,6 @@ function Consultapagos() {
         results = newfilter;
     }
 
-    //CAPTURAR ID PAGO SELECCIONADO A EDITAR
-    const capturarID = (pago) =>{
-        setIdpago(pago.idpago)
-        setNum_contrato(pago.num_contrato);
-        setMontopago(pago.montopago);
-        setMespago(pago.mespago);
-        setAnio(pago.anio);
-        setMediopago(pago.mediopago);
-        setObservacion(pago.observacion);
-        setFechapago(pago.fechapago);
-        
-        mostrarPagos();   
-    }
-
-    const limpiarcampos = ()=>{
-      setIdpago("");
-      setNum_contrato("");
-      setMontopago("");
-      setMespago("");
-      setFechapago("");
-      setAnio("");
-      setMediopago("")
-      setObservacion("");
-      ventanaModal();
-    }
-
      useEffect(() =>{   
         getPagos()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,7 +83,14 @@ function Consultapagos() {
 
     return(
         <div className='App'>
-          <h1 className='mb-3'>Registro de Pagos</h1>
+          <div>
+            <form className="input-group mb-3" onSubmit={handleSubmit}>
+            <input type="file" className="form-control" onChange={handleFileChange}/>
+            <br/>
+            <button type="submit" className="btn btn-secondary">Cargar</button>
+            </form>
+            </div>    
+          <h1 className='mb-3'>Reporte de Pagos</h1>      
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control border border-success'/>
             {
               isAdmin() ?(
@@ -125,123 +98,38 @@ function Consultapagos() {
               ):null
             }
             
-            
             <table className='table table-striped table-hover mt-3 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>
-                            <th>N° Contrato</th>
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
-                            <th>Plan contratado</th>
                             <th>Fecha_pago</th>
-                            <th>Monto pagado</th>
-                            <th>Medio de pago</th>
-                            <th>Mes Facturado</th>
-                            <th>Año</th>
-                            {isAdmin() ?(
-                              <th>Acción</th>
-                            ):null}
-                            
+                            <th>Hora_pago</th>
+                            <th>Descripcion</th>
+                            <th>Monto</th>
+                            <th>Agencia</th>
+                            <th>Operacion</th>                            
                         </tr>
                     </thead>
                     <tbody>
                     {results.map((pago, key)=>(
                             <tr key={pago.idpago}>
-                                <td>{pago.num_contrato}</td>
-                                <td>{pago.cliente_dnicliente}</td>
+                                <td>{pago.dnipago}</td>
                                 <td>{pago.apellidocli}</td>
                                 <td>{pago.nombrecli}</td>
-                                <td>{pago.nombreplan}</td>
-                                <td>{pago.fechapago}</td>
-                                <td>{pago.montopago}</td>
-                                <td>{pago.mediopago}</td>
-                                <td>{pago.mespago}</td>
-                                <td>{pago.anio}</td>
-                                {isAdmin() ?(
-                                  <td><button type="button" className="btn btn-outline-success"
-                                  onClick={()=>{capturarID(pago);
-                                  }}>Editar</button></td>
-                                ):null}
-                                
+                                <td>{pago.fechapago2}</td>
+                                <td>{pago.hora}</td>
+                                <td>{pago.descripcion}</td>
+                                <td>{pago.monto}</td>
+                                <td>{pago.agencia}</td>
+                                <td>{pago.operacion}</td>            
                             </tr>
                     ))}
                     </tbody>
             </table>
 
-            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
-                <ModalBody>
-                <div className='from-group'>
-                <h4 className=''>Modificar Pago:</h4>
-                <div className='mb-3'>
-                        <label for='num_contrato' className="form-label">Numero Contrato:</label>
-                        <span className="input-group-text" id="basic-addon1">
-                        {num_contrato}
-                        </span>
-                </div>
-                
-                <div className="mb-3">
-                        <label for='fechapago' className="form-label">
-                          Fecha Pago:
-                        </label>
-                        <span className="input-group-text" id="basic-addon1">
-                        {fechapago}
-                        </span>
-                </div>
-                <div className="mb-3">
-                        <label for='mespago' className="form-label">
-                          Periodo/mes Facturado:
-                        </label>
-                        <span className="input-group-text" id="basic-addon1">
-                        {mespago}
-                        </span>
-                </div>
-                <div className="mb-3">
-                        <label for='aniofacturado' className="form-label">
-                          Año Facturado:
-                        </label>
-                        <span className="input-group-text" id="basic-addon1">
-                        {anio}
-                        </span>
-                </div>
-                <div className="mb-3">
-                        <label for='montopago' className="form-label">
-                          Monto pagado:
-                        </label>
-                        <input type="number" value={montopago}
-                          onChange={(event) => { setMontopago(event.target.value); }}
-                          className="form-control" id="montopago" placeholder="Monto Pago" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='mediopago' className="form-label">
-                          Medio Pago:
-                        </label>
-                        <input type="text" value={mediopago}
-                          onChange={(event) => { setMediopago(event.target.value); }}
-                          className="form-control" id="mediopago" placeholder="Medio Pago" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                          <label for='observacion' className="form-label">
-                            Observacion:
-                          </label>
-                          <input type="text" value={observacion}
-                          onChange={(event) => { setObservacion(event.target.value); }}
-                          className="form-control" id="observacion" placeholder="Observacion" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                </div>
-                </ModalBody>
-                <ModalFooter>
-                    <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-    
-                    <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
-                </ModalFooter>
-            </Modal>
-
         </div>
     )
-
 }
 export default Consultapagos;

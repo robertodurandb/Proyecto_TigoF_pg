@@ -14,14 +14,14 @@ const {loginCallback} = props
 let ipbackend = `${API.URL}`;
 
 function doLogin() {
-    fetch(ipbackend+'login', {
+    fetch(ipbackend+'dologin', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            username: username,
-            password: password
+            id_user: username,
+            password_user: password
         })
     }).then ((response) => {
         console.log(response.status)

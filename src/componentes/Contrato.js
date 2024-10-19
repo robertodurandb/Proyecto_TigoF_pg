@@ -114,7 +114,11 @@ function Contrato() {
   };
 
   function getContratos(){
-    fetch(ipbackend+"todocontratosactiv")
+    fetch(ipbackend+"todocontratosactiv", {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
     .then(response => response.json())
     .then(data => setContratos(data))
     console.log(contratos[1])
@@ -281,9 +285,9 @@ if (busqueda === "") {
               <th scope="col">dni_Cliente</th>
               <th scope="col">Plan</th>
               <th scope="col">Fecha Contrato</th>
-              <th scope="col">Observacion</th>
-              <th scope="col">Fec. Instalacion Programada</th>
               <th scope="col">Dia de pago</th>
+              <th scope="col">Fec. Instalacion Programada</th>
+              <th scope="col">Estado Instalacion</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -295,9 +299,9 @@ if (busqueda === "") {
                   <td>{val.cliente_dnicliente}</td>
                   <td>{val.nombreplan}</td>
                   <td>{val.fecha_contrato}</td>
-                  <td>{val.observacion}</td>
-                  <td>{val.fechaprog_instalacion}</td>
                   <td>{val.diapago}</td>
+                  <td>{val.fechaprog_instalacion}</td>
+                  <td>{val.estadoc_instalacion}</td>
                   <td>
                     <button
                       type="button"

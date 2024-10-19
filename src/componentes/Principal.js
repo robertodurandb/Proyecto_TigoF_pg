@@ -34,7 +34,7 @@ let mes = `${API.MES}`
     //TABLA INSTALACION
     const [user_create, setUser_create] = useState();
     const [geolocalizacion, setGeolocalizacion] = useState();
-    const [estadodc_instalacion, setEstadodc_instalacion] = useState();
+    const [estadoc_instalacion, setEstadoc_instalacion] = useState();
     const [fechainstalacion, setFechainstalacion] = useState();
     const [imagencasa, setImagencasa] = useState();
     const [observacion_instalacion, setObservacion_instalacion] = useState();
@@ -68,9 +68,15 @@ let mes = `${API.MES}`
     }
 
     function getClientes(){
-        fetch(ipbackend+'todoinstacli')
+        fetch(ipbackend+'todoinstacli', {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => response.json())
             .then(data => setListaClientes(data))
+            console.log("la lista de clientes es:")
+            console.log("el token es: "+token)
             console.log(listaClientes[0])
     }
 
@@ -139,7 +145,7 @@ let mes = `${API.MES}`
         setFechaprog_instalacion(cliente.fechaprog_instalacion);
         setUser_create(cliente.user_create);
         setGeolocalizacion(cliente.geolocalizacion);
-        setEstadodc_instalacion(cliente.estadodc_instalacion);
+        setEstadoc_instalacion(cliente.estadoc_instalacion);
         setFechainstalacion(cliente.fechainstalacion);
         setImagencasa(cliente.nombreimg);
         setObservacion_instalacion(cliente.observacion_instalacion);
@@ -296,6 +302,10 @@ let mes = `${API.MES}`
                     <div className='row mb-2'>
                         <div className='col-4'>Instalacion programada:</div>
                         <div className="col-6">{fechaprog_instalacion}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Estado Instalacion:</div>
+                        <div className="col-6">{estadoc_instalacion}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Tecnico:</div>
