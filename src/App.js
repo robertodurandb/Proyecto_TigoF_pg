@@ -6,6 +6,8 @@ import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
+import Passwordupdate from '../src/componentes/Passwordupdate';
+
 // import Upload from '../src/componentes/Upload';
 //import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
@@ -65,6 +67,8 @@ function App() {
                   <Link to="/cliente" className="btn navbar-brand">
                     Cliente
                   </Link>
+                  
+
                   {isAdmin()?(
                     <>
                     <Link to="/contrato" className="btn navbar-brand">
@@ -86,7 +90,9 @@ function App() {
                     {User}
                   </button>
                   <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><button className="dropdown-item" >Cambiar Contraseña</button></li>
+                    <li><button className="dropdown-item"><Link to="/Passwordupdate">
+                    Cambio de contraseña
+                  </Link></button></li>
                     <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
                   </ul>
                 </div>
@@ -106,6 +112,9 @@ function App() {
               </Routes>
               <Routes>
                 <Route path="/instalacion" element={<Instalacion />} />
+              </Routes>
+              <Routes>
+                <Route path="/passwordupdate" element={<Passwordupdate />} />
               </Routes>
               {/* <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />

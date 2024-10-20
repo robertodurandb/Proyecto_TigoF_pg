@@ -139,8 +139,6 @@ function Contrato() {
   const update = () => {
     Axios.put(ipbackend+"todocontratosactiv/"+num_contrato, {
         planes_idplanes: planes_idplanes,
-        // cliente_dnicliente: cliente_dnicliente,
-        // fecha_contrato: fecha_contrato,
         observacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
