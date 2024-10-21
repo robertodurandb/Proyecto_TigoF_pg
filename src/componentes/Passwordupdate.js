@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API from '../utils/const'
@@ -34,8 +34,25 @@ let user = sessionStorage.getItem("currentUser")
 
 return(
     <div>
-        Hola voy a cambiar mi contraseña
-    </div>
+        <div className='container-fluid login border border-secondary border-2 rounded p-3 m'>
+                <div className='text-center pb-2'>
+                  <h1>Modificar Contraseña</h1>
+                </div>
+                
+                <div className="mb-3 row">
+                  <label for="inputPassword" className="col-form-label">Nueva Contraseña:</label>
+                  <input type="password" className="form-control" id="inputPassword"/>
+                </div>
+                <div className="mb-3 row">
+                  <label for="inputPassword" className="col-form-label">Repita Nueva Contraseña:</label>
+                  <input type="password" className="form-control" id="inputPassword"/>
+                </div>
+          </div>
+          <div className='text-center'>
+                <button type="button" className="btn btn-primary mt-3">Guardar</button>
+          </div>
+        </div>
+   
 )
 
 }

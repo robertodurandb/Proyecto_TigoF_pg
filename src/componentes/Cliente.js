@@ -248,11 +248,12 @@ if (busqueda === "") {
               </div>
               <div className="mb-3">
                 <label for="fecha_nacimiento" className="form-label">Fecha Nacimiento:</label>
-                <input type="text" value={fecha_nacimiento} onChange={(event) => {
+                <input type="date" value={fecha_nacimiento} onChange={(event) => {
                     setFecha_nacimiento(event.target.value);
                   }}
                   className="form-control" aria-describedby="basic-addon1"
                 ></input>
+                <span>{fecha_nacimiento}</span>
               </div>
             </div>
           </ModalBody>

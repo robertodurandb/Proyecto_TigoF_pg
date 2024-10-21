@@ -160,12 +160,20 @@ function Contrato() {
       });
   };
   function getClientes(){
-    fetch(ipbackend+'clientes')
+    fetch(ipbackend+'getclientes', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
         .then(response => response.json())
         .then(data => setListaclientes(data))
 }
 function getPlanes(){
-  fetch(ipbackend+'planes')
+  fetch(ipbackend+'getplanes', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
       .then(response => response.json())
       .then(data => setListaPlanes(data))
 }
