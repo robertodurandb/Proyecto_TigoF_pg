@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import Axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../estilos/style.css'
 import Tigo from '../imagenes/tigo1.png'
@@ -8,43 +9,41 @@ function Login(props){
 
 const [username, setUsername] = React.useState("")
 const [password, setPassword] = React.useState("")
-const [hashError, setHashError] = React.useState(false)
+const [hashError, setHashError] = React.useState("")
 
 const {loginCallback} = props
 let ipbackend = `${API.URL}`;
 
-function doLogin() {
-    fetch(ipbackend+'dologin', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            id_user: username,
-            password_user: password
-        })
-    }).then ((response) => {
-        console.log(response.status)
-        if (response.status == 401){
-            setHashError(true)
-            console.log("hubo un error y no hay data")  
-        }else{
-            setHashError(false)
-            return response.json()
-            .then((data) =>{
-                sessionStorage.setItem("token", data.token)
-                sessionStorage.setItem("currentUser", data.username)
-                sessionStorage.setItem("role", data.role)
-                loginCallback()
-            })    
-        }    
-    })
+    function doLogin() {
+        fetch(ipbackend+'dologin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id_user: username,
+                password_user: password
+            })
+        }).then ((response) => {
+            console.log(response.status)
+            if (response.status == 401){
+               setHashError("Password Inválido")
+                console.log("ERROR DE PASSWORD")  
+            }else if(response.status == 404){
+                setHashError("Usuario no existe")
+                console.log("USUARIO NO EXISTE") 
+            }else{
+                return response.json()
+                .then((data) =>{
+                    sessionStorage.setItem("token", data.token)
+                    sessionStorage.setItem("currentUser", data.username)
+                    sessionStorage.setItem("role", data.role)
+                    loginCallback()
+                })    
+            }    
+        })   
+    }
     
-    
-
-    
-}
-
 function handleUsernameChanged (event) {
     setUsername(event.target.value)
 }
@@ -70,10 +69,7 @@ function handlePasswordChanged (event) {
                         }
                     }}
                     />
-                    { hashError ? (
-                        <div>Usuario o Password incorrectos</div>
-                    ) :
-                    null}
+                        <div>{hashError}</div>
                 </div>
                 <div className='text-center'>
                     <button type="button" className="btn btn-primary" onClick={doLogin}>Iniciar Sesion</button>
