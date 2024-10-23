@@ -15,6 +15,7 @@ function Contrato() {
     const [observacion, setObservacion] = useState("");
     const [fechaprog_instalacion, setFechaprog_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
+    const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
 
@@ -30,9 +31,8 @@ function Contrato() {
     const [direccioncli, setDireccioncli] = useState("");
     const [distritocli, setDistritocli] = useState("");
     const [provinciacli, setProvinciacli] = useState("");
-    const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
     const [telefonocli, setTelefonocli] = useState();
-    const [telefonocli2, setTelefonocli2] = useState();
+    const [fechanacimiento, setFechaNacimiento] = useState();
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrar2, setModalMostrar2] = useState(false);
@@ -53,7 +53,7 @@ function Contrato() {
     ventanaModal2();
 }
   const addcontrato = () => {
-    Axios.post(ipbackend+"detallecontrato", {
+    Axios.post(ipbackend+"createcontrato", {
         planes_idplanes: planes_idplanes,
         cliente_dnicliente: cliente_dnicliente,
         num_contrato: num_contrato,
@@ -61,6 +61,7 @@ function Contrato() {
         observacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
+        estadoc_instalacion: estadoc_instalacion
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -81,7 +82,7 @@ function Contrato() {
   /************************************ */
   const addcliente = () => {
     if (cliente_dnicliente.length>7) {
-    Axios.post(ipbackend+"cliente", 
+    Axios.post(ipbackend+"createcliente", 
     {  
         dnicliente: cliente_dnicliente,
         nombrecli: nombrecli,
@@ -89,9 +90,8 @@ function Contrato() {
         direccioncli: direccioncli,
         distritocli: distritocli,
         provinciacli: provinciacli,
-        nacionalidadcli: nacionalidadcli,
         telefonocli: telefonocli,
-        telefonocli2: telefonocli2,
+        fecha_nacimiento: fechanacimiento
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -137,7 +137,7 @@ function Contrato() {
     ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"todocontratosactiv/"+num_contrato, {
+    Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         observacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
@@ -221,9 +221,8 @@ function validardnicliente() {
     setDireccioncli("");
     setDistritocli("");
     setProvinciacli("");
-    setNacionalidadcli("Peruana");
     setTelefonocli("");
-    setTelefonocli2("");
+    setFechaNacimiento("");
   }
   const limpiarcamposclienteencontrado = () => {
     setNombrecli("");
@@ -231,9 +230,8 @@ function validardnicliente() {
     setDireccioncli("");
     setDistritocli("");
     setProvinciacli("");
-    setNacionalidadcli("Peruana");
     setTelefonocli("");
-    setTelefonocli2("");
+    setFechaNacimiento("");
   }
   const cerrarModalContrato = ()=>{
     limpiarcamposcontrato();
@@ -460,9 +458,7 @@ if (busqueda === "") {
                 <label for="fecha_instalacion" className="form-label">
                   Fecha Instalacion programada:
                 </label>
-                <span className="input-group-text" id="basic-addon1">
-                    {fechaprog_instalacion}
-                  </span>
+               
                 <input
                   type="date"
                   value={fechaprog_instalacion}
@@ -565,30 +561,19 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="nacionalidad" className="form-label">Nacionalidad:</label>
-                <select value={nacionalidadcli} onChange={(event) => {
-                    setNacionalidadcli(event.target.value);
+                <label for="fechanacimiento" className="form-label">Fecha Nacimiento:</label>
+                <input type="date" value={fechanacimiento} onChange={(event) => {
+                    setFechaNacimiento(event.target.value);
                   }}
-                  className="form-select" id="nacionalidad" aria-describedby="basic-addon1"
-                >
-                  <option>Peruana</option>
-                  <option>Extranjera</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label for="telefono1" className="form-label">Telefono 1:</label>
-                <input type="number" value={telefonocli} onChange={(event) => {
-                    setTelefonocli(event.target.value);
-                  }}
-                  className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
+                  className="form-control" id="fechanacimiento" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="telefono2" className="form-label">Telefono 2:</label>
-                <input type="number" value={telefonocli2} onChange={(event) => {
+                <label for="telefono2" className="form-label">Telefono:</label>
+                <input type="number" value={telefonocli} onChange={(event) => {
                     setTelefonocli(event.target.value);
                   }}
-                  className="form-control" id="telefono2" placeholder="Telefono 2 del Cliente" aria-describedby="basic-addon1"
+                  className="form-control" id="telefono2" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
             </div>

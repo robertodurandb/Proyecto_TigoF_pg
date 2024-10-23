@@ -28,9 +28,15 @@ let ipbackend = `${API.URL}`;
             console.log(response.status)
             if (response.status == 401){
                setHashError("Password Inválido")
+               setTimeout(() => {
+                setHashError("");
+              }, "3000");
                 console.log("ERROR DE PASSWORD")  
             }else if(response.status == 404){
                 setHashError("Usuario no existe")
+                setTimeout(() => {
+                    setHashError("");
+                  }, "3000");
                 console.log("USUARIO NO EXISTE") 
             }else{
                 return response.json()
