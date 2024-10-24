@@ -253,7 +253,6 @@ if (busqueda === "") {
                   }}
                   className="form-control" aria-describedby="basic-addon1"
                 ></input>
-                <span>{fecha_nacimiento}</span>
               </div>
             </div>
           </ModalBody>

@@ -28,7 +28,7 @@ let fechaactual = `${API.DATENOW}`
     const [user_create, setUser_create] = useState();
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
     const [user_update, setUser_update] = useState();
-    const [estado, setEstado] = useState("Instalado");
+    const [caja_instalacion, setCajainstalacion] = useState();
     const [editar, setEditar] = useState(false);
 
     const [selectedImage, setSelectedImage] = useState(null);
@@ -58,26 +58,28 @@ let fechaactual = `${API.DATENOW}`
       try {
           const response = await axios.post(ipbackend+'imagen', formData, {
               headers: {
-                  'Content-Type': 'multipart/form-data'
+                  'Content-Type': 'multipart/form-data',
+                  //'Authorization': `Bearer ${token}`
               }
           });
-          let idimagen = response.data
+            let idimagen = response.data
             let newidimagen = idimagen.split(',')
             setIdImagenServer(newidimagen[1])
             alert("Se cargó con éxito ")
+            console.log(newidimagen)
       } catch (error) {
           console.error(error);
       }
   };
 
     const addinstalacion = () => {
-        Axios.post(ipbackend+"instalacion", {
+        Axios.post(ipbackend+"createinstalacion", {
             fechainstalacion: fechainstalacion,
             geolocalizacion: geolocalizacion,
             observacion_instalacion: observacion,
             user_create: user_create,
             fecha_create: fecha_actual,
-            estado: estado
+            caja_instalacion: caja_instalacion
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -103,12 +105,13 @@ let fechaactual = `${API.DATENOW}`
       };
 
       const updateinstalacion = () => {
-        Axios.put(ipbackend+"instalacion/"+idinstalacion, {
+        Axios.put(ipbackend+"updateinstalacion/"+idinstalacion, {
             geolocalizacion: geolocalizacion,
             observacion_instalacion: observacion,
             user_update: user_update,
             fecha_update: fecha_actual,
-            imagen_idimagen: idImagenServer
+            imagen_idimagen: idImagenServer,
+            caja_instalacion: caja_instalacion
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -116,7 +119,7 @@ let fechaactual = `${API.DATENOW}`
         }).then(() => {
           limpiarcampos();
           ventanaModal();
-          getClientes();
+          getInstalacionesPendientes();
           getInstalaciones();
           alert("Instalacion Actualizada con exito");
         }).catch((error) => {
@@ -129,38 +132,78 @@ let fechaactual = `${API.DATENOW}`
           });
       };
 
-    function getClientes(){
-      fetch(ipbackend+'pendinstacli', {
-        headers:{
-          'Authorization': `Bearer ${token}`
-        }
-      })
-          .then(response => response.json())
-          .then(data => setListaClientes(data))
-          setUser_create(user)
-          setUser_update(user)
-  }
+    // function getClientes2(){
 
-  function getInstalaciones(){
-    fetch(ipbackend+'todoinstacli', {
+    //     fetch(ipbackend+'pendinstacli', {
+    //       headers:{
+    //         'Authorization': `Bearer ${token}`
+    //       }
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => setListaClientes(data))
+    //         setUser_create(user)
+    //         setUser_update(user)
+    //   }
+      const getInstalacionesPendientes = async () => {
+        try {
+          const response = await Axios.get(ipbackend+'pendinstacli', {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+          }
+          );
+          setListaClientes(response.data);
+          setUser_create(user);
+          setUser_update(user);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          if (error.response && error.response.status === 401){
+            sessionStorage.removeItem("token");
+            window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+        }
+      };
+
+//   function getInstalaciones2(){
+
+//       fetch(ipbackend+'todoinstacli', {
+//         headers:{
+//           'Authorization': `Bearer ${token}`
+//         }
+//       })
+//           .then(response => response.json())
+//           .then(data => setInstalaciones(data))
+// }
+const getInstalaciones = async () => {
+  try {
+    const response = await Axios.get(ipbackend+'todoinstacli', {
       headers:{
-        'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
       }
-    })
-        .then(response => response.json())
-        .then(data => setInstalaciones(data))
-}
+    }
+    );
+    setInstalaciones(response.data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    if (error.response && error.response.status === 401){
+      sessionStorage.removeItem("token");
+      window.location.reload();
+      alert("Sesión expirada, vuelva a iniciar sesión");
+      }
+  }
+};
 
       const confirmarinstalacion = () => {
-        Axios.put(ipbackend+"pendinstacli/"+num_contrato, {
-            estadodc_instalacion: "instalado",
+        Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
+            estadodc_instalacion: 2,
             instalacion_idinstalacion: idinstalacion
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }).then(() => {
-          axios.put(ipbackend+"instalacion/"+idinstalacion,{
+          axios.put(ipbackend+"updateinstalacion/"+idinstalacion,{
             imagen_idimagen: idImagenServer
           },{
             headers: {
@@ -170,14 +213,14 @@ let fechaactual = `${API.DATENOW}`
           }).then(() =>{
           limpiarcampos();
           ventanaModalConfirmar();
-          getClientes();
+          getInstalacionesPendientes();
         }).catch((error) => {
-          if (401 === error.response.status){
-          sessionStorage.removeItem("token");
-          window.location.reload();
-          alert("Sesión expirada, vuelva a iniciar sesión");
-          }
-          return error;
+          if (error.response && error.response.status === 401){
+            sessionStorage.removeItem("token");
+            window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+          // return error;
           });
       };
 
@@ -199,6 +242,7 @@ let fechaactual = `${API.DATENOW}`
       setIdinstalacion(cliente.instalacion_idinstalacion);
       setObservacion(cliente.observacion_instalacion);
       setGeolocalizacion(cliente.geolocalizacion);
+      setCajainstalacion(cliente.caja_instalacion);
       
       ventanaModal();   
       console.log(cliente.instalacion_idinstalacion)
@@ -211,6 +255,7 @@ let fechaactual = `${API.DATENOW}`
         setNum_contrato("");
         setGeolocalizacion("");
         setObservacion("");
+        setCajainstalacion("");
         setIdImagenServer();
         // setTecnico("");
         // setUsuarioactualiza("");
@@ -225,7 +270,7 @@ let fechaactual = `${API.DATENOW}`
        //****************Funcion de Busqueda
        const searcher = (e) =>{
         setBusqueda(e.target.value);
-        getClientes();
+        getInstalacionesPendientes();
         getInstalaciones();
         if(e.target.value=="instalados"){
           console.log("instalados")
@@ -248,7 +293,7 @@ let fechaactual = `${API.DATENOW}`
       
     
         useEffect(() =>{
-          getClientes();
+          getInstalacionesPendientes();
           getInstalaciones();
           // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
@@ -342,7 +387,17 @@ let fechaactual = `${API.DATENOW}`
                   className="form-control" id="geolocalizacion" placeholder="Ingrese Geolocalización de Maps" aria-describedby="basic-addon1"
                 ></input>
               </div>
-
+              <div className="mb-3">
+                <label for="caja_instalacion" className="form-label">
+                  Caja & Spliter:
+                </label>
+                <input type="text" value={caja_instalacion}
+                  onChange={(event) => {
+                    setCajainstalacion(event.target.value);
+                  }}
+                  className="form-control" id="cajainstalacion" placeholder="Ingrese la Caja & Spliter" aria-describedby="basic-addon1"
+                ></input>
+              </div>
               <div className="mb-3">
                 <label for="geolocalización" className="form-label">
                   Observación:
@@ -354,7 +409,7 @@ let fechaactual = `${API.DATENOW}`
                   className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
               </div>
-              <label className="form-label">Cargar imagen de la casa:</label>
+              <label className="form-label">Cargar imagen de la casa: (opcional)</label>
               <form className="input-group mb-3" onSubmit={handleSubmit}>
             <input type="file" className="form-control" onChange={handleImageChange}/>
             <br/>

@@ -58,7 +58,7 @@ function Contrato() {
         cliente_dnicliente: cliente_dnicliente,
         num_contrato: num_contrato,
         fecha_contrato: fecha_contrato,
-        observacion: observacion,
+        observacion_contrato: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
         estadoc_instalacion: estadoc_instalacion
@@ -131,7 +131,7 @@ function Contrato() {
     setPlanes_idplanes(val.planes_idplanes);
     setCliente_dnicliente(val.cliente_dnicliente);
     setFecha_contrato(val.fecha_contrato);
-    setObservacion(val.observacion);
+    setObservacion(val.observacion_contrato);
     setFechaprog_instalacion(val.fechaprog_instalacion);
     setDiapago(val.diapago);
     ventanaModal();
@@ -139,7 +139,7 @@ function Contrato() {
   const update = () => {
     Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
-        observacion: observacion,
+        observacion_contrato: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
     }, {
