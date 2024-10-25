@@ -300,7 +300,7 @@ const getInstalaciones = async () => {
 
       return (
         <div className="App">
-          <h1 className="mb3">Gestión de Instalaciones</h1>
+          <h1 className="mb3">Registrar Instalaciones</h1>
           <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
             <option value="pendientes">Pendientes</option>
             <option value="instalados">Instalados</option>

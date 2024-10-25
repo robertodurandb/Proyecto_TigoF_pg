@@ -7,6 +7,7 @@ import Instalacion from '../src/componentes/Instalacion';
 import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
+import Gestiontickets from '../src/componentes/Gestiontickets';
 
 // import Upload from '../src/componentes/Upload';
 //import Usuarios from '../src/componentes/Usuario';
@@ -64,11 +65,8 @@ function App() {
                   <Link to="/reportepagos" className="btn navbar-brand">
                     Reporte Pagos
                   </Link>
-                  <Link to="/cliente" className="btn navbar-brand">
-                    Cliente
-                  </Link>
-                  
 
+                  
                   {isAdmin()?(
                     <>
                     <Link to="/contrato" className="btn navbar-brand">
@@ -85,12 +83,18 @@ function App() {
                 <Link to="/instalacion" className="btn navbar-brand" role='button'>
                   Instalaciones
                 </Link>
+                <Link to="/tickets" className="btn navbar-brand">
+                    Gestión de Tickets
+                  </Link>
                 <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     {User}
                   </button>
                   <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><button className="dropdown-item"><Link to="/Passwordupdate">
+                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cliente">
+                    Tabla Clientes
+                  </Link></button></li>
+                    <li><button className="dropdown-item"><Link className='text-decoration-none' to="/Passwordupdate">
                     Cambio de contraseña
                   </Link></button></li>
                     <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
@@ -115,6 +119,9 @@ function App() {
               </Routes>
               <Routes>
                 <Route path="/passwordupdate" element={<Passwordupdate />} />
+              </Routes>
+              <Routes>
+                <Route path="/tickets" element={<Gestiontickets />} />
               </Routes>
               {/* <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
