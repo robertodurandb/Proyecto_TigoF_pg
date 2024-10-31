@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 // import Caja from '../src/componentes/Caja';
-// import Planes from '../src/componentes/Planes';
+import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
@@ -9,8 +9,8 @@ import Reportepagos from '../src/componentes/Consultapagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Gestiontickets from '../src/componentes/Gestiontickets';
 
-// import Upload from '../src/componentes/Upload';
-//import Usuarios from '../src/componentes/Usuario';
+import Upload from '../src/componentes/Upload';
+import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
 import {
   BrowserRouter as Router,
@@ -61,27 +61,19 @@ function App() {
                 <div className='container'>
                   <Link to="/" className="btn navbar-brand">
                     Inicio
-                  </Link>
-                  <Link to="/reportepagos" className="btn navbar-brand">
-                    Reporte Pagos
-                  </Link>
-
-                  
+                  </Link>    
                   {isAdmin()?(
                     <>
                     <Link to="/contrato" className="btn navbar-brand">
-                    Contrato
+                    Contratos
                   </Link>
-                  {/* <Link to="/planes" className="btn navbar-brand">
-                  Planes
-                  </Link> */}
-                  {/* <Link to="/usuario" className="btn navbar-brand">
-                    Usuario
-                  </Link> */}
                     </>
                   ):null}
                 <Link to="/instalacion" className="btn navbar-brand" role='button'>
                   Instalaciones
+                </Link>
+                <Link to="/reportepagos" className="btn navbar-brand">
+                    Pagos
                 </Link>
                 <Link to="/tickets" className="btn navbar-brand">
                     Gestión de Tickets
@@ -91,6 +83,12 @@ function App() {
                     {User}
                   </button>
                   <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/usuarios">
+                    Tabla Usuarios
+                  </Link></button></li>
+                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/planes">
+                    Tabla Planes
+                  </Link></button></li>
                   <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cliente">
                     Tabla Clientes
                   </Link></button></li>
@@ -123,15 +121,15 @@ function App() {
               <Routes>
                 <Route path="/tickets" element={<Gestiontickets />} />
               </Routes>
-              {/* <Routes>
+              <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
-              </Routes> */}
+              </Routes>
               {/* <Routes>
                 <Route path="/caja" element={logged2?<Caja />:null} />
               </Routes> */}
-              {/* <Routes>
-              <Route path="/usuario" element={ isAdmin() ?(<Usuarios />):null} />
-            </Routes>      */}
+              <Routes>
+              <Route path="/usuarios" element={ isAdmin() ?(<Usuarios />):null} />
+            </Routes>
               <Routes>
                 <Route path="/" element={<Inicio />} />
               </Routes>

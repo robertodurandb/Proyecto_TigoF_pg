@@ -73,39 +73,6 @@ function Principal() {
         ventanaModal();
     }
 
-    // const Registrarpago=()=>{
-    //     ventanaModal3();
-    // }
-    // const addpagos = () => {
-    //     Axios.post(ipbackend+"pago", {
-    //         num_contrato: num_contrato,
-    //         montopago: montopago,
-    //         fechapago: fechapago,
-    //         mespago: mespago,
-    //         anio: anio,
-    //         mediopago: mediopago,
-    //         observacion: observacion,
-    //     },{
-    //       headers: {
-    //         'Authorization': `Bearer ${token}`
-    //       }
-    //     }).then(() => {
-    //         limpiarcampos();
-    //         getPagos();
-    //         ventanaModal3();
-    //         alert("Pago Registrado con exito");
-    //         ventanaModal2();
-    //     }).catch((error) => {
-    //         console.log(error.response.status)
-    //       if (error.response && error.response.status === 401){
-    //         limpiarcampos();
-    //       sessionStorage.removeItem("token");
-    //       window.location.reload();
-    //       alert("Sesión expirada, vuelva a iniciar sesión");
-    //       }
-    //       return error;
-    //       });
-    //   };
     const capturarID = (cliente) => {
         setNum_contrato(cliente.num_contrato);
         setDnicli(cliente.dnicliente);
@@ -130,33 +97,6 @@ function Principal() {
 
         mostrarCliente();
     }
-    // const capturarIDpago = (cliente) =>{
-    //     setNum_contrato(cliente.num_contrato);
-    //     setDnicli(cliente.dnicliente);
-    //     setNombrecli(cliente.nombrecli);
-    //     setApellidocli(cliente.apellidocli);
-    //     setDiapago(cliente.diapago);
-    //     setNombreplan(cliente.nombreplan);
-    //     setVerPagos(false);
-    //     mostrarPagos();   
-    // }
-    // const Verpagos = ()=> {
-    //     console.log("contrato seleccionado es: "+num_contrato)
-    //     let results3 = listaPagos.filter(function(cli) {
-    //         return cli.num_contrato == num_contrato;
-    //       });
-    //     setResults2(results3);
-    //     setVerPagos(true);
-    //     }
-
-    //     const limpiarcampos = ()=>{
-    //         setMontopago(0);
-    //         setFechapago(fechaactual);
-    //         setMespago(mes);
-    //         setAnio(anioactual);
-    //         setMediopago("");
-    //         setObservacion("");
-    //       }
        
     //Funcion de Busqueda
     const searcher = (e) =>{
@@ -188,27 +128,32 @@ function Principal() {
         <div className="App">
             <h1 className='mb-3'>Contratos y Clientes Activos</h1>
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
-              <table className='table table-striped table-hover mt-5 shadow-lg'>
+              <table className='table-striped table-hover mt-5 shadow-lg'>
+              {/* table table-striped table-hover mt-5 shadow-lg */}
                     <thead>
-                        <tr className='bg-curso text-white'>
+                        <tr className='bg-curso text-black'>
+                            <th>Cont</th>
                             <th>DNI</th>
                             <th>Apellidos</th>
                             <th>Nombres</th>
                             <th>Distrito</th>
                             <th>Direccion</th>
                             <th>Tecnico</th>
+                            <th>Servicio</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                     {results.map((cliente, key)=>(
-                            <tr key={cliente.num_contrato} value={num_contrato}>
+                            <tr key={cliente.num_contrato} value={num_contrato} className={cliente.nombre_estado === 'Suspendido' ? 'text-warning' : 'null'}>
+                                <td>{cliente.num_contrato}</td>
                                 <td>{cliente.dnicliente}</td>
                                 <td>{cliente.apellidocli}</td>
                                 <td>{cliente.nombrecli}</td>
                                 <td>{cliente.distritocli}</td>
                                 <td>{cliente.direccioncli}</td>
                                 <td>{cliente.user_create}</td>
+                                <td>{cliente.nombre_estado}</td>
                                 <td><button type="button" className="btn btn-outline-success" 
                                 onClick={()=>{capturarID(cliente);
                                 }}>Detalles</button></td>
@@ -296,7 +241,7 @@ function Principal() {
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Imagen de la casa:</div>
-                        <div className="col-6">{imagencasa}<button onClick={verimagen}>Ver imagen</button></div>
+                        <div className="col-6"><button onClick={verimagen}>{imagencasa}</button></div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Observación del técnico:</div>

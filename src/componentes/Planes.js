@@ -10,7 +10,8 @@ function Planes() {
     const [descplan, setDescplan] = useState("");
     const [precioplan, setPrecioplan] = useState();
     const [velocidadplan, setVelocidadplan] = useState("");
-    const [estado, setEstado] = useState("Activo");
+    const [estado, setEstado] = useState(1);
+    const [estados, setEstados] = useState([]);
     const [planes, setPlanes] = useState([]);
     const [editar, setEditar] = useState(false);
 
@@ -25,12 +26,12 @@ function Planes() {
     let ipbackend = `${API.URL}`;
 
   const add = () => {
-    Axios.post(ipbackend+"plan", {
+    Axios.post(ipbackend+"createplan", {
       nombreplan: nombreplan,
       descplan: descplan,
       precioplan: precioplan,
       velocidadplan: velocidadplan,
-      estado: estado,
+      estado_plan: estado,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -49,11 +50,34 @@ function Planes() {
       });
   };
 
-  function getPlanes(){
-    fetch(ipbackend+'planes')
+  function getEstados(){
+    fetch(ipbackend+'getestados', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
         .then(response => response.json())
-        .then(data => setPlanes(data))    
-}
+        .then(data => setEstados(data))
+  }
+
+const getPlanes = async () => {
+  try {
+    const response = await Axios.get(ipbackend+'getplanes', {
+      headers:{
+          'Authorization': `Bearer ${token}`
+      }
+    }
+    );
+    setPlanes(response.data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    if (error.response && error.response.status === 401){
+      sessionStorage.removeItem("token");
+      window.location.reload();
+      alert("Sesión expirada, vuelva a iniciar sesión");
+      }
+  }
+};
 
   const editarPlan = (val)=>{
     setEditar(true);
@@ -62,19 +86,18 @@ function Planes() {
     setDescplan(val.descplan);
     setPrecioplan(val.precioplan);
     setVelocidadplan(val.velocidadplan)
-    setEstado(val.estado);
-    console.log("el id plan capturado es "+idplanes);
+    setEstado(val.estado_plan);
     ventanaModal();
     }
 
   
   const update = () => {
-    Axios.put(ipbackend+"plan/"+idplanes, {
+    Axios.put(ipbackend+"updateplan/"+idplanes, {
         nombreplan: nombreplan,
         descplan: descplan,
         precioplan: precioplan,
         velocidadplan: velocidadplan,
-        estado: estado,
+        estado_plan: estado,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -98,12 +121,13 @@ function Planes() {
     setDescplan("");
     setPrecioplan("");
     setVelocidadplan("");
-    setEstado("Activo")
+    setEstado(1);
     setEditar(false);
     ventanaModal();
   }
       useEffect(() =>{
         getPlanes()
+        getEstados()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -129,7 +153,7 @@ function Planes() {
                     <td>{val.descplan}</td>
                     <td>{val.precioplan}</td>
                     <td>{val.velocidadplan}</td>
-                    <td>{val.estado}</td>
+                    <td>{val.nombre_estado}</td>
                     <td>
                     <button type="button" className="btn btn-info" 
                     onClick={()=>{
@@ -187,12 +211,24 @@ function Planes() {
                           <label for='estado' className="form-label">
                             Estado:
                           </label>
-                          <select value={estado}
-                          onChange={(event) => { setEstado(event.target.value); }}
-                          className="form-select" id="estado" aria-describedby="basic-addon1"
+                          <select
+                            className="form-control"
+                            aria-describedby="basic-addon1"
+                            key={estado}
+                            value={estado}
+                            onChange={(event) => {
+                              setEstado(event.target.value);
+                            }}
                           >
-                            <option>Activo</option>
-                            <option>Inactivo</option>
+                            {estados.map((estado) => {
+                              return (
+                                <>
+                                  <option value={estado.id_estado}>
+                                    {estado.nombre_estado}
+                                  </option>
+                                </>
+                              );
+                            })}
                           </select>
                 </div>
                 </div>

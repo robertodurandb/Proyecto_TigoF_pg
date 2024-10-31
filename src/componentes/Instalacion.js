@@ -3,7 +3,6 @@ import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
-import axios from "axios";
 
 function Instalacion() {
 
@@ -32,13 +31,14 @@ let fechaactual = `${API.DATENOW}`
     const [editar, setEditar] = useState(false);
 
     const [selectedImage, setSelectedImage] = useState(null);
-    const [idImagenServer, setIdImagenServer] = useState();
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
+    const [modalImagen, setModalImagen] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
+    const ventanaModalImagen = () => setModalImagen(!modalImagen);
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
@@ -48,25 +48,22 @@ let fechaactual = `${API.DATENOW}`
     const handleImageChange = (event) => {
       setSelectedImage(event.target.files[0]);
   };
+  //********************************************** */
+  
 
   const handleSubmit = async (event) => {
       event.preventDefault();
-
       const formData = new FormData();
       formData.append('image', selectedImage);
-
       try {
-          const response = await axios.post(ipbackend+'imagen', formData, {
+          await Axios.put(ipbackend+'updateimagen/'+idinstalacion, formData, {
               headers: {
                   'Content-Type': 'multipart/form-data',
-                  //'Authorization': `Bearer ${token}`
+                  'Authorization': `Bearer ${token}`
               }
           });
-            let idimagen = response.data
-            let newidimagen = idimagen.split(',')
-            setIdImagenServer(newidimagen[1])
-            alert("Se cargó con éxito ")
-            console.log(newidimagen)
+            alert("Se cargó imagen con éxito ")
+            ventanaModalImagen();
       } catch (error) {
           console.error(error);
       }
@@ -87,13 +84,11 @@ let fechaactual = `${API.DATENOW}`
         })
         .then((response) => {
             ventanaModal();
-            ventanaModalConfirmar(); 
+            ventanaModalConfirmar();
+            console.log(response.data)
             let id = "";
             id = response.data
-            let id2 = id.split(',')
-            setIdinstalacion(id2[1])
-            console.log(idinstalacion)
-                  
+            setIdinstalacion(id.idinstalacion)
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -104,13 +99,35 @@ let fechaactual = `${API.DATENOW}`
           });
       };
 
+      const confirmarinstalacion = () => {
+        Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
+            estadoc_instalacion: 2,
+            instalacion_idinstalacion: idinstalacion,
+            estado_servicio: 1
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(() =>{
+          limpiarcampos();
+          ventanaModalConfirmar();
+          getInstalacionesPendientes();
+        }).catch((error) => {
+          if (error.response && error.response.status === 401){
+            sessionStorage.removeItem("token");
+            window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+          // return error;
+          });
+      };
+
       const updateinstalacion = () => {
         Axios.put(ipbackend+"updateinstalacion/"+idinstalacion, {
             geolocalizacion: geolocalizacion,
             observacion_instalacion: observacion,
             user_update: user_update,
             fecha_update: fecha_actual,
-            imagen_idimagen: idImagenServer,
             caja_instalacion: caja_instalacion
         },{
           headers: {
@@ -132,18 +149,6 @@ let fechaactual = `${API.DATENOW}`
           });
       };
 
-    // function getClientes2(){
-
-    //     fetch(ipbackend+'pendinstacli', {
-    //       headers:{
-    //         'Authorization': `Bearer ${token}`
-    //       }
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => setListaClientes(data))
-    //         setUser_create(user)
-    //         setUser_update(user)
-    //   }
       const getInstalacionesPendientes = async () => {
         try {
           const response = await Axios.get(ipbackend+'pendinstacli', {
@@ -165,16 +170,6 @@ let fechaactual = `${API.DATENOW}`
         }
       };
 
-//   function getInstalaciones2(){
-
-//       fetch(ipbackend+'todoinstacli', {
-//         headers:{
-//           'Authorization': `Bearer ${token}`
-//         }
-//       })
-//           .then(response => response.json())
-//           .then(data => setInstalaciones(data))
-// }
 const getInstalaciones = async () => {
   try {
     const response = await Axios.get(ipbackend+'todoinstacli', {
@@ -194,36 +189,6 @@ const getInstalaciones = async () => {
   }
 };
 
-      const confirmarinstalacion = () => {
-        Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
-            estadodc_instalacion: 2,
-            instalacion_idinstalacion: idinstalacion
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }).then(() => {
-          axios.put(ipbackend+"updateinstalacion/"+idinstalacion,{
-            imagen_idimagen: idImagenServer
-          },{
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-          }).then(() =>{
-          limpiarcampos();
-          ventanaModalConfirmar();
-          getInstalacionesPendientes();
-        }).catch((error) => {
-          if (error.response && error.response.status === 401){
-            sessionStorage.removeItem("token");
-            window.location.reload();
-            alert("Sesión expirada, vuelva a iniciar sesión");
-            }
-          // return error;
-          });
-      };
-
       const capturarID = (cliente) =>{
         setNum_contrato(cliente.num_contrato);
         setDnicliente(cliente.dnicliente);
@@ -232,6 +197,14 @@ const getInstalaciones = async () => {
         setNombrecliente(cliente.nombrecli);
         ventanaModal();   
     }
+    const capturarIDforimage = (cliente) =>{
+      setIdinstalacion(cliente.instalacion_idinstalacion);
+      setNum_contrato(cliente.num_contrato);
+      setDnicliente(cliente.dnicliente);
+      setApellidocliente(cliente.apellidocli);
+      setNombrecliente(cliente.nombrecli);
+      ventanaModalImagen();   
+  }
     const capturarIDinstalacion = (cliente) =>{
       setEditar(true);
       setNum_contrato(cliente.num_contrato);
@@ -256,9 +229,6 @@ const getInstalaciones = async () => {
         setGeolocalizacion("");
         setObservacion("");
         setCajainstalacion("");
-        setIdImagenServer();
-        // setTecnico("");
-        // setUsuarioactualiza("");
         setEditar(false);
       }
       const cerrarModal = ()=>{
@@ -289,9 +259,7 @@ const getInstalaciones = async () => {
             results = listaClientes
           
           }
-        
-      
-    
+
         useEffect(() =>{
           getInstalacionesPendientes();
           getInstalaciones();
@@ -300,7 +268,7 @@ const getInstalaciones = async () => {
 
       return (
         <div className="App">
-          <h1 className="mb3">Registrar Instalaciones</h1>
+          <h1 className="mb3">Registro de Instalaciones</h1>
           <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
             <option value="pendientes">Pendientes</option>
             <option value="instalados">Instalados</option>
@@ -334,9 +302,9 @@ const getInstalaciones = async () => {
                                 <td>{cliente.user_create}</td>
                                 <td>{cliente.fechainstalacion}</td>
                                 {controlbusqueda?(
-                                  <td><button type="button" className="btn btn-outline-success" 
-                                  onClick={()=>{capturarIDinstalacion(cliente)}}>Editar
-                                  </button></td>
+                                <td><button type="button" className="btn btn-outline-success" 
+                                onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button>
+                                <button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>img</button></td>
                                 ):(
                                   <td><button type="button" className="btn btn-outline-success" 
                                   onClick={()=>{capturarID(cliente)}}>Registrar
@@ -409,12 +377,6 @@ const getInstalaciones = async () => {
                   className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
               </div>
-              <label className="form-label">Cargar imagen de la casa: (opcional)</label>
-              <form className="input-group mb-3" onSubmit={handleSubmit}>
-            <input type="file" className="form-control" onChange={handleImageChange}/>
-            <br/>
-            <button type="submit" className="btn btn-secondary">Cargar</button>
-              </form>
             </div>
           </ModalBody>
           <ModalFooter>
@@ -451,6 +413,34 @@ const getInstalaciones = async () => {
                 </button>
                 <button className="btn btn-danger" onClick={ventanaModalConfirmar}>
                   Cancelar
+                </button>
+              </div>
+            
+          </ModalFooter>
+        </Modal>
+
+        <Modal isOpen={modalImagen} toggle={ventanaModalImagen}>
+          <ModalBody>
+            <div className="from-group h3">
+                  Agregar/actualizar Imagen de la Casa de:
+                  <span>
+                    {" "+apellidocliente + " " + nombrecliente}
+                  </span>
+            </div>
+            <label className="form-label">Cargar imagen de la casa: (opcional)</label>
+              <form className="input-group mb-3" onSubmit={handleSubmit}>
+            <input type="file" className="form-control" onChange={handleImageChange}/>
+            <br/>
+            <button type="submit" className="btn btn-secondary">Cargar</button>
+              </form>
+          </ModalBody>
+          <ModalFooter>    
+              <div>
+                {/* <button type="submit" className="btn btn-warning m-2">
+                  Guardar
+                </button> */}
+                <button className="btn btn-danger" onClick={ventanaModalImagen}>
+                  Cerrar
                 </button>
               </div>
             

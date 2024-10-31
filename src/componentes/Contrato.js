@@ -16,6 +16,8 @@ function Contrato() {
     const [fechaprog_instalacion, setFechaprog_instalacion] = useState("");
     const [diapago, setDiapago] = useState(1);
     const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
+    const [estado, setEstado] = useState(2);
+    const [estados, setEstados] = useState([]);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
 
@@ -61,7 +63,8 @@ function Contrato() {
         observacion_contrato: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
-        estadoc_instalacion: estadoc_instalacion
+        estadoc_instalacion: estadoc_instalacion,
+        estado_servicio: estado,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -71,10 +74,9 @@ function Contrato() {
         cerrarModalContrato();
         alert("Contrato Registrado con exito");
     }).catch((error) => {
-      if (401 === error.response.status){
-      sessionStorage.removeItem("token");
-      window.location.reload();
-      alert("Sesión expirada, vuelva a iniciar sesión");
+      if (error.response && error.response.status === 400){
+      alert("Error: "+error.response.data.error);
+      console.log(error.response.data.error)
       }
       return error;
       });
@@ -82,46 +84,64 @@ function Contrato() {
   /************************************ */
   const addcliente = () => {
     if (cliente_dnicliente.length>7) {
-    Axios.post(ipbackend+"createcliente", 
-    {  
-        dnicliente: cliente_dnicliente,
-        nombrecli: nombrecli,
-        apellidocli: apellidocli,
-        direccioncli: direccioncli,
-        distritocli: distritocli,
-        provinciacli: provinciacli,
-        telefonocli: telefonocli,
-        fecha_nacimiento: fechanacimiento
-    },{
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }).then(() => {
-      getClientes();
-      cerrarModalCliente();
-      alert("Cliente Registrado con exito");
-    }).catch((error) => {
-      if (401 === error.response.status){
-      sessionStorage.removeItem("token");
-      window.location.reload();
-      alert("Sesión expirada, vuelva a iniciar sesión");
-      }
-      return error;
-      });
-  } else {
-      alert("El Documento de Identidad debe tener mas de 7 caracteres")
-  }
-  };
 
-  function getContratos(){
-    fetch(ipbackend+"todocontratosactiv", {
-      headers: {
-        'Authorization': `Bearer ${token}`
+        Axios.post(ipbackend+"createcliente", 
+          {  
+              dnicliente: cliente_dnicliente,
+              nombrecli: nombrecli,
+              apellidocli: apellidocli,
+              direccioncli: direccioncli,
+              distritocli: distritocli,
+              provinciacli: provinciacli,
+              telefonocli: telefonocli,
+              fecha_nacimiento: fechanacimiento
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(() => {
+            getClientes();
+            cerrarModalCliente();
+            alert("Cliente Registrado con exito");
+          }).catch((error) => {
+            if (error.response && error.response.status === 400){
+            alert("Error: "+error.response.data.error);
+            console.log(error.response.data.error)
+            }
+            return error;
+            });  
+      } else {
+          alert("El Documento de Identidad debe tener minimo 8 caracteres")
       }
-    })
-    .then(response => response.json())
-    .then(data => setContratos(data))
-    console.log(contratos[1])
+    } 
+
+    const getContratos = async () => {
+      try {
+        const response = await Axios.get(ipbackend+'todocontratosactiv', {
+          headers:{
+              'Authorization': `Bearer ${token}`
+          }
+        }
+        );
+        setContratos(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        if (error.response && error.response.status === 401){
+          sessionStorage.removeItem("token");
+          window.location.reload();
+          alert("Sesión expirada, vuelva a iniciar sesión");
+          }
+      }
+    };
+
+    function getEstados(){
+      fetch(ipbackend+'getestados', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+          .then(response => response.json())
+          .then(data => setEstados(data))
     }
 
   const editarContrato = (val)=>{
@@ -134,6 +154,7 @@ function Contrato() {
     setObservacion(val.observacion_contrato);
     setFechaprog_instalacion(val.fechaprog_instalacion);
     setDiapago(val.diapago);
+    setEstado(val.id_estado);
     ventanaModal();
   }
   const update = () => {
@@ -142,6 +163,7 @@ function Contrato() {
         observacion_contrato: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
+        estado_servicio: estado,
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -151,11 +173,14 @@ function Contrato() {
       cerrarModalContrato();
       alert("Contrato Actualizado con exito");
     }).catch((error) => {
-      if (401 === error.response.status){
-      sessionStorage.removeItem("token");
-      window.location.reload();
-      alert("Sesión expirada, vuelva a iniciar sesión");
-      }
+      if (error.response && error.response.status === 400){
+        alert("Error: "+error.response.data.error);
+        console.log(error.response.data.error)
+        }else if(error.response && error.response.status === 401){
+          sessionStorage.removeItem("token");
+          window.location.reload();
+          alert("Sesión expirada, vuelva a iniciar sesión");
+        }
       return error;
       });
   };
@@ -212,6 +237,8 @@ function validardnicliente() {
     setObservacion("");
     setFechaprog_instalacion("");
     setDiapago("1");
+    setEstadocinstalacion(1);
+    setEstado(2);
     setEditar(false); 
   }
   const limpiarcamposcliente = () => {
@@ -270,12 +297,13 @@ if (busqueda === "") {
     getPlanes();
     getClientes();
     getContratos();
+    getEstados();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
     <div className="App">
-      <h1 className="mb-3">Gestión de Contratos</h1>
+      <h1 className="mb-3">Registro de Contratos</h1>
         <button type="button" className="btn btn-info" onClick={agregarContrato}>
           Registrar Nuevo Contrato
         </button>
@@ -285,13 +313,14 @@ if (busqueda === "") {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">N° Contrato</th>
+              <th scope="col">Contrato</th>
               <th scope="col">dni_Cliente</th>
               <th scope="col">Plan</th>
               <th scope="col">Fecha Contrato</th>
               <th scope="col">Dia de pago</th>
               <th scope="col">Fec. Instalacion Programada</th>
-              <th scope="col">Estado Instalacion</th>
+              <th scope="col">Instalacion</th>
+              <th scope="col">Servicio</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -305,7 +334,8 @@ if (busqueda === "") {
                   <td>{val.fecha_contrato}</td>
                   <td>{val.diapago}</td>
                   <td>{val.fechaprog_instalacion}</td>
-                  <td>{val.estadoc_instalacion}</td>
+                  <td>{val.nombre_estadoinstalacion}</td>
+                  <td>{val.nombre_estado}</td>
                   <td>
                     <button
                       type="button"
@@ -360,7 +390,6 @@ if (busqueda === "") {
                   aria-describedby="basic-addon1"
                 ></input>
                 )}
-                  
                 <div className="fw-bold">{errordni}</div>
                 { editar ? (
                   null
@@ -379,30 +408,6 @@ if (busqueda === "") {
                 </button>
                   </>
                 )}
-              </div>
-              <div className="mb-3">
-                <label for="planes" className="form-label">
-                  Planes:
-                </label>
-                <select
-                  className="form-control"
-                  aria-describedby="basic-addon1"
-                  key={planes_idplanes}
-                  value={planes_idplanes}
-                  onChange={(event) => {
-                    setPlanes_idplanes(event.target.value);
-                  }}
-                >
-                  {listaPlanes.map((planes) => {
-                    return (
-                      <>
-                        <option value={planes.idplanes}>
-                          {planes.nombreplan}
-                        </option>
-                      </>
-                    );
-                  })}
-                </select>
               </div>
               <div className="mb-3">
                 <label for="fecha_contrato" className="form-label">
@@ -425,35 +430,31 @@ if (busqueda === "") {
                   aria-describedby="basic-addon1"
                 ></input>
                 )}
-                {/* <input
-                  type="date"
-                  value={fecha_contrato}
-                  onChange={(event) => {
-                    setFecha_contrato(event.target.value);
-                  }}
-                  className="form-control"
-                  id="fecha_contrato"
-                  placeholder="Fecha Contrato"
-                  aria-describedby="basic-addon1"
-                ></input> */}
               </div>
               <div className="mb-3">
-                <label for="observacion" className="form-label">
-                  Observacion:
+                <label for="planes" className="form-label">
+                  Plan:
                 </label>
-                <input
-                  type="text"
-                  value={observacion}
-                  onChange={(event) => {
-                    setObservacion(event.target.value);
-                  }}
+                <select
                   className="form-control"
-                  id="observacion"
-                  placeholder="Ingrese Observacion"
                   aria-describedby="basic-addon1"
-                ></input>
+                  key={planes_idplanes}
+                  value={planes_idplanes}
+                  onChange={(event) => {
+                    setPlanes_idplanes(event.target.value);
+                  }}
+                >
+                  {listaPlanes.map((planes) => {
+                    return (
+                      <>
+                        <option value={planes.idplanes}>
+                          {planes.nombreplan}
+                        </option>
+                      </>
+                    );
+                  })}
+                </select>
               </div>
-              
               <div className="mb-3">
                 <label for="fecha_instalacion" className="form-label">
                   Fecha Instalacion programada:
@@ -489,23 +490,57 @@ if (busqueda === "") {
                   <option>16</option>
                 </select>
               </div>
+              <div className="mb-3">
+                <label for="observacion" className="form-label">
+                  Observacion:
+                </label>
+                <input
+                  type="text"
+                  value={observacion}
+                  onChange={(event) => {
+                    setObservacion(event.target.value);
+                  }}
+                  className="form-control"
+                  id="observacion"
+                  placeholder="Ingrese Observacion"
+                  aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="estado" className="form-label">
+                  Estado Servicio:
+                </label>
+                <select
+                            className="form-control"
+                            aria-describedby="basic-addon1"
+                            key={estado}
+                            value={estado}
+                            onChange={(event) => {
+                              setEstado(event.target.value);
+                            }}
+                          >
+                            {estados.map((estado) => {
+                              return (
+                                <>
+                                  <option value={estado.id_estado}>
+                                    {estado.nombre_estado}
+                                  </option>
+                                </>
+                              );
+                            })}
+                          </select>
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>
-            {editar ? (
+            {
+            editar ?
               <div>
-                <button className="btn btn-warning m-2" onClick={update}>
-                  Actualizar
-                </button>
+                <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
               </div>
-            ) : (
-              <button className="btn btn-success" onClick={addcontrato}>
-                Registrar
-              </button>
-            )}
-            <button className="btn btn-danger" onClick={cerrarModalContrato}>
-              Cerrar
-            </button>
+              :<button className="btn btn-success" onClick={addcontrato}>Registrar</button>
+            }
+            <button className="btn btn-danger" onClick={cerrarModalContrato}>Cerrar</button>
           </ModalFooter>
         </Modal>
 

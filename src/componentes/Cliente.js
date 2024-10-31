@@ -56,7 +56,7 @@ function Cliente() {
     ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"cliente/"+dnicliente, {
+    Axios.put(ipbackend+"updatecliente/"+dnicliente, {
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
