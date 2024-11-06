@@ -13,7 +13,7 @@ function Contrato() {
     const [num_contrato, setNum_contrato] = useState();
     const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
     const [observacion, setObservacion] = useState("");
-    const [fechaprog_instalacion, setFechaprog_instalacion] = useState("");
+    const [fechaprog_instalacion, setFechaprog_instalacion] = useState(fechaactual);
     const [diapago, setDiapago] = useState(1);
     const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
     const [estado, setEstado] = useState(2);
@@ -34,7 +34,11 @@ function Contrato() {
     const [distritocli, setDistritocli] = useState("");
     const [provinciacli, setProvinciacli] = useState("");
     const [telefonocli, setTelefonocli] = useState();
-    const [fechanacimiento, setFechaNacimiento] = useState();
+    const [fechanacimiento, setFechaNacimiento] = useState('2001-01-01');
+    const [user_create, setUser_create] = useState();
+    const [fecha_actual, setFecha_actual] = useState(fechaactual);
+
+    const [fecha_createcli, setFecha_createcli] = useState("");
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrar2, setModalMostrar2] = useState(false);
@@ -46,6 +50,7 @@ function Contrato() {
 
     let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
+    let user = sessionStorage.getItem("currentUser");
 
     const agregarContrato=()=>{
       setEditar(false);
@@ -65,6 +70,8 @@ function Contrato() {
         diapago: diapago,
         estadoc_instalacion: estadoc_instalacion,
         estado_servicio: estado,
+        fecha_create: fecha_actual,
+        user_create: user_create,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -94,7 +101,9 @@ function Contrato() {
               distritocli: distritocli,
               provinciacli: provinciacli,
               telefonocli: telefonocli,
-              fecha_nacimiento: fechanacimiento
+              fecha_nacimiento: fechanacimiento,
+              fecha_create: fecha_actual,
+              user_create: user_create,
           },{
             headers: {
               'Authorization': `Bearer ${token}`
@@ -124,6 +133,7 @@ function Contrato() {
         }
         );
         setContratos(response.data);
+        setUser_create(user);
       } catch (error) {
         console.error('Error fetching data:', error);
         if (error.response && error.response.status === 401){
@@ -164,6 +174,8 @@ function Contrato() {
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
         estado_servicio: estado,
+        fecha_update: fecha_actual,
+        user_update: user_create,
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -203,7 +215,7 @@ function getPlanes(){
       .then(data => setListaPlanes(data))
 }
 
-/** VALIDAR SI EXISTE EL DNI***/
+/** VALIDAR SI EXISTE EL DNI Y SI TIENE CONTRATO***/
 function validardnicliente() {
   let index = listaclientes.findIndex(function(i){
     return i.dnicliente == cliente_dnicliente;
@@ -224,7 +236,8 @@ function validardnicliente() {
       setNombrecli(listaclientes[index].nombrecli)
       setDireccioncli(listaclientes[index].direccioncli)
       setDistritocli(listaclientes[index].distritocli)
-      setTelefonocli(listaclientes[index].telefonocli)      
+      setTelefonocli(listaclientes[index].telefonocli)
+      setFecha_createcli(listaclientes[index].fecha_create)
     }
   }
 }
@@ -240,6 +253,8 @@ function validardnicliente() {
     setEstadocinstalacion(1);
     setEstado(2);
     setEditar(false); 
+    setUser_create(user);
+    
   }
   const limpiarcamposcliente = () => {
     setCliente_dnicliente("");
@@ -250,6 +265,7 @@ function validardnicliente() {
     setProvinciacli("");
     setTelefonocli("");
     setFechaNacimiento("");
+    setFecha_createcli("");
   }
   const limpiarcamposclienteencontrado = () => {
     setNombrecli("");
@@ -259,6 +275,8 @@ function validardnicliente() {
     setProvinciacli("");
     setTelefonocli("");
     setFechaNacimiento("");
+    setFecha_createcli("");
+    setUser_create(user);
   }
   const cerrarModalContrato = ()=>{
     limpiarcamposcontrato();
@@ -336,16 +354,11 @@ if (busqueda === "") {
                   <td>{val.fechaprog_instalacion}</td>
                   <td>{val.nombre_estadoinstalacion}</td>
                   <td>{val.nombre_estado}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="btn btn-info"
-                      onClick={() => {
-                        editarContrato(val);
-                      }}
-                    >
-                      Editar
-                    </button>
+                  <td><button type="button" className="btn btn-info"
+                      onClick={() => {editarContrato(val); }}>Edit</button>
+                  </td>
+                  <td><button type="button" className="btn btn-info"
+                      onClick={() => {editarContrato(val); }}>Serv</button>
                   </td>
                 </tr>
               );
@@ -358,13 +371,9 @@ if (busqueda === "") {
             <div className="from-group">
               <h4 className="">Agregar/Modificar Contrato:</h4>
               <div className="mb-3">
-                <label for="num_contrato" className="form-label">
-                  Número de Contrato:
-                </label>
+                <label for="num_contrato" className="form-label">Número de Contrato:</label>
                 {editar ? (
-                  <span className="input-group-text" id="basic-addon1">
-                    {num_contrato}
-                  </span>
+                  <span className="input-group-text" id="basic-addon1">{num_contrato}</span>
                 ) : (
                   <input type="number" value={num_contrato} onChange={(event) => {
                       setNum_contrato(event.target.value);
@@ -374,13 +383,9 @@ if (busqueda === "") {
                 )}
               </div>
               <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI:
-                </label>
+                <label for="dnicliente" className="form-label">DNI:</label>
                 { editar ? (
-                  <span className="input-group-text" id="basic-addon1">
-                  {cliente_dnicliente}
-                </span>
+                  <span className="input-group-text" id="basic-addon1">{cliente_dnicliente}</span>
                 ) : (
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);}}
@@ -395,24 +400,14 @@ if (busqueda === "") {
                   null
                 ) : (
                   <>
-                  <button type="button" className="btn btn-secondary" onClick={validardnicliente}>
-                  validar DNI
-                </button>
+                  <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar DNI</button>
                 &nbsp;
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={agregarCliente}
-                >
-                  Nuevo Cliente
-                </button>
+                <button type="button"  className="btn btn-secondary" onClick={agregarCliente}>Nuevo Cliente</button>
                   </>
                 )}
               </div>
               <div className="mb-3">
-                <label for="fecha_contrato" className="form-label">
-                  Fecha Contrato:
-                </label>
+                <label for="fecha_contrato" className="form-label">Fecha Contrato: </label>
                 {editar ?(
                   <span className="input-group-text" id="basic-addon1">
                     {fecha_contrato}
@@ -432,9 +427,7 @@ if (busqueda === "") {
                 )}
               </div>
               <div className="mb-3">
-                <label for="planes" className="form-label">
-                  Plan:
-                </label>
+                <label for="planes" className="form-label"> Plan: </label>                
                 <select
                   className="form-control"
                   aria-describedby="basic-addon1"
@@ -456,10 +449,7 @@ if (busqueda === "") {
                 </select>
               </div>
               <div className="mb-3">
-                <label for="fecha_instalacion" className="form-label">
-                  Fecha Instalacion programada:
-                </label>
-               
+                <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
                 <input
                   type="date"
                   value={fechaprog_instalacion}
@@ -506,7 +496,8 @@ if (busqueda === "") {
                   aria-describedby="basic-addon1"
                 ></input>
               </div>
-              <div className="mb-3">
+              { editar ?(
+                <div className="mb-3">
                 <label for="estado" className="form-label">
                   Estado Servicio:
                 </label>
@@ -530,6 +521,10 @@ if (busqueda === "") {
                             })}
                           </select>
               </div>
+                ):(
+                  null
+                )}
+              
             </div>
           </ModalBody>
           <ModalFooter>
@@ -549,20 +544,18 @@ if (busqueda === "") {
             <div className="from-group">
               <h4 className="">Agregar/Modificar Cliente:</h4>
               <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI Cliente:
-                </label>
-                <input type="text" value={cliente_dnicliente} onChange={(event) => {
+                <label for="dnicliente" className="form-label">DNI Cliente:</label>
+                  <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);
-                  }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
-                ></input>
+                  }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1">
+                  </input>
               </div>
               <div className="mb-3">
                 <label for="nombres" className="form-label">Nombres:</label>
-                <input type="text" value={nombrecli} onChange={(event) => {
+                  <input type="text" value={nombrecli} onChange={(event) => {
                     setNombrecli(event.target.value);
-                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
-                ></input>
+                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1">
+                  </input>
               </div>
               <div className="mb-3">
                 <label for="apellidos" className="form-label">Apellidos:</label>
@@ -626,14 +619,14 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar3} toggle={ventanaModal3}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Datos del Cliente encontrado:</h4>
+              <h4 className="">DNI encontrado en la Base de Datos Clientes!!</h4>
               <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI:
-                </label>
-                  <span className="input-group-text" id="basic-addon1">
-                    {cliente_dnicliente}
-                  </span>
+                <label for="fecha_create" className="form-label">Fecha creación Cliente:</label>
+                <span className="input-group-text" id="basic-addon1">{fecha_createcli}</span>
+              </div>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">DNI:</label>
+                <span className="input-group-text" id="basic-addon1">{cliente_dnicliente}</span>
               </div>
               <div className="mb-3">
                 <label for="nombres" className="form-label">

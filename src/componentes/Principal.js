@@ -64,11 +64,6 @@ function Principal() {
         window.open(ipbackend+imagencasa,"_blank");
     }
 
-    function isAdmin() {
-        let role = sessionStorage.getItem("role");
-        return role == "Admin";
-    }
-
     const mostrarCliente=()=>{
         ventanaModal();
     }
@@ -97,9 +92,9 @@ function Principal() {
 
         mostrarCliente();
     }
-       
-    //Funcion de Busqueda
-    const searcher = (e) =>{
+     
+    //Funcion de Busqueda 2
+    const searcher2 = (e) =>{
         setBusqueda(e.target.value);
         }
     //Funcion de Filtrado
@@ -127,7 +122,8 @@ function Principal() {
     return(
         <div className="App">
             <h1 className='mb-3'>Contratos y Clientes Activos</h1>
-            <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
+                
+            <input value={busqueda} onChange={searcher2} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
               <table className='table-striped table-hover mt-5 shadow-lg'>
               {/* table table-striped table-hover mt-5 shadow-lg */}
                     <thead>

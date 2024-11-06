@@ -3,6 +3,7 @@ import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
+// import Resizer from "react-image-file-resizer";
 
 function Instalacion() {
 
@@ -30,7 +31,12 @@ let fechaactual = `${API.DATENOW}`
     const [caja_instalacion, setCajainstalacion] = useState();
     const [editar, setEditar] = useState(false);
 
-    const [selectedImage, setSelectedImage] = useState(null);
+    // const [selectedImage, setSelectedImage] = useState(null);
+    const [invalidImage, setinvalidImage] = useState(null);
+    const [userInfo, setuserInfo] = useState({
+      file:[],
+      filepreview:null,
+  });
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
@@ -44,9 +50,71 @@ let fechaactual = `${API.DATENOW}`
     let user = sessionStorage.getItem("currentUser")
     let ipbackend = `${API.URL}`;
 
-    //***************** CODIGO PARA SUBIR IMAGEN **********/
-    const handleImageChange = (event) => {
-      setSelectedImage(event.target.files[0]);
+    //***************** CODIGO PARA SUBIR IMAGEN **********//
+  let reader = new FileReader();
+  const handleImageChange = (event) => {
+    const imageFile = event.target.files[0];
+    const imageFilname = event.target.files[0].name;
+    // if (!imageFile) {
+    //   setinvalidImage('Please select image.');
+    //    return false;
+    //  }
+ 
+     if (!imageFile.name.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG|gif)$/)) {
+      setinvalidImage('Please select valid image JPG,JPEG,PNG');
+       return false;
+     }
+     reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+
+//------------- Resize img code ----------------------------------
+       var canvas = document.createElement('canvas');
+       var ctx = canvas.getContext("2d");
+       ctx.drawImage(img, 0, 0);
+
+       var MAX_WIDTH = 400;
+       var MAX_HEIGHT = 400;
+       var width = img.width;
+       var height = img.height;
+
+       if (width > height) {
+         if (width > MAX_WIDTH) {
+           height *= MAX_WIDTH / width;
+           width = MAX_WIDTH;
+         }
+       } else {
+         if (height > MAX_HEIGHT) {
+           width *= MAX_HEIGHT / height;
+           height = MAX_HEIGHT;
+         }
+       }
+       canvas.width = width;
+       canvas.height = height;
+       var ctx = canvas.getContext("2d");
+       ctx.drawImage(img, 0, 0, width, height);
+       ctx.canvas.toBlob((blob) => {
+         const file = new File([blob], imageFilname, {
+             type: 'image/jpeg',
+             lastModified: Date.now()
+         });
+         setuserInfo({
+            ...userInfo,
+            file:file,
+            filepreview:URL.createObjectURL(imageFile),
+       })
+       }, 'image/jpeg', 1);
+     setinvalidImage(null)
+     };
+      img.onerror = () => {
+            setinvalidImage('Invalid image content.');
+        return false;
+      };
+      //debugger
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(imageFile);
+    //console.log(imageFile)
   };
   //********************************************** */
   
@@ -54,8 +122,11 @@ let fechaactual = `${API.DATENOW}`
   const handleSubmit = async (event) => {
       event.preventDefault();
       const formData = new FormData();
-      formData.append('image', selectedImage);
-      try {
+      formData.append('image', userInfo.file);
+      //console.log(invalidImage)
+      //console.log(userInfo.file)
+      if (invalidImage==null) {
+        try {
           await Axios.put(ipbackend+'updateimagen/'+idinstalacion, formData, {
               headers: {
                   'Content-Type': 'multipart/form-data',
@@ -64,9 +135,14 @@ let fechaactual = `${API.DATENOW}`
           });
             alert("Se cargó imagen con éxito ")
             ventanaModalImagen();
+            limpiarcampos();
       } catch (error) {
           console.error(error);
       }
+      } else {
+        alert(invalidImage)
+      }
+      
   };
 
     const addinstalacion = () => {
@@ -203,7 +279,7 @@ const getInstalaciones = async () => {
       setDnicliente(cliente.dnicliente);
       setApellidocliente(cliente.apellidocli);
       setNombrecliente(cliente.nombrecli);
-      ventanaModalImagen();   
+      ventanaModalImagen();
   }
     const capturarIDinstalacion = (cliente) =>{
       setEditar(true);
@@ -229,11 +305,21 @@ const getInstalaciones = async () => {
         setGeolocalizacion("");
         setObservacion("");
         setCajainstalacion("");
+        setinvalidImage(null);
+        setuserInfo({
+          file:[],
+          filepreview:null
+        })
+
         setEditar(false);
       }
       const cerrarModal = ()=>{
         limpiarcampos();
         ventanaModal();
+      }
+      const cerrarModalImagen = ()=>{
+        limpiarcampos();
+       ventanaModalImagen();
       }
 
 
@@ -302,9 +388,11 @@ const getInstalaciones = async () => {
                                 <td>{cliente.user_create}</td>
                                 <td>{cliente.fechainstalacion}</td>
                                 {controlbusqueda?(
+                                <>
                                 <td><button type="button" className="btn btn-outline-success" 
-                                onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button>
-                                <button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>img</button></td>
+                                onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button></td>
+                                <td><button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>Img</button></td>
+                                </>
                                 ):(
                                   <td><button type="button" className="btn btn-outline-success" 
                                   onClick={()=>{capturarID(cliente)}}>Registrar
@@ -436,10 +524,7 @@ const getInstalaciones = async () => {
           </ModalBody>
           <ModalFooter>    
               <div>
-                {/* <button type="submit" className="btn btn-warning m-2">
-                  Guardar
-                </button> */}
-                <button className="btn btn-danger" onClick={ventanaModalImagen}>
+                <button className="btn btn-danger" onClick={cerrarModalImagen}>
                   Cerrar
                 </button>
               </div>
