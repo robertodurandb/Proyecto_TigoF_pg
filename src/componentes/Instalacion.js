@@ -145,10 +145,25 @@ let fechaactual = `${API.DATENOW}`
       
   };
 
+  
+  //FUNCION PARA GEOLOCALIZACION
+  function contieneBarra() {
+    if (geolocalizacion.includes('/')) {
+      console.log("si incluye /")
+      let newgeo = geolocalizacion.replace("/",",");
+      return(newgeo)
+    } else {
+      console.log("no incluye /")
+      return(geolocalizacion)
+    }
+  }
+  
+
     const addinstalacion = () => {
+      let newgeo = contieneBarra();
         Axios.post(ipbackend+"createinstalacion", {
             fechainstalacion: fechainstalacion,
-            geolocalizacion: geolocalizacion,
+            geolocalizacion: newgeo,
             observacion_instalacion: observacion,
             user_create: user_create,
             fecha_create: fecha_actual,
@@ -199,8 +214,9 @@ let fechaactual = `${API.DATENOW}`
       };
 
       const updateinstalacion = () => {
+        let newgeo = contieneBarra();
         Axios.put(ipbackend+"updateinstalacion/"+idinstalacion, {
-            geolocalizacion: geolocalizacion,
+            geolocalizacion: newgeo,
             observacion_instalacion: observacion,
             user_update: user_update,
             fecha_update: fecha_actual,

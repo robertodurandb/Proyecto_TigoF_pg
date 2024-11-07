@@ -141,7 +141,7 @@ function Principal() {
                     </thead>
                     <tbody>
                     {results.map((cliente, key)=>(
-                            <tr key={cliente.num_contrato} value={num_contrato} className={cliente.nombre_estado === 'Suspendido' ? 'text-warning' : 'null'}>
+                            <tr key={cliente.num_contrato} value={num_contrato} className={cliente.nombre_estado === 'Suspendido' ? 'text-warning' : null}>
                                 <td>{cliente.num_contrato}</td>
                                 <td>{cliente.dnicliente}</td>
                                 <td>{cliente.apellidocli}</td>

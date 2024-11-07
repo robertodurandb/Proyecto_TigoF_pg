@@ -20,6 +20,7 @@ function Contrato() {
     const [estados, setEstados] = useState([]);
     const [contratos, setContratos] = useState([]);
     const [editar, setEditar] = useState(false);
+    const [instalado, setInstalado] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
 
@@ -156,6 +157,11 @@ function Contrato() {
 
   const editarContrato = (val)=>{
     setEditar(true);
+    if (val.estadoc_instalacion==2) {
+      setInstalado(true)
+    }else{
+      setInstalado(false)
+    }
 
     setNum_contrato(val.num_contrato);
     setPlanes_idplanes(val.planes_idplanes);
@@ -165,6 +171,7 @@ function Contrato() {
     setFechaprog_instalacion(val.fechaprog_instalacion);
     setDiapago(val.diapago);
     setEstado(val.id_estado);
+    setEstadocinstalacion(val.estadoc_instalacion);
     ventanaModal();
   }
   const update = () => {
@@ -248,11 +255,12 @@ function validardnicliente() {
     setNum_contrato();
     setFecha_contrato(fechaactual);
     setObservacion("");
-    setFechaprog_instalacion("");
+    setFechaprog_instalacion(fecha_actual);
     setDiapago("1");
     setEstadocinstalacion(1);
     setEstado(2);
-    setEditar(false); 
+    setEditar(false);
+    setInstalado(false); 
     setUser_create(user);
     
   }
@@ -264,7 +272,7 @@ function validardnicliente() {
     setDistritocli("");
     setProvinciacli("");
     setTelefonocli("");
-    setFechaNacimiento("");
+    setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
   }
   const limpiarcamposclienteencontrado = () => {
@@ -274,7 +282,7 @@ function validardnicliente() {
     setDistritocli("");
     setProvinciacli("");
     setTelefonocli("");
-    setFechaNacimiento("");
+    setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
     setUser_create(user);
   }
@@ -356,9 +364,6 @@ if (busqueda === "") {
                   <td>{val.nombre_estado}</td>
                   <td><button type="button" className="btn btn-info"
                       onClick={() => {editarContrato(val); }}>Edit</button>
-                  </td>
-                  <td><button type="button" className="btn btn-info"
-                      onClick={() => {editarContrato(val); }}>Serv</button>
                   </td>
                 </tr>
               );
@@ -447,10 +452,14 @@ if (busqueda === "") {
                     );
                   })}
                 </select>
-              </div>
-              <div className="mb-3">
-                <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
-                <input
+              </div>     
+                {
+                  instalado?(
+                    null
+                  ):(
+                  <div className="mb-3">
+                    <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
+                    <input
                   type="date"
                   value={fechaprog_instalacion}
                   onChange={(event) => {
@@ -461,7 +470,10 @@ if (busqueda === "") {
                   placeholder="fecha programada para instalar"
                   aria-describedby="basic-addon1"
                 ></input>
-              </div>
+                </div>
+                  )
+                }
+              
               <div className="mb-3">
                 <label for="diapago" className="form-label">
                   Dia Pago:
