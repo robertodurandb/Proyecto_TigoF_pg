@@ -124,7 +124,7 @@ function Principal() {
             <h1 className='mb-3'>Contratos y Clientes Activos</h1>
                 
             <input value={busqueda} onChange={searcher2} type='text' placeholder='Busqueda por: DNI/Apellidos/Dirección' className='form-control border border-success'/>
-              <table className='table-striped table-hover mt-5 shadow-lg'>
+              <table className='table-striped table-hover mt-2 shadow-lg'>
               {/* table table-striped table-hover mt-5 shadow-lg */}
                     <thead>
                         <tr className='bg-curso text-black'>

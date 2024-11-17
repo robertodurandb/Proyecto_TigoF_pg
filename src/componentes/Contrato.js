@@ -38,16 +38,23 @@ function Contrato() {
     const [fechanacimiento, setFechaNacimiento] = useState('2001-01-01');
     const [user_create, setUser_create] = useState();
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
+    const [nombre_estado, setNombre_estado] = useState("");
+    const [detalle_estado, setDetalle_estado] = useState("");
+    const [nuevo_estado, setNuevo_estado] = useState(3);
+
 
     const [fecha_createcli, setFecha_createcli] = useState("");
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrar2, setModalMostrar2] = useState(false);
     const [modalMostrar3, setModalMostrar3] = useState(false);
+    const [modalMostrar4, setModalMostrar4] = useState(false);
+
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModal2 = () => setModalMostrar2(!modalMostrar2);
     const ventanaModal3 = () => setModalMostrar3(!modalMostrar3);
+    const ventanaModal4 = () => setModalMostrar4(!modalMostrar4);
 
     let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
@@ -145,6 +152,41 @@ function Contrato() {
       }
     };
 
+    const registrarCambioEstado = () => {
+      Axios.post(ipbackend+"createcambioestado", 
+        {  
+            num_contrato: num_contrato,
+            detalle: detalle_estado,
+            estado_anterior: estado,
+            estado_actual: nuevo_estado,
+            user_create: user_create,
+            fecha_create: fecha_actual,
+        },{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(Axios.put(ipbackend+"updatecontrato/"+num_contrato,
+          {
+            estado_servicio: nuevo_estado,
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }))
+          .then(() => {
+          getContratos();
+          cerrarModalEstado();
+          alert("Estado Servicio actualizado correctamente");
+        }).catch((error) => {
+          if (error.response && error.response.status === 400){
+          alert("Error: "+error.response.data.error);
+          console.log(error.response.data.error)
+          }
+          return error;
+          });
+    }
+
     function getEstados(){
       fetch(ipbackend+'getestados', {
         headers: {
@@ -174,13 +216,14 @@ function Contrato() {
     setEstadocinstalacion(val.estadoc_instalacion);
     ventanaModal();
   }
+
   const update = () => {
     Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
         planes_idplanes: planes_idplanes,
         observacion_contrato: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
         diapago: diapago,
-        estado_servicio: estado,
+        //estado_servicio: estado,
         fecha_update: fecha_actual,
         user_update: user_create,
     }, {
@@ -212,6 +255,15 @@ function Contrato() {
         .then(response => response.json())
         .then(data => setListaclientes(data))
 }
+
+const editarEstado = (val)=>{
+  setNum_contrato(val.num_contrato);
+  setCliente_dnicliente(val.cliente_dnicliente);
+  setNombre_estado(val.nombre_estado);
+  setEstado(val.id_estado);
+  ventanaModal4();
+}
+
 function getPlanes(){
   fetch(ipbackend+'getplanes', {
     headers: {
@@ -286,6 +338,15 @@ function validardnicliente() {
     setFecha_createcli("");
     setUser_create(user);
   }
+  const limpiarcampos_estado = () => {
+    setCliente_dnicliente("");
+    setNum_contrato("");
+    setDetalle_estado("");
+    setEstado(2);
+    setNuevo_estado(3);
+    setNombre_estado("");
+    setUser_create(user);
+  }
   const cerrarModalContrato = ()=>{
     limpiarcamposcontrato();
     ventanaModal();
@@ -297,6 +358,10 @@ function validardnicliente() {
   const cerrarModalClienteEncontrado = ()=>{
     limpiarcamposclienteencontrado();
     ventanaModal3();
+  }
+  const cerrarModalEstado = ()=>{
+    limpiarcampos_estado();
+    ventanaModal4();
   }
 
   //Funcion de Busqueda
@@ -365,6 +430,9 @@ if (busqueda === "") {
                   <td><button type="button" className="btn btn-info"
                       onClick={() => {editarContrato(val); }}>Edit</button>
                   </td>
+                  <td><button type="button" className="btn btn-info"
+                      onClick={() => {editarEstado(val); }}>E</button>
+                  </td>
                 </tr>
               );
             })}
@@ -392,12 +460,8 @@ if (busqueda === "") {
                 { editar ? (
                   <span className="input-group-text" id="basic-addon1">{cliente_dnicliente}</span>
                 ) : (
-                  <input type="text" value={cliente_dnicliente} onChange={(event) => {
-                    setCliente_dnicliente(event.target.value);}}
-                  className="form-control"
-                  id="dnicliente"
-                  placeholder="DNI del cliente"
-                  aria-describedby="basic-addon1"
+                  <input type="text" value={cliente_dnicliente} onChange={(event) => {setCliente_dnicliente(event.target.value);}}
+                  className="form-control" id="dnicliente" placeholder="DNI del cliente" aria-describedby="basic-addon1"
                 ></input>
                 )}
                 <div className="fw-bold">{errordni}</div>
@@ -418,29 +482,17 @@ if (busqueda === "") {
                     {fecha_contrato}
                   </span>
                 ):(
-                  <input
-                  type="date"
-                  value={fecha_contrato}
-                  onChange={(event) => {
-                    setFecha_contrato(event.target.value);
+                  <input type="date" value={fecha_contrato} onChange={(event) => {setFecha_contrato(event.target.value);
                   }}
-                  className="form-control"
-                  id="fecha_contrato"
-                  placeholder="Fecha Contrato"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="fecha_contrato" placeholder="Fecha Contrato" aria-describedby="basic-addon1"
                 ></input>
                 )}
               </div>
               <div className="mb-3">
                 <label for="planes" className="form-label"> Plan: </label>                
                 <select
-                  className="form-control"
-                  aria-describedby="basic-addon1"
-                  key={planes_idplanes}
-                  value={planes_idplanes}
-                  onChange={(event) => {
-                    setPlanes_idplanes(event.target.value);
-                  }}
+                  className="form-control" aria-describedby="basic-addon1" key={planes_idplanes} value={planes_idplanes}
+                  onChange={(event) => { setPlanes_idplanes(event.target.value);}}
                 >
                   {listaPlanes.map((planes) => {
                     return (
@@ -459,16 +511,10 @@ if (busqueda === "") {
                   ):(
                   <div className="mb-3">
                     <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
-                    <input
-                  type="date"
-                  value={fechaprog_instalacion}
-                  onChange={(event) => {
+                    <input type="date" value={fechaprog_instalacion} onChange={(event) => {
                     setFechaprog_instalacion(event.target.value);
                   }}
-                  className="form-control"
-                  id="fecha_instalacion"
-                  placeholder="fecha programada para instalar"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="fecha_instalacion" placeholder="fecha programada para instalar" aria-describedby="basic-addon1"
                 ></input>
                 </div>
                   )
@@ -478,15 +524,10 @@ if (busqueda === "") {
                 <label for="diapago" className="form-label">
                   Dia Pago:
                 </label>
-                <select
-                  value={diapago}
-                  onChange={(event) => {
+                <select value={diapago} onChange={(event) => {
                     setDiapago(event.target.value);
                   }}
-                  className="form-control"
-                  id="diapago"
-                  aria-label="Dia Pago"
-                  aria-describedby="basic-addon1"
+                  className="form-control" id="diapago" aria-label="Dia Pago" aria-describedby="basic-addon1"
                 >
                   <option>1</option>
                   <option>16</option>
@@ -496,47 +537,11 @@ if (busqueda === "") {
                 <label for="observacion" className="form-label">
                   Observacion:
                 </label>
-                <input
-                  type="text"
-                  value={observacion}
-                  onChange={(event) => {
-                    setObservacion(event.target.value);
-                  }}
-                  className="form-control"
-                  id="observacion"
-                  placeholder="Ingrese Observacion"
-                  aria-describedby="basic-addon1"
+                <input type="text" value={observacion}
+                  onChange={(event) => { setObservacion(event.target.value); }}
+                  className="form-control" id="observacion" placeholder="Ingrese Observacion" aria-describedby="basic-addon1"
                 ></input>
               </div>
-              { editar ?(
-                <div className="mb-3">
-                <label for="estado" className="form-label">
-                  Estado Servicio:
-                </label>
-                <select
-                            className="form-control"
-                            aria-describedby="basic-addon1"
-                            key={estado}
-                            value={estado}
-                            onChange={(event) => {
-                              setEstado(event.target.value);
-                            }}
-                          >
-                            {estados.map((estado) => {
-                              return (
-                                <>
-                                  <option value={estado.id_estado}>
-                                    {estado.nombre_estado}
-                                  </option>
-                                </>
-                              );
-                            })}
-                          </select>
-              </div>
-                ):(
-                  null
-                )}
-              
             </div>
           </ModalBody>
           <ModalFooter>
@@ -678,6 +683,74 @@ if (busqueda === "") {
             <button className="btn btn-danger" onClick={cerrarModalClienteEncontrado}>Cerrar</button>
           </ModalFooter>
         </Modal>
+
+
+        <Modal isOpen={modalMostrar4} toggle={ventanaModal4}>
+          <ModalBody>
+            <div className="from-group">
+              <h4 className="">Modificar Estado Servicio:</h4>
+              <div className="mb-3">
+                <label for="numcontrato" className="form-label">Contrato:</label>
+                <span className="input-group-text" id="basic-addon1">
+                    {num_contrato}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="dnicliente" className="form-label">DNI Cliente:</label>
+                <span className="input-group-text" id="basic-addon1">
+                    {cliente_dnicliente}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="nombre_estadoanterior" className="form-label">Estado Anterior:</label>
+                <span className="input-group-text" id="basic-addon1">
+                    {nombre_estado}
+                  </span>
+              </div>
+              <div className="mb-3">
+                <label for="nombres" className="form-label">Detalle:</label>
+                  <input type="text" onChange={(event) => {
+                    setDetalle_estado(event.target.value);
+                  }} className="form-control" id="detalle_estado" placeholder="Detalle del cambio estado" aria-describedby="basic-addon1">
+                  </input>
+              </div>
+              <div className="mb-3">
+                <label for="nuevo_estado" className="form-label">Nuevo Estado:</label>
+                <div className="mb-3">
+                <select
+                            className="form-control"
+                            aria-describedby="basic-addon1"
+                            key={nuevo_estado}
+                            value={nuevo_estado}
+                            onChange={(event) => {
+                              setNuevo_estado(event.target.value);
+                            }}
+                          >
+                            {estados.map((estado) => {
+                              return (
+                                <>
+                                  <option value={estado.id_estado}>
+                                    {estado.nombre_estado}
+                                  </option>
+                                </>
+                              );
+                            })}
+                          </select>
+              </div>
+              </div>
+             
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button className="btn btn-success" onClick={registrarCambioEstado}>
+              Registrar
+            </button>
+            <button className="btn btn-danger" onClick={cerrarModalEstado}>
+              Cerrar
+            </button>
+          </ModalFooter>
+        </Modal>
+
     </div>
   );
 }

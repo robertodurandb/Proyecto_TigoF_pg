@@ -30,6 +30,7 @@ let fechaactual = `${API.DATENOW}`
     const [user_update, setUser_update] = useState();
     const [caja_instalacion, setCajainstalacion] = useState();
     const [editar, setEditar] = useState(false);
+    const [pendientes, setPendientes] = useState(false);
 
     // const [selectedImage, setSelectedImage] = useState(null);
     const [invalidImage, setinvalidImage] = useState(null);
@@ -123,8 +124,7 @@ let fechaactual = `${API.DATENOW}`
       event.preventDefault();
       const formData = new FormData();
       formData.append('image', userInfo.file);
-      //console.log(invalidImage)
-      //console.log(userInfo.file)
+
       if (invalidImage==null) {
         try {
           await Axios.put(ipbackend+'updateimagen/'+idinstalacion, formData, {
@@ -359,7 +359,6 @@ const getInstalaciones = async () => {
             
           } else{
             results = listaClientes
-          
           }
 
         useEffect(() =>{
@@ -386,8 +385,17 @@ const getInstalaciones = async () => {
                             <th>Direccion</th>
                             <th>Telefono</th>
                             <th>Fecha programada</th>
-                            <th>Técnico</th>
-                            <th>Fecha Instalacion</th>
+                            {
+                              controlbusqueda?(
+                                <>
+                                <th>Técnico</th>
+                                <th>Fecha Instalacion</th>
+                                </> 
+                              ):(
+                                <th>Observacion</th>
+                              )
+                            }
+                            
                             <th>Acción</th>
                 </tr>
               </thead>
@@ -401,8 +409,16 @@ const getInstalaciones = async () => {
                                 <td>{cliente.direccioncli}</td>
                                 <td>{cliente.telefonocli}</td>
                                 <td>{cliente.fechaprog_instalacion}</td>
-                                <td>{cliente.user_create}</td>
-                                <td>{cliente.fechainstalacion}</td>
+                                {
+                                  controlbusqueda?(
+                                    <>
+                                    <td>{cliente.user_create}</td>
+                                    <td>{cliente.fechainstalacion}</td>
+                                    </>
+                                  ):(
+                                    <td>{cliente.observacion_contrato}</td>
+                                  )
+                                }
                                 {controlbusqueda?(
                                 <>
                                 <td><button type="button" className="btn btn-outline-success" 
