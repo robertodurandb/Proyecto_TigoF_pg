@@ -16,13 +16,21 @@ if (mes < 10) {
   texmes = "-"
 }
 
+let hour = new Date();
+let hora = hour.getHours();
+let minut = hour.getMinutes();
+let second = hour.getSeconds();
+let horaactual = "";
+horaactual = hora+":"+minut+":"+second
+
 let API = {
     URL:"http://localhost:9100/api/v1/clientes/",
     //URL:"https://api.tigo.com.pe/api/v1/clientes/",
     //************************************ */
     DATENOW: anioactual + texmes + mes + texdia + dia,
     ANIO: anioactual,
-    MES: mes
+    MES: mes,
+    TIMENOW: horaactual
 }
 
 export default API

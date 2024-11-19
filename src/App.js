@@ -8,8 +8,8 @@ import Inicio from '../src/componentes/Principal';
 import Reportepagos from '../src/componentes/Consultapagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Gestiontickets from '../src/componentes/Gestiontickets';
+import Cortes from '../src/componentes/Cortes_Activaciones';
 
-import Upload from '../src/componentes/Upload';
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
 import {
@@ -92,6 +92,9 @@ function App() {
                   <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cliente">
                     Tabla Clientes
                   </Link></button></li>
+                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cortes">
+                    Cortes/Activ
+                  </Link></button></li>
                     <li><button className="dropdown-item"><Link className='text-decoration-none' to="/Passwordupdate">
                     Cambio de contraseña
                   </Link></button></li>
@@ -111,6 +114,9 @@ function App() {
             </Routes>
               <Routes>
                 <Route path="/cliente" element={<Clientes />} />
+              </Routes>
+              <Routes>
+                <Route path="/cortes" element={<Cortes />} />
               </Routes>
               <Routes>
                 <Route path="/instalacion" element={<Instalacion />} />
