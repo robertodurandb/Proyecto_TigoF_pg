@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from "axios";
 import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import API from '../utils/const';
@@ -70,6 +69,7 @@ function Cortes_Activaciones() {
                             <th>Nombres</th>
                             <th>Fecha</th>
                             <th>Hora</th>
+                            <th>Hora2</th>
                             <th>Estado</th>
                             <th>Descripcion</th>
                             <th>User</th>

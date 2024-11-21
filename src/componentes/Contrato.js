@@ -6,7 +6,6 @@ import API from '../utils/const';
 
 //OBTENER FECHA ACTUAL
 let fechaactual = `${API.DATENOW}`
-let horaactual = `${API.TIMENOW}`
 
 function Contrato() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
@@ -39,7 +38,6 @@ function Contrato() {
     const [fechanacimiento, setFechaNacimiento] = useState('2001-01-01');
     const [user_create, setUser_create] = useState();
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
-    const [hora_actual, setHora_actual] = useState(horaactual)
     const [nombre_estado, setNombre_estado] = useState("");
     const [detalle_estado, setDetalle_estado] = useState("");
     const [nuevo_estado, setNuevo_estado] = useState(3);
@@ -144,7 +142,6 @@ function Contrato() {
         );
         setContratos(response.data);
         setUser_create(user);
-        console.log(horaactual)
       } catch (error) {
         console.error('Error fetching data:', error);
         if (error.response && error.response.status === 401){
@@ -163,8 +160,6 @@ function Contrato() {
             estado_anterior: estado,
             estado_actual: nuevo_estado,
             user_create: user_create,
-            fecha_create: fecha_actual,
-            hora_create: hora_actual
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -265,7 +260,6 @@ const editarEstado = (val)=>{
   setCliente_dnicliente(val.cliente_dnicliente);
   setNombre_estado(val.nombre_estado);
   setEstado(val.id_estado);
-  setHora_actual(horaactual);
   ventanaModal4();
 }
 
