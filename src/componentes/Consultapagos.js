@@ -31,18 +31,16 @@ const handleSubmit = async (event) => {
   try {
       const response = await axios.post(ipbackend+'importar', formData, {
           headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
           }
       });
-      //  let idfile = response.data
-      //   let newidfile = idpago2.split(',')
-      //   setIdImagenServer(newidfile[1])
-      // console.log(response.data)
         alert("Se cargó con éxito ")
         getPagos();
         setSelectedFile(null);
   } catch (error) {
       console.error(error);
+      alert("Hay un error con el archivo o no se ha cargado: "+error.response.data.error)
   }
 };
 
