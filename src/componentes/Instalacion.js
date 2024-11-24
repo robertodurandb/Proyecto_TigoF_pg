@@ -74,8 +74,8 @@ let fechaactual = `${API.DATENOW}`
        var ctx = canvas.getContext("2d");
        ctx.drawImage(img, 0, 0);
 
-       var MAX_WIDTH = 400;
-       var MAX_HEIGHT = 400;
+       var MAX_WIDTH = 500;
+       var MAX_HEIGHT = 500;
        var width = img.width;
        var height = img.height;
 

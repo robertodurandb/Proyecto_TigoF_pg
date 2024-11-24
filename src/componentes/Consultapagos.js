@@ -40,7 +40,7 @@ const handleSubmit = async (event) => {
         setSelectedFile(null);
   } catch (error) {
       console.error(error);
-      alert("Hay un error con el archivo o no se ha cargado: "+error.response.data.error)
+      alert("Hay un error con el archivo: "+error.response.data)
   }
 };
 
