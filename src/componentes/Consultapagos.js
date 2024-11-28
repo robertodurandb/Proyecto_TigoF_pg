@@ -8,6 +8,7 @@ function Consultapagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
+    
 
     let ipbackend = `${API.URL}`;
     let token = sessionStorage.getItem("token");
@@ -53,7 +54,7 @@ const handleSubmit = async (event) => {
                 .then(response => response.json())
                 .then(data => setListaPagos(data))
         }
-  
+
     //Funcion de Busqueda
     const searcher = (e) =>{
         setBusqueda(e.target.value);
@@ -93,9 +94,9 @@ const handleSubmit = async (event) => {
             {
               isAdmin() ?(
                 <CSVLink data={results}><button className='btn btn-success mt-2'>Exportar CSV</button></CSVLink>
+                
               ):null
             }
-            
             <table className='table table-striped table-hover mt-3 shadow-lg'>
                     <thead>
                         <tr className='bg-curso text-white'>

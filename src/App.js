@@ -9,6 +9,7 @@ import Reportepagos from '../src/componentes/Consultapagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Gestiontickets from '../src/componentes/Gestiontickets';
 import Cortes from '../src/componentes/Cortes_Activaciones';
+import Logs from '../src/componentes/Logs_Carga';
 
 import Usuarios from '../src/componentes/Usuario';
 import Login from '../src/componentes/Login';
@@ -95,6 +96,9 @@ function App() {
                   <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cortes">
                     Cortes/Activ
                   </Link></button></li>
+                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/logs">
+                    Logs Carga
+                  </Link></button></li>
                     <li><button className="dropdown-item"><Link className='text-decoration-none' to="/Passwordupdate">
                     Cambio de contraseña
                   </Link></button></li>
@@ -117,6 +121,9 @@ function App() {
               </Routes>
               <Routes>
                 <Route path="/cortes" element={<Cortes />} />
+              </Routes>
+              <Routes>
+                <Route path="/logs" element={<Logs />} />
               </Routes>
               <Routes>
                 <Route path="/instalacion" element={<Instalacion />} />

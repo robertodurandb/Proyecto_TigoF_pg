@@ -69,7 +69,6 @@ function Cortes_Activaciones() {
                             <th>Nombres</th>
                             <th>Fecha</th>
                             <th>Hora</th>
-                            <th>Hora2</th>
                             <th>Estado</th>
                             <th>Descripcion</th>
                             <th>User</th>
