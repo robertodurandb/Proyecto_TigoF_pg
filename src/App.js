@@ -1,4 +1,5 @@
-import 'bootstrap/dist/css/bootstrap.css';
+//import 'bootstrap/dist/css/bootstrap.css';
+import './estilos/style.css';
 // import Caja from '../src/componentes/Caja';
 import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
@@ -23,7 +24,18 @@ import React, { useEffect } from 'react';
 
 function App() {
   const [logged, setLogged] = React.useState(false)
-  const [User, setUser] = React.useState("")
+  const [User, setUser] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+  // Función para manejar el scroll
+  // const handleScroll = () => {
+  //   if (window.scrollY > 50 && isOpen) {
+  //     setIsOpen(false);
+  //   }
+  // };
 
   function checkLogin() {
     let token = sessionStorage.getItem('token')
@@ -40,7 +52,9 @@ function App() {
     return role == "Admin";
 }
   useEffect(() => {
-    checkLogin()
+    checkLogin();
+    // window.addEventListener('scroll', handleScroll);
+    // return () => window.removeEventListener('scroll', handleScroll);
   }, [])
 
   function signOut() {
@@ -53,33 +67,41 @@ function App() {
 
   return (
 
-    <div className="container-xl">
+    <div className='main1'>
       {  logged?
         (
        
         <Router>
-              <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className='container'>
-                  <Link to="/" className="btn navbar-brand">
-                    Inicio
-                  </Link>    
-                  {isAdmin()?(
-                    <>
-                    <Link to="/contrato" className="btn navbar-brand">
-                    Contratos
-                  </Link>
-                    </>
-                  ):null}
-                <Link to="/instalacion" className="btn navbar-brand" role='button'>
-                  Instalaciones
-                </Link>
-                <Link to="/reportepagos" className="btn navbar-brand">
-                    Pagos
-                </Link>
-                <Link to="/tickets" className="btn navbar-brand">
-                    Gestión de Tickets
-                  </Link>
-                <div class="dropdown">
+              
+              <nav className="navbar1">
+                <div className='logo'>TIGO</div>
+                <ul className={isOpen ? 'nav-links2':'nav-links1'}>
+                  <li>
+                    <Link to="/" className="links1">Inicio</Link>
+                  </li>
+                  <li>
+                    <Link to="/Contratos" className="links1">Contratos</Link>
+                  </li>
+                  <li>
+                    <Link to="/Instalaciones" className="links1" role='button'>Instalaciones</Link>
+                  </li>
+                  <li>
+                    <Link to="/Pagos" className="links1">Pagos</Link>
+                  </li>
+                  <li>
+                    <Link to="/Tickets" className="links1">Gestión de Tickets</Link>
+                  </li>
+
+                
+
+                  </ul>
+                  <div className='burger' aria-label='Abrir menu de navegacion' onClick={toggleMenu}>
+                    <div className='line'></div>
+                    <div className='line'></div>
+                    <div className='line'></div>
+                  </div>
+
+                  <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     {User}
                   </button>
@@ -97,7 +119,7 @@ function App() {
                     Cortes/Activ
                   </Link></button></li>
                   <li><button className="dropdown-item"><Link className='text-decoration-none' to="/logs">
-                    Logs Carga
+                    Logs Errores
                   </Link></button></li>
                     <li><button className="dropdown-item"><Link className='text-decoration-none' to="/Passwordupdate">
                     Cambio de contraseña
@@ -105,16 +127,23 @@ function App() {
                     <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
                   </ul>
                 </div>
-                  </div>
-              
+                  
               </nav>
+              {isOpen ? 
+              (<>
               <hr />
+              <hr />
+              <hr />
+              <hr />
+              <hr />
+              </>):null}
+              {/* <hr /> */}
 
             <Routes>
-                <Route path="/contrato" element={ isAdmin() ?(<Contratos />):null} />
+                <Route path="/Contratos" element={ isAdmin() ?(<Contratos />):null} />
             </Routes>
             <Routes>
-                <Route path="/reportepagos" element={<Reportepagos />} />
+                <Route path="/Pagos" element={<Reportepagos />} />
             </Routes>
               <Routes>
                 <Route path="/cliente" element={<Clientes />} />
@@ -126,7 +155,7 @@ function App() {
                 <Route path="/logs" element={<Logs />} />
               </Routes>
               <Routes>
-                <Route path="/instalacion" element={<Instalacion />} />
+                <Route path="/Instalaciones" element={<Instalacion />} />
               </Routes>
               <Routes>
                 <Route path="/passwordupdate" element={<Passwordupdate />} />
@@ -137,9 +166,6 @@ function App() {
               <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
               </Routes>
-              {/* <Routes>
-                <Route path="/caja" element={logged2?<Caja />:null} />
-              </Routes> */}
               <Routes>
               <Route path="/usuarios" element={ isAdmin() ?(<Usuarios />):null} />
             </Routes>

@@ -1,3 +1,72 @@
+/****ESTILOS PARA EL MENÚ DE NAVEGACION****/
+.main1{
+  margin: 0px;
+  padding: 0px;
+  font-family: Arial, sans-serif;
+}
+
+.navbar1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+}
+.nav-links1{
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.nav-links2 {
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  margin: 0;
+  text-align: center;
+  transition: all 0.3;
+}
+.links1 {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3;
+  font-size: 18px;
+}
+.links1:hover {
+  color: #f39c12;
+}
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.line {
+  width: 30px;
+  height: 3px;
+  background-color: white;
+  margin: 3px 0;
+}
+.burger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+@media screen and (max-width: 768px){
+  .navbar1 {
+    position: relative;
+  }
+  .burger {
+    display: flex;
+  }
+  .nav-links1 {
+    display: none;
+  }
+
+}
+/*ESTILOS PARA EL LOGIN*/
 .App {
     text-align: center;
     padding: 40px 30px;

@@ -36,7 +36,8 @@ const handleSubmit = async (event) => {
               'Authorization': `Bearer ${token}`
           }
       });
-        alert("Se cargó con éxito ")
+        alert(response.data)
+        //console.log(response.data)
         getPagos();
         setSelectedFile(null);
   } catch (error) {

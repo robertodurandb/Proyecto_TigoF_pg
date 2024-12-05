@@ -1,5 +1,4 @@
 import React from 'react';
-import Axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../estilos/style.css'
 import Tigo from '../imagenes/tigo1.png'
