@@ -5,7 +5,8 @@ import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
 import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
-import Inicio from '../src/componentes/Principal';
+import Consultas from './componentes/Consulta';
+import Inicio from './componentes/Inicio';
 import Reportepagos from '../src/componentes/Consultapagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Gestiontickets from '../src/componentes/Gestiontickets';
@@ -70,7 +71,6 @@ function App() {
     <div className='main1'>
       {  logged?
         (
-       
         <Router>
               
               <nav className="navbar1">
@@ -78,6 +78,9 @@ function App() {
                 <ul className={isOpen ? 'nav-links2':'nav-links1'}>
                   <li>
                     <Link to="/" className="links1">Inicio</Link>
+                  </li>
+                  <li>
+                    <Link to="/Consultas" className="links1">Consultas</Link>
                   </li>
                   <li>
                     <Link to="/Contratos" className="links1">Contratos</Link>
@@ -101,7 +104,7 @@ function App() {
                     <div className='line'></div>
                   </div>
 
-                  <div class="dropdown">
+                  {/* <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     {User}
                   </button>
@@ -126,7 +129,7 @@ function App() {
                   </Link></button></li>
                     <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
                   </ul>
-                </div>
+                </div> */}
                   
               </nav>
               {isOpen ? 
@@ -138,7 +141,10 @@ function App() {
               <hr />
               </>):null}
               {/* <hr /> */}
-
+            
+            <Routes>
+                <Route path="/Consultas" element={ <Consultas />} />
+            </Routes>
             <Routes>
                 <Route path="/Contratos" element={ isAdmin() ?(<Contratos />):null} />
             </Routes>
