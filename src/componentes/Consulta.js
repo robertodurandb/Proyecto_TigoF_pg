@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Axios from "axios";
+//import '../estilos/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';
@@ -16,7 +17,6 @@ import {
     getSortedRowModel,
     useReactTable,
     getToggleSelectedHandler,
-    onRowSelectionChange,
   } from '@tanstack/react-table'
 
 function Consulta() {
@@ -50,6 +50,7 @@ function Consulta() {
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
     const [rowSelection, setRowSelection] = useState({})
+    const [filaselect, setFilaselect] = useState(false);
 
     const [modalMostrar, setModalMostrar] = useState(false);
 
@@ -141,30 +142,61 @@ function Consulta() {
         ventanaModal();
     }
 
-    const capturarID = (cliente) => {
-        setNum_contrato(cliente.num_contrato);
-        setDnicli(cliente.dnicliente);
-        setNombrecli(cliente.nombrecli);
-        setApellidocli(cliente.apellidocli);
-        setDiapago(cliente.diapago);
-        setDireccioncli(cliente.direccioncli);
-        setDistritocli(cliente.distritocli);
-        setNombreplan(cliente.nombreplan);
-        setFechacontrato(cliente.fecha_contrato);
-        setTelefonocli(cliente.telefonocli);
-        setFecha_nacimiento(cliente.fecha_nacimiento);
-        setVelocidadplan(cliente.velocidadplan);
-        setPrecioplan(cliente.precioplan);
-        setUser_create(cliente.user_create);
-        setGeolocalizacion(cliente.geolocalizacion);
-        setEstado_servicio(cliente.nombre_estado);
-        setFechainstalacion(cliente.fechainstalacion);
-        setImagencasa(cliente.nombreimg);
-        setObservacion_instalacion(cliente.observacion_instalacion);
-        setCaja_instalacion(cliente.caja_instalacion);
+    const detalleCliente = () => {
+        if (table.getSelectedRowModel().flatRows[0]==undefined) {
+            alert("Debe seleccionar un registro")
+        }else{
+            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setDnicli(table.getSelectedRowModel().flatRows[0].original.dnicliente);
+            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
+            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
+            setDiapago(table.getSelectedRowModel().flatRows[0].original.diapago);
+            setDireccioncli(table.getSelectedRowModel().flatRows[0].original.direccioncli);
+            setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
+            setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
+            setFechacontrato(table.getSelectedRowModel().flatRows[0].original.fecha_contrato);
+            setTelefonocli(table.getSelectedRowModel().flatRows[0].original.telefonocli);
+            setFecha_nacimiento(table.getSelectedRowModel().flatRows[0].original.fecha_nacimiento);
+            setVelocidadplan(table.getSelectedRowModel().flatRows[0].original.velocidadplan);
+            setPrecioplan(table.getSelectedRowModel().flatRows[0].original.precioplan);
+            setUser_create(table.getSelectedRowModel().flatRows[0].original.user_create);
+            setGeolocalizacion(table.getSelectedRowModel().flatRows[0].original.geolocalizacion);
+            setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
+            setFechainstalacion(table.getSelectedRowModel().flatRows[0].original.fechainstalacion);
+            setImagencasa(table.getSelectedRowModel().flatRows[0].original.nombreimg);
+            setObservacion_instalacion(table.getSelectedRowModel().flatRows[0].original.observacion_instalacion);
+            setCaja_instalacion(table.getSelectedRowModel().flatRows[0].original.caja_instalacion);
 
-        mostrarCliente();
+            mostrarCliente();
+        }
     }
+    // {table.getSelectedRowModel().flatRows.map((el) => {
+    //     return <li key={el.id}>{JSON.stringify(el.original)}</li>;
+    // })}
+    // const capturarID = (cliente) => {
+    //     setNum_contrato(cliente.num_contrato);
+    //     setDnicli(cliente.dnicliente);
+    //     setNombrecli(cliente.nombrecli);
+    //     setApellidocli(cliente.apellidocli);
+    //     setDiapago(cliente.diapago);
+    //     setDireccioncli(cliente.direccioncli);
+    //     setDistritocli(cliente.distritocli);
+    //     setNombreplan(cliente.nombreplan);
+    //     setFechacontrato(cliente.fecha_contrato);
+    //     setTelefonocli(cliente.telefonocli);
+    //     setFecha_nacimiento(cliente.fecha_nacimiento);
+    //     setVelocidadplan(cliente.velocidadplan);
+    //     setPrecioplan(cliente.precioplan);
+    //     setUser_create(cliente.user_create);
+    //     setGeolocalizacion(cliente.geolocalizacion);
+    //     setEstado_servicio(cliente.nombre_estado);
+    //     setFechainstalacion(cliente.fechainstalacion);
+    //     setImagencasa(cliente.nombreimg);
+    //     setObservacion_instalacion(cliente.observacion_instalacion);
+    //     setCaja_instalacion(cliente.caja_instalacion);
+
+    //     mostrarCliente();
+    // }
      
     //Funcion de Busqueda 2
     // const searcher2 = (e) =>{
@@ -195,7 +227,7 @@ function Consulta() {
     return(
         <div>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
-            <h2>--------------------</h2>
+            <button type="button" className="btn btn-outline-success mb-3" onClick={detalleCliente}>Detalle Cliente Seleccionado</button>
             <input value={filtering} type='text' placeholder='Búsqueda de registros' className='form-control border border-success'
             onChange={(e) => setFiltering(e.target.value)}
             />
@@ -225,7 +257,7 @@ function Consulta() {
                 <tbody>
                 {table.getRowModel().rows.map(row => (
                     <tr key={row.id} 
-                    className={row.getIsSelected() ? 'selected' : null}
+                    className={row.getIsSelected() ? 'table-primary' : null}
                     onClick={row.getToggleSelectedHandler()}>
                     {row.getVisibleCells().map(cell => (
                         <td key={cell.id}>
@@ -268,9 +300,11 @@ function Consulta() {
                 {'>>'}
                 </button>
                 <div>
-                    <label>Row Selection State:</label>
-                    <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
-                    {console.log(rowSelection)}
+
+                        {/* {table.getSelectedRowModel().flatRows.map((el) => {
+                            return <li key={el.id}>{JSON.stringify(el.original)}</li>;
+                        })} */}
+
                 </div>
                 {/* <select type='text' value={busqueda} onChange={seleccionestado} className='form-select form-select-lg mt-3'>
                     <option value="Activo">Activos</option>
