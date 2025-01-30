@@ -135,39 +135,40 @@ const getPlanes = async () => {
     <div className="App">
       <h1 className="mb-3">Gestion de Planes</h1>
         <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Plan</button>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Nombre Plan</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Velocidad</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-          {planes.map((val, key) => {
-            return <tr key={val.idplanes}>
-                    <td>{val.nombreplan}</td>
-                    <td>{val.descplan}</td>
-                    <td>{val.precioplan}</td>
-                    <td>{val.velocidadplan}</td>
-                    <td>{val.nombre_estado}</td>
-                    <td>
-                    <button type="button" className="btn btn-info" 
-                    onClick={()=>{
-                      editarPlan(val);
-                    }}>
-                      Editar
-                    </button>
-                    </td>
-            </tr>
-           
-          })}
-            
-          </tbody>
-        </table>
+        <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Nombre Plan</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Velocidad</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+              {planes.map((val, key) => {
+                return <tr key={val.idplanes}>
+                        <td>{val.nombreplan}</td>
+                        <td>{val.descplan}</td>
+                        <td>{val.precioplan}</td>
+                        <td>{val.velocidadplan}</td>
+                        <td>{val.nombre_estado}</td>
+                        <td>
+                        <button type="button" className="btn btn-info" 
+                        onClick={()=>{
+                          editarPlan(val);
+                        }}>
+                          Editar
+                        </button>
+                        </td>
+                </tr>
+                        })}
+              </tbody>
+            </table>
+        </div>
+        
 
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>

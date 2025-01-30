@@ -6,23 +6,17 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import API from '../utils/const';
 import {
-    Column,
-    ColumnDef,
-    PaginationState,
-    Table,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-    getToggleSelectedHandler,
   } from '@tanstack/react-table'
 
 function Consulta() {
 
     const [listaClientes, setListaClientes] = useState([]);
-    const [busqueda, setBusqueda] = useState("");
 
     //Datos para el Modal
     const [num_contrato, setNum_contrato] = useState();
@@ -51,6 +45,11 @@ function Consulta() {
     const [filtering, setFiltering] = useState("");
     const [rowSelection, setRowSelection] = useState({})
     const [filaselect, setFilaselect] = useState(false);
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 10,
+      })
+      const [columnFilters, setColumnFilters] = React.useState([])
 
     const [modalMostrar, setModalMostrar] = useState(false);
 
@@ -80,10 +79,6 @@ function Consulta() {
 
       const columns = [
           {
-            header: 'Contrato',
-            accessorKey: 'num_contrato',
-          },
-          {
             header: 'DNI',
             accessorKey: 'dnicliente',
           },
@@ -96,16 +91,16 @@ function Consulta() {
             accessorKey: 'nombrecli',
           },
           {
+            header: 'Provincia',
+            accessorKey: 'provinciacli',
+          },
+          {
             header: 'Distrito',
             accessorKey: 'distritocli',
           },
           {
             header: 'Dirección',
             accessorKey: 'direccioncli',
-          },
-          {
-            header: 'Técnico',
-            accessorKey: 'user_create',
           },
           {
             header: 'Servicio',
@@ -117,21 +112,28 @@ function Consulta() {
             const table = useReactTable({
             columns,
             data,
-            // debugTable: true,
+            filterFns: {},
+            debugTable: true,
             getCoreRowModel: getCoreRowModel(),
             getSortedRowModel: getSortedRowModel(),
             getFilteredRowModel: getFilteredRowModel(),
             getPaginationRowModel: getPaginationRowModel(),
+            onPaginationChange: setPagination,
             state: {
                 sorting,
                 globalFilter: filtering,
                 rowSelection: rowSelection,
+                pagination,
+                columnFilters,
             },
+            onColumnFiltersChange: setColumnFilters,
             onSortingChange: setSorting,
             onGlobalFilterChange: setFiltering,
             onRowSelectionChange: setRowSelection,
             enableMultiRowSelection: false,
             enableRowSelection: true,
+            debugHeaders: true,
+            debugColumns: false,
           });
 
     const verimagen=()=>{
@@ -170,54 +172,6 @@ function Consulta() {
             mostrarCliente();
         }
     }
-    // {table.getSelectedRowModel().flatRows.map((el) => {
-    //     return <li key={el.id}>{JSON.stringify(el.original)}</li>;
-    // })}
-    // const capturarID = (cliente) => {
-    //     setNum_contrato(cliente.num_contrato);
-    //     setDnicli(cliente.dnicliente);
-    //     setNombrecli(cliente.nombrecli);
-    //     setApellidocli(cliente.apellidocli);
-    //     setDiapago(cliente.diapago);
-    //     setDireccioncli(cliente.direccioncli);
-    //     setDistritocli(cliente.distritocli);
-    //     setNombreplan(cliente.nombreplan);
-    //     setFechacontrato(cliente.fecha_contrato);
-    //     setTelefonocli(cliente.telefonocli);
-    //     setFecha_nacimiento(cliente.fecha_nacimiento);
-    //     setVelocidadplan(cliente.velocidadplan);
-    //     setPrecioplan(cliente.precioplan);
-    //     setUser_create(cliente.user_create);
-    //     setGeolocalizacion(cliente.geolocalizacion);
-    //     setEstado_servicio(cliente.nombre_estado);
-    //     setFechainstalacion(cliente.fechainstalacion);
-    //     setImagencasa(cliente.nombreimg);
-    //     setObservacion_instalacion(cliente.observacion_instalacion);
-    //     setCaja_instalacion(cliente.caja_instalacion);
-
-    //     mostrarCliente();
-    // }
-     
-    //Funcion de Busqueda 2
-    // const searcher2 = (e) =>{
-    //     setBusqueda(e.target.value);
-    //     }
-    //Funcion de Filtrado
-    //  const newfilter = listaClientes.filter(dato => {
-    //     return (
-    // dato.dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
-    // dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
-    // dato.direccioncli.toLowerCase().includes(busqueda.toLocaleLowerCase())
-    // )
-    // });
-
-    // let results = [];
-    
-    // if (busqueda === "") {
-    //     results = listaClientes;
-    // } else {
-    //     results = newfilter;
-    // }
 
     useEffect(() =>{
         getClientes()
@@ -228,29 +182,49 @@ function Consulta() {
         <div>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
             <button type="button" className="btn btn-outline-success mb-3" onClick={detalleCliente}>Detalle Cliente Seleccionado</button>
-            <input value={filtering} type='text' placeholder='Búsqueda de registros' className='form-control border border-success'
+            {/* <input value={filtering} type='text' placeholder='Búsqueda de registros' className='form-control border border-success'
             onChange={(e) => setFiltering(e.target.value)}
-            />
+            /> */}
             <div className='table-responsive'>
             <table className='table'>
                 <thead>
                 {table.getHeaderGroups().map(headerGroup => (
                     <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                        <th key={header.id}
-                            onClick={header.column.getToggleSortingHandler()}
-                        >
-                        {header.isPlaceholder ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                            )}
-                            {{
-                        asc: ' 🔼',
-                        desc: ' 🔽',
-                      }[header.column.getIsSorted()] ?? null}
-                        </th>
-                    ))}
+                    {headerGroup.headers.map(header => {
+                    return (
+                        <th key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder ? null : (
+                            <>
+                            <div 
+                                {...{
+                                    className: header.column.getCanSort()
+                                        ? 'pe-auto'
+                                        : '',
+                                    onClick: header.column.getToggleSortingHandler(),
+                                }}>
+                                {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                )}
+                                {{
+                                    asc: ' 🔼',
+                                    desc: ' 🔽',
+                                }[header.column.getIsSorted()] ?? null}
+                                </div>
+                                {header.column.getCanFilter() ? (
+                                <div>
+                                    <input
+                                    type="text"
+                                    value={header.column.getFilterValue() || ''}
+                                    onChange={e => header.column.setFilterValue(e.target.value)}
+                                    />
+                                </div>
+                                ) : null}
+                            </>
+                        )}
+                         </th>
+                        )
+                    })}
                     </tr>
                 ))}
                 </thead>
@@ -267,10 +241,10 @@ function Consulta() {
                     </tr>
                 ))}
                 </tbody>
-
             </table>
-
             </div>
+            <div className="h2" />
+            <div className="flex items-center gap-2">
                 <button
                 className="border rounded p-1"
                 onClick={() => table.firstPage()}
@@ -299,12 +273,17 @@ function Consulta() {
                 >
                 {'>>'}
                 </button>
+                <span className="flex items-center gap-1">
+                    <div>Página</div>
+                    <strong>
+                        {table.getState().pagination.pageIndex + 1} of{' '}
+                        {table.getPageCount().toLocaleString()}
+                    </strong>
+                </span>
                 <div>
-
-                        {/* {table.getSelectedRowModel().flatRows.map((el) => {
-                            return <li key={el.id}>{JSON.stringify(el.original)}</li>;
-                        })} */}
-
+                    Mostrando {table.getRowModel().rows.length.toLocaleString()} de{' '}
+                    {table.getRowCount().toLocaleString()} Filas
+                </div>
                 </div>
                 {/* <select type='text' value={busqueda} onChange={seleccionestado} className='form-select form-select-lg mt-3'>
                     <option value="Activo">Activos</option>

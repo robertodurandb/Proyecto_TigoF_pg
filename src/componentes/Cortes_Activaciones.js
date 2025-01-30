@@ -59,39 +59,39 @@ function Cortes_Activaciones() {
                 <CSVLink data={results}><button className='btn btn-success mt-2'>Exportar CSV</button></CSVLink>
               ):null
             }
-            
-            <table className='table table-striped table-hover mt-3 shadow-lg'>
-                    <thead>
-                        <tr className='bg-curso text-white'>
-                            <th>Contrato</th>
-                            <th>DNI</th>
-                            <th>Apellidos</th>
-                            <th>Nombres</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Estado</th>
-                            <th>Descripcion</th>
-                            <th>User</th>
-                                                   
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {results.map((corte, key)=>(
-                            <tr key={corte.num_contrato}>
-                                <td>{corte.num_contrato}</td>
-                                <td>{corte.cliente_dnicliente}</td>
-                                <td>{corte.apellidocli}</td>
-                                <td>{corte.nombrecli}</td>
-                                <td>{corte.fecha_create}</td>
-                                <td>{corte.hora_create}</td>
-                                <td>{corte.nomestado_actual}</td>
-                                <td>{corte.detalle}</td>   
-                                <th>{corte.user_create}</th>       
+            <div className='table-responsive'>
+                <table className='table table-striped table-hover mt-3 shadow-lg'>
+                        <thead>
+                            <tr className='bg-curso text-white'>
+                                <th>Contrato</th>
+                                <th>DNI</th>
+                                <th>Apellidos</th>
+                                <th>Nombres</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Estado</th>
+                                <th>Descripcion</th>
+                                <th>User</th>
+                                                    
                             </tr>
-                    ))}
-                    </tbody>
-            </table>
-
+                        </thead>
+                        <tbody>
+                        {results.map((corte, key)=>(
+                                <tr key={corte.num_contrato}>
+                                    <td>{corte.num_contrato}</td>
+                                    <td>{corte.cliente_dnicliente}</td>
+                                    <td>{corte.apellidocli}</td>
+                                    <td>{corte.nombrecli}</td>
+                                    <td>{corte.fecha_create}</td>
+                                    <td>{corte.hora_create}</td>
+                                    <td>{corte.nomestado_actual}</td>
+                                    <td>{corte.detalle}</td>   
+                                    <th>{corte.user_create}</th>       
+                                </tr>
+                        ))}
+                        </tbody>
+                </table>
+            </div>
         </div>
     )
 }

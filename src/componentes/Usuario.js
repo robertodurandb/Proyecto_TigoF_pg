@@ -134,41 +134,42 @@ function Usuarios() {
 
   return (
     <div className="App">
-      <h1 className="mb-3">Tabla de Usuarios</h1>
+        <h1 className="mb-3">Tabla de Usuarios</h1>
         <button type="button" className="btn btn-info" onClick={agregarUsuario}>Registrar Nuevo Usuario</button>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Usuario</th>
-              <th scope="col">Nombre Usuario</th>
-              <th scope="col">Apellido Usuario</th>
-              <th scope="col">Perfil</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-          {usuarios.map((val, key) => {
-            return <tr key={val.id_user}>
-                    <td>{val.id_user}</td>
-                    <td>{val.nombre_user}</td>
-                    <td>{val.apellido_user}</td>
-                    <td>{val.perfil_user}</td>
-                    <td>{val.estado_user}</td>
-                    <td>
-                    <button type="button" className="btn btn-info" 
-                    onClick={()=>{
-                      editarUser(val);
-                    }}>
-                      Editar
-                    </button>
-                    </td>
-            </tr>
-           
-          })}
-            
-          </tbody>
-        </table>
+        <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Nombre Usuario</th>
+                  <th scope="col">Apellido Usuario</th>
+                  <th scope="col">Perfil</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+              {usuarios.map((val, key) => {
+                return <tr key={val.id_user}>
+                        <td>{val.id_user}</td>
+                        <td>{val.nombre_user}</td>
+                        <td>{val.apellido_user}</td>
+                        <td>{val.perfil_user}</td>
+                        <td>{val.estado_user}</td>
+                        <td>
+                        <button type="button" className="btn btn-info" 
+                        onClick={()=>{
+                          editarUser(val);
+                        }}>
+                          Editar
+                        </button>
+                        </td>
+                </tr>
+              })} 
+              </tbody>
+            </table>                    
+        </div>
+        
 
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>

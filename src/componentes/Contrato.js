@@ -33,7 +33,7 @@ function Contrato() {
     const [apellidocli, setApellidocli] = useState("");
     const [direccioncli, setDireccioncli] = useState("");
     const [distritocli, setDistritocli] = useState("");
-    const [provinciacli, setProvinciacli] = useState("");
+    const [provinciacli, setProvinciacli] = useState("Lima");
     const [telefonocli, setTelefonocli] = useState();
     const [fechanacimiento, setFechaNacimiento] = useState('2001-01-01');
     const [user_create, setUser_create] = useState();
@@ -256,6 +256,11 @@ function Contrato() {
 }
 
 const editarEstado = (val)=>{
+  if (val.estadoc_instalacion==2) {
+    setInstalado(true)
+  }else{
+    setInstalado(false)
+  }
   setNum_contrato(val.num_contrato);
   setCliente_dnicliente(val.cliente_dnicliente);
   setNombre_estado(val.nombre_estado);
@@ -316,12 +321,11 @@ function validardnicliente() {
     
   }
   const limpiarcamposcliente = () => {
-    setCliente_dnicliente("");
     setNombrecli("");
     setApellidocli("");
     setDireccioncli("");
     setDistritocli("");
-    setProvinciacli("");
+    setProvinciacli("Lima");
     setTelefonocli("");
     setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
@@ -331,7 +335,7 @@ function validardnicliente() {
     setApellidocli("");
     setDireccioncli("");
     setDistritocli("");
-    setProvinciacli("");
+    setProvinciacli("Lima");
     setTelefonocli("");
     setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
@@ -393,50 +397,53 @@ if (busqueda === "") {
 
   return (
     <div className="App">
-      <h1 className="mb-3">Registro de Contratos</h1>
+        <h1 className="mb-3">Registro de Contratos</h1>
         <button type="button" className="btn btn-info" onClick={agregarContrato}>
           Registrar Nuevo Contrato
         </button>
         <br />
         <br />
         <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'/>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Contrato</th>
-              <th scope="col">dni_Cliente</th>
-              <th scope="col">Plan</th>
-              <th scope="col">Fecha Contrato</th>
-              <th scope="col">Dia de pago</th>
-              <th scope="col">Fec. Instalacion Programada</th>
-              <th scope="col">Instalacion</th>
-              <th scope="col">Servicio</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((val, key) => {
-              return (
-                <tr key={val.num_contrato}>
-                  <td>{val.num_contrato}</td>
-                  <td>{val.cliente_dnicliente}</td>
-                  <td>{val.nombreplan}</td>
-                  <td>{val.fecha_contrato}</td>
-                  <td>{val.diapago}</td>
-                  <td>{val.fechaprog_instalacion}</td>
-                  <td>{val.nombre_estadoinstalacion}</td>
-                  <td>{val.nombre_estado}</td>
-                  <td><button type="button" className="btn btn-info"
-                      onClick={() => {editarContrato(val); }}>Edit</button>
-                  </td>
-                  <td><button type="button" className="btn btn-info"
-                      onClick={() => {editarEstado(val); }}>E</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Contrato</th>
+                <th scope="col">DNI</th>
+                <th scope="col">Plan</th>
+                <th scope="col">Fecha Contrato</th>
+                <th scope="col">Dia de pago</th>
+                <th scope="col">Instalacion Programada</th>
+                <th scope="col">Estado Instalacion</th>
+                <th scope="col">Estado Servicio</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((val, key) => {
+                return (
+                  <tr key={val.num_contrato}>
+                    <td>{val.num_contrato}</td>
+                    <td>{val.cliente_dnicliente}</td>
+                    <td>{val.nombreplan}</td>
+                    <td>{val.fecha_contrato}</td>
+                    <td>{val.diapago}</td>
+                    <td>{val.fechaprog_instalacion}</td>
+                    <td>{val.nombre_estadoinstalacion}</td>
+                    <td>{val.nombre_estado}</td>
+                    <td><button type="button" className="btn btn-info"
+                        onClick={() => {editarContrato(val); }}>Edit</button>
+                    </td>
+                    <td><button type="button" className="btn btn-info"
+                        onClick={() => {editarEstado(val); }}>E</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        
 
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
@@ -581,12 +588,15 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="direccion" className="form-label">Direccion: </label>
-                <input type="text" value={direccioncli} onChange={(event) => {
-                    setDireccioncli(event.target.value);
+                <label for="provincia" className="form-label">Provincia: </label>
+                <select value={provinciacli} onChange={(event) => {
+                    setProvinciacli(event.target.value);
                   }}
-                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
-                ></input>
+                  className="form-control" id="provincia" aria-label="provincia" aria-describedby="basic-addon1"
+                >
+                  <option>Lima</option>
+                  <option>Piura</option>
+                </select>
               </div>
               <div className="mb-3">
                 <label for="distrito" className="form-label"> Distrito:</label>
@@ -597,11 +607,11 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="provincia" className="form-label">Provincia: </label>
-                <input type="text" value={provinciacli} onChange={(event) => {
-                    setProvinciacli(event.target.value);
+                <label for="direccion" className="form-label">Direccion: </label>
+                <input type="text" value={direccioncli} onChange={(event) => {
+                    setDireccioncli(event.target.value);
                   }}
-                  className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
+                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
@@ -700,6 +710,8 @@ if (busqueda === "") {
                     {cliente_dnicliente}
                   </span>
               </div>
+              {instalado?(
+              <>
               <div className="mb-3">
                 <label for="nombre_estadoanterior" className="form-label">Estado Anterior:</label>
                 <span className="input-group-text" id="basic-addon1">
@@ -737,13 +749,23 @@ if (busqueda === "") {
                           </select>
               </div>
               </div>
+              </>
+              ):(
+                <h3>No se puede modificar el Estado si no se ha instalado el Servicio</h3>
+              )
+              }
              
             </div>
           </ModalBody>
           <ModalFooter>
-            <button className="btn btn-success" onClick={registrarCambioEstado}>
+            {instalado?(
+              <button className="btn btn-success" onClick={registrarCambioEstado}>
               Registrar
             </button>
+            ):(
+              null
+            )}
+            
             <button className="btn btn-danger" onClick={cerrarModalEstado}>
               Cerrar
             </button>

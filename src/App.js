@@ -7,7 +7,8 @@ import Contratos from '../src/componentes/Contrato';
 import Instalacion from '../src/componentes/Instalacion';
 import Consultas from './componentes/Consulta';
 import Inicio from './componentes/Inicio';
-import Reportepagos from '../src/componentes/Consultapagos';
+import ImportPagos from '../src/componentes/ImportPagos';
+import ControlPagos from '../src/componentes/ControlPagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Gestiontickets from '../src/componentes/Gestiontickets';
 import Cortes from '../src/componentes/Cortes_Activaciones';
@@ -89,51 +90,61 @@ function App() {
                     <Link to="/Instalaciones" className="links1" role='button'>Instalaciones</Link>
                   </li>
                   <li>
-                    <Link to="/Pagos" className="links1">Pagos</Link>
+                    <Link to="/ControlPagos" className="links1">Pagos</Link>
                   </li>
                   <li>
-                    <Link to="/Tickets" className="links1">Gestión de Tickets</Link>
+                    <Link to="/Pagos" className="links1">Importar</Link>
                   </li>
+                  {/* <li>
+                    <Link to="/Tickets" className="links1">Tickets</Link>
+                  </li> */}
+                </ul>
 
-                
-
-                  </ul>
                   <div className='burger' aria-label='Abrir menu de navegacion' onClick={toggleMenu}>
                     <div className='line'></div>
                     <div className='line'></div>
                     <div className='line'></div>
+                    {/**/}
+                    
                   </div>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      {User}
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/usuarios">
+                        Tabla Usuarios
+                      </Link></button></li>
+                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/planes">
+                        Tabla Planes
+                      </Link></button></li>
+                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cliente">
+                        Tabla Clientes
+                      </Link></button></li>
+                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
+                        Control de Cambios
+                      </Link></button></li>
+                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/logs">
+                        Logs Errores (Import)
+                      </Link></button></li>
+                        <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/Passwordupdate">
+                        Cambio de contraseña
+                      </Link></button></li>
+                      <li><hr className='dropdown-divider'></hr></li>
+                        <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
+                    </ul>
 
-                  {/* <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    {User}
-                  </button>
-                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/usuarios">
-                    Tabla Usuarios
-                  </Link></button></li>
-                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/planes">
-                    Tabla Planes
-                  </Link></button></li>
-                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cliente">
-                    Tabla Clientes
-                  </Link></button></li>
-                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/cortes">
-                    Cortes/Activ
-                  </Link></button></li>
-                  <li><button className="dropdown-item"><Link className='text-decoration-none' to="/logs">
-                    Logs Errores
-                  </Link></button></li>
-                    <li><button className="dropdown-item"><Link className='text-decoration-none' to="/Passwordupdate">
-                    Cambio de contraseña
-                  </Link></button></li>
-                    <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
-                  </ul>
-                </div> */}
+
+                    
+                </div>
+
+                  
                   
               </nav>
               {isOpen ? 
               (<>
+              <hr />
+              <hr />
               <hr />
               <hr />
               <hr />
@@ -149,7 +160,10 @@ function App() {
                 <Route path="/Contratos" element={ isAdmin() ?(<Contratos />):null} />
             </Routes>
             <Routes>
-                <Route path="/Pagos" element={<Reportepagos />} />
+                <Route path="/Pagos" element={<ImportPagos />} />
+            </Routes>
+            <Routes>
+                <Route path="/ControlPagos" element={<ControlPagos />} />
             </Routes>
               <Routes>
                 <Route path="/cliente" element={<Clientes />} />
@@ -166,9 +180,9 @@ function App() {
               <Routes>
                 <Route path="/passwordupdate" element={<Passwordupdate />} />
               </Routes>
-              <Routes>
+              {/* <Routes>
                 <Route path="/tickets" element={<Gestiontickets />} />
-              </Routes>
+              </Routes> */}
               <Routes>
                 <Route path="/planes" element={ isAdmin() ?(<Planes />):null} />
               </Routes>

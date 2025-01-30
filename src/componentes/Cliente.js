@@ -129,56 +129,55 @@ if (busqueda === "") {
   return (
     <div className="App">
       <h1 className="mb-3">Tabla Clientes</h1>
-      
-    <br />
-        <br />
+      <br />
+      <br />
         <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
+        <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">DNI</th>
+                  <th scope="col">Nombres</th>
+                  <th scope="col">Apellidos</th>
+                  <th scope="col">Direccion</th>
+                  <th scope="col">Distrito</th>
+                  <th scope="col">Provincia</th>
+                  <th scope="col">Telefono</th>
+                  <th scope="col">Fecha Nac</th>
+                { 
+                  isAdmin() ? (
+                    <th scope="col">Accion</th>
+                  ):null
+                }
+                </tr>
+              </thead>
+              <tbody>
+              {results.map((val, key) => {
+                return <tr key={val.dnicliente}>
+                        <th>{val.dnicliente}</th>
+                        <td>{val.nombrecli}</td>
+                        <td>{val.apellidocli}</td>
+                        <td>{val.direccioncli}</td>
+                        <td>{val.distritocli}</td>
+                        <td>{val.provinciacli}</td>
+                        <td>{val.telefonocli}</td>
+                        <td>{val.fecha_nacimiento}</td>
+                        <td>
+                        { 
+                          isAdmin() ? (
+                            <button type="button" className="btn btn-info" 
+                        onClick={()=>{ editarClientes(val) }}>
+                          Editar
+                        </button>
+                          ):null 
+                          }
+                        </td>
+                </tr>
+              })}
+              </tbody>
+            </table>
+        </div>
         
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">DNI</th>
-              <th scope="col">Nombres</th>
-              <th scope="col">Apellidos</th>
-              <th scope="col">Direccion</th>
-              <th scope="col">Distrito</th>
-              <th scope="col">Provincia</th>
-              <th scope="col">Telefono</th>
-              <th scope="col">Fecha Nac</th>
-             { 
-              isAdmin() ? (
-                <th scope="col">Accion</th>
-              ):null
-            }
-            </tr>
-          </thead>
-          <tbody>
-          {results.map((val, key) => {
-            return <tr key={val.dnicliente}>
-                    <th>{val.dnicliente}</th>
-                    <td>{val.nombrecli}</td>
-                    <td>{val.apellidocli}</td>
-                    <td>{val.direccioncli}</td>
-                    <td>{val.distritocli}</td>
-                    <td>{val.provinciacli}</td>
-                    <td>{val.telefonocli}</td>
-                    <td>{val.fecha_nacimiento}</td>
-                    <td>
-                     { 
-                      isAdmin() ? (
-                        <button type="button" className="btn btn-info" 
-                    onClick={()=>{ editarClientes(val) }}>
-                      Editar
-                    </button>
-                      ):null 
-                      }
-                    </td>
-            </tr>
-           
-          })}
-            
-          </tbody>
-        </table>
 
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>

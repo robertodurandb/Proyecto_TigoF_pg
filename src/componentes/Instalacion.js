@@ -374,67 +374,69 @@ const getInstalaciones = async () => {
             <option value="pendientes">Pendientes</option>
             <option value="instalados">Instalados</option>
           </select>
-
-            <table className="table table-striped table-hover mt-5 shadow-lg">
-              <thead>
-                <tr className="bg-curso text-white">
-                            <th>DNI</th>
-                            <th>Apellidos</th>
-                            <th>Nombres</th>
-                            <th>Distrito</th>
-                            <th>Direccion</th>
-                            <th>Telefono</th>
-                            <th>Fecha programada</th>
-                            {
-                              controlbusqueda?(
-                                <>
-                                <th>Técnico</th>
-                                <th>Fecha Instalacion</th>
-                                </> 
-                              ):(
-                                <th>Observacion</th>
-                              )
-                            }
-                            
-                            <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-              {results.map((cliente, key)=>(
-                            <tr key={cliente.num_contrato} value={num_contrato}>
-                                <td>{cliente.dnicliente}</td>
-                                <td>{cliente.apellidocli}</td>
-                                <td>{cliente.nombrecli}</td>
-                                <td>{cliente.distritocli}</td>
-                                <td>{cliente.direccioncli}</td>
-                                <td>{cliente.telefonocli}</td>
-                                <td>{cliente.fechaprog_instalacion}</td>
+          <div className="table-responsive">
+              <table className="table table-striped table-hover mt-5 shadow-lg">
+                  <thead>
+                    <tr className="bg-curso text-white">
+                                <th>DNI</th>
+                                <th>Apellidos</th>
+                                <th>Nombres</th>
+                                <th>Distrito</th>
+                                <th>Direccion</th>
+                                <th>Telefono</th>
+                                <th>Fecha programada</th>
                                 {
                                   controlbusqueda?(
                                     <>
-                                    <td>{cliente.user_create}</td>
-                                    <td>{cliente.fechainstalacion}</td>
-                                    </>
+                                    <th>Técnico</th>
+                                    <th>Fecha Instalacion</th>
+                                    </> 
                                   ):(
-                                    <td>{cliente.observacion_contrato}</td>
+                                    <th>Observacion</th>
                                   )
                                 }
-                                {controlbusqueda?(
-                                <>
-                                <td><button type="button" className="btn btn-outline-success" 
-                                onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button></td>
-                                <td><button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>Img</button></td>
-                                </>
-                                ):(
-                                  <td><button type="button" className="btn btn-outline-success" 
-                                  onClick={()=>{capturarID(cliente)}}>Registrar
-                                  </button></td>
-                                )}
                                 
-                            </tr>
-                    ))}  
-              </tbody>
-            </table>
+                                <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {results.map((cliente, key)=>(
+                                <tr key={cliente.num_contrato} value={num_contrato}>
+                                    <td>{cliente.dnicliente}</td>
+                                    <td>{cliente.apellidocli}</td>
+                                    <td>{cliente.nombrecli}</td>
+                                    <td>{cliente.distritocli}</td>
+                                    <td>{cliente.direccioncli}</td>
+                                    <td>{cliente.telefonocli}</td>
+                                    <td>{cliente.fechaprog_instalacion}</td>
+                                    {
+                                      controlbusqueda?(
+                                        <>
+                                        <td>{cliente.user_create}</td>
+                                        <td>{cliente.fechainstalacion}</td>
+                                        </>
+                                      ):(
+                                        <td>{cliente.observacion_contrato}</td>
+                                      )
+                                    }
+                                    {controlbusqueda?(
+                                    <>
+                                    <td><button type="button" className="btn btn-outline-success" 
+                                    onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button></td>
+                                    <td><button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>Img</button></td>
+                                    </>
+                                    ):(
+                                      <td><button type="button" className="btn btn-outline-success" 
+                                      onClick={()=>{capturarID(cliente)}}>Registrar
+                                      </button></td>
+                                    )}
+                                    
+                                </tr>
+                        ))}  
+                  </tbody>
+                </table>
+          </div>
+            
 
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>

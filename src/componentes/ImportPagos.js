@@ -4,7 +4,7 @@ import { CSVLink } from "react-csv";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import API from '../utils/const';
 
-function Consultapagos() {
+function ImportPagos() {
     const [listaPagos, setListaPagos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
@@ -83,14 +83,12 @@ const handleSubmit = async (event) => {
 
     return(
         <div className='App'>
-          <div>
             <form className="input-group mb-3" onSubmit={handleSubmit}>
-            <input type="file" className="form-control" onChange={handleFileChange}/>
-            <br/>
-            <button type="submit" className="btn btn-secondary">Cargar</button>
+                <input type="file" className="form-control" onChange={handleFileChange}/>
+                <br/>
+                <button type="submit" className="btn btn-secondary">Cargar</button>
             </form>
-            </div>    
-          <h1 className='mb-3'>Reporte de Pagos</h1>      
+            <h1 className='mb-3'>Importar Pagos</h1>      
             <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o Apellidos' className='form-control border border-success'/>
             {
               isAdmin() ?(
@@ -98,38 +96,39 @@ const handleSubmit = async (event) => {
                 
               ):null
             }
-            <table className='table table-striped table-hover mt-3 shadow-lg'>
-                    <thead>
-                        <tr className='bg-curso text-white'>
-                            <th>DNI</th>
-                            <th>Apellidos</th>
-                            <th>Nombres</th>
-                            <th>Fecha_pago</th>
-                            <th>Hora_pago</th>
-                            <th>Descripcion</th>
-                            <th>Monto</th>
-                            <th>Agencia</th>
-                            <th>Operacion</th>                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {results.map((pago, key)=>(
-                            <tr key={pago.idpago}>
-                                <td>{pago.dnipago}</td>
-                                <td>{pago.apellidocli}</td>
-                                <td>{pago.nombrecli}</td>
-                                <td>{pago.fechapago2}</td>
-                                <td>{pago.hora}</td>
-                                <td>{pago.descripcion}</td>
-                                <td>{pago.monto}</td>
-                                <td>{pago.agencia}</td>
-                                <td>{pago.operacion}</td>            
-                            </tr>
-                    ))}
-                    </tbody>
-            </table>
-
+            <div className='table-responsive'>
+              <table className='table table-striped table-hover mt-3 shadow-lg'>
+                      <thead>
+                          <tr className='bg-curso text-white'>
+                              <th>DNI</th>
+                              <th>Apellidos</th>
+                              <th>Nombres</th>
+                              <th>Fecha_pago</th>
+                              <th>Hora_pago</th>
+                              <th>Descripcion</th>
+                              <th>Monto</th>
+                              <th>Agencia</th>
+                              <th>Operacion</th>                            
+                          </tr>
+                      </thead>
+                      <tbody>
+                      {results.map((pago, key)=>(
+                              <tr key={pago.idpago}>
+                                  <td>{pago.dnipago}</td>
+                                  <td>{pago.apellidocli}</td>
+                                  <td>{pago.nombrecli}</td>
+                                  <td>{pago.fechapago2}</td>
+                                  <td>{pago.hora}</td>
+                                  <td>{pago.descripcion}</td>
+                                  <td>{pago.monto}</td>
+                                  <td>{pago.agencia}</td>
+                                  <td>{pago.operacion}</td>            
+                              </tr>
+                      ))}
+                      </tbody>
+              </table>
+            </div>
         </div>
     )
 }
-export default Consultapagos;
+export default ImportPagos;

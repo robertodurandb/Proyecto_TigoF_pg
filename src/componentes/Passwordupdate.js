@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API from '../utils/const'
-//import Inicio from '../src/componentes/Principal';
+import Inicio from '../componentes/Inicio';
 import {
   BrowserRouter as Router,
   Routes,
@@ -60,6 +60,7 @@ const handlePassword2 = (e) =>{
 
 return(
     <div>
+      
         <div className='container-fluid login border border-secondary border-2 rounded p-3 m'>
                 <div className='text-center pb-2'>
                   <h1>Modificar Contraseña</h1>
@@ -79,7 +80,10 @@ return(
           </div>
           <div className='text-center'>
                 <button type="button" className="btn btn-primary mt-3" onClick={updatePassword}>Guardar</button>
-                <button type="button" className="btn btn-primary mt-3 ms-3">Salir</button>
+
+                  {/* <button type="button" className="btn btn-primary mt-3 ms-3">Salir</button> */}
+
+                
           </div>
         </div>
    
