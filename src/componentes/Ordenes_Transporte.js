@@ -7,18 +7,17 @@ import API from '../utils/const';
 //OBTENER FECHA ACTUAL
 let fechaactual = `${API.DATENOW}`
 
-function Contrato() {
+function Ordenes_Transporte() {
     const [planes_idplanes, setPlanes_idplanes] = useState(1);
     const [cliente_dnicliente, setCliente_dnicliente] = useState("");
-    const [num_contrato, setNum_contrato] = useState();
-    const [fecha_contrato, setFecha_contrato] = useState(fechaactual);
+    const [id_ordentrabajo, setId_ordentrabajo] = useState();
     const [observacion, setObservacion] = useState("");
     const [fechaprog_instalacion, setFechaprog_instalacion] = useState(fechaactual);
+    const [horario_instalacion, setHorario_instalacion] = useState("8am - 1pm")
     const [diapago, setDiapago] = useState(1);
     const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
-    const [estado, setEstado] = useState(2);
-    const [estados, setEstados] = useState([]);
-    const [contratos, setContratos] = useState([]);
+    const [costo_instalacion, setCosto_instalacion] = useState()
+    const [ordenes, setOrdenes] = useState([]);
     const [editar, setEditar] = useState(false);
     const [instalado, setInstalado] = useState(false);
 
@@ -35,26 +34,19 @@ function Contrato() {
     const [distritocli, setDistritocli] = useState("");
     const [provinciacli, setProvinciacli] = useState("Lima");
     const [telefonocli, setTelefonocli] = useState();
-    const [fechanacimiento, setFechaNacimiento] = useState('2001-01-01');
+    const [referenciacli, setReferenciacli] = useState('');
+    const [geolocalizacion, setGeolocalizacion] = useState('');
     const [user_create, setUser_create] = useState();
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
-    const [nombre_estado, setNombre_estado] = useState("");
-    const [detalle_estado, setDetalle_estado] = useState("");
-    const [nuevo_estado, setNuevo_estado] = useState(3);
-
-
     const [fecha_createcli, setFecha_createcli] = useState("");
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrar2, setModalMostrar2] = useState(false);
     const [modalMostrar3, setModalMostrar3] = useState(false);
-    const [modalMostrar4, setModalMostrar4] = useState(false);
-
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModal2 = () => setModalMostrar2(!modalMostrar2);
     const ventanaModal3 = () => setModalMostrar3(!modalMostrar3);
-    const ventanaModal4 = () => setModalMostrar4(!modalMostrar4);
 
     let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
@@ -67,17 +59,16 @@ function Contrato() {
   const agregarCliente=()=>{
     ventanaModal2();
 }
-  const addcontrato = () => {
-    Axios.post(ipbackend+"createcontrato", {
-        planes_idplanes: planes_idplanes,
-        cliente_dnicliente: cliente_dnicliente,
-        num_contrato: num_contrato,
-        fecha_contrato: fecha_contrato,
-        observacion_contrato: observacion,
+  const addordentrabajo = () => {
+    Axios.post(ipbackend+"createordentrabajo", {
+        planinicial_idplanes: planes_idplanes,
+        clienteinicial_dnicliente: cliente_dnicliente,
+        indicacion_instalacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
+        horario_instalacion: horario_instalacion,
         diapago: diapago,
-        estadoc_instalacion: estadoc_instalacion,
-        estado_servicio: estado,
+        costo_instalacion: costo_instalacion,
+        estado_instalacion: estadoc_instalacion,
         fecha_create: fecha_actual,
         user_create: user_create,
     },{
@@ -85,9 +76,9 @@ function Contrato() {
         'Authorization': `Bearer ${token}`
       }
     }).then(() => {
-        getContratos();
+        getOrdenes();
         cerrarModalContrato();
-        alert("Contrato Registrado con exito");
+        alert("OT Registrado con exito");
     }).catch((error) => {
       if (error.response && error.response.status === 400){
       alert("Error: "+error.response.data.error);
@@ -99,7 +90,7 @@ function Contrato() {
   /************************************ */
   const addcliente = () => {
     if (cliente_dnicliente.length>7) {
-
+      let newgeo = contieneBarra();
         Axios.post(ipbackend+"createcliente", 
           {  
               dnicliente: cliente_dnicliente,
@@ -109,7 +100,8 @@ function Contrato() {
               distritocli: distritocli,
               provinciacli: provinciacli,
               telefonocli: telefonocli,
-              fecha_nacimiento: fechanacimiento,
+              referenciacli: referenciacli,
+              geolocalizacion: newgeo,
               fecha_create: fecha_actual,
               user_create: user_create,
           },{
@@ -132,15 +124,15 @@ function Contrato() {
       }
     } 
 
-    const getContratos = async () => {
+    const getOrdenes = async () => {
       try {
-        const response = await Axios.get(ipbackend+'getinstalacionesall2', {
+        const response = await Axios.get(ipbackend+'orders_pending', {
           headers:{
               'Authorization': `Bearer ${token}`
           }
         }
         );
-        setContratos(response.data);
+        setOrdenes(response.data);
         setUser_create(user);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -152,77 +144,27 @@ function Contrato() {
       }
     };
 
-    const registrarCambioEstado = () => {
-      Axios.post(ipbackend+"createcambioestado", 
-        {  
-            num_contrato: num_contrato,
-            detalle: detalle_estado,
-            estado_anterior: estado,
-            estado_actual: nuevo_estado,
-            user_create: user_create,
-        },{
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(Axios.put(ipbackend+"updatecontrato/"+num_contrato,
-          {
-            estado_servicio: nuevo_estado,
-          },{
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }))
-          .then(() => {
-          getContratos();
-          cerrarModalEstado();
-          alert("Estado Servicio actualizado correctamente");
-        }).catch((error) => {
-          if (error.response && error.response.status === 400){
-          alert("Error: "+error.response.data.error);
-          console.log(error.response.data.error)
-          }
-          return error;
-          });
-    }
-
-    function getEstados(){
-      fetch(ipbackend+'getestados', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-          .then(response => response.json())
-          .then(data => setEstados(data))
-    }
-
-  const editarContrato = (val)=>{
+  const editarOrden = (val)=>{
     setEditar(true);
-    if (val.estadoc_instalacion==2) {
-      setInstalado(true)
-    }else{
-      setInstalado(false)
-    }
-
-    setNum_contrato(val.num_contrato);
-    setPlanes_idplanes(val.planes_idplanes);
-    setCliente_dnicliente(val.cliente_dnicliente);
-    setFecha_contrato(val.fecha_contrato);
-    setObservacion(val.observacion_contrato);
+    setId_ordentrabajo(val.id_ordentrabajo);
+    setPlanes_idplanes(val.planinicial_idplanes);
+    setCliente_dnicliente(val.clienteinicial_dnicliente);
+    setObservacion(val.indicacion_instalacion);
     setFechaprog_instalacion(val.fechaprog_instalacion);
     setDiapago(val.diapago);
-    setEstado(val.id_estado);
-    setEstadocinstalacion(val.estadoc_instalacion);
+    setHorario_instalacion(val.horario_instalacion);
+    setCosto_instalacion(val.costo_instalacion);
     ventanaModal();
   }
 
   const update = () => {
-    Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
-        planes_idplanes: planes_idplanes,
-        observacion_contrato: observacion,
+    Axios.put(ipbackend+"updateordentrabajo/"+id_ordentrabajo  , {
+        planinicial_idplanes: planes_idplanes,
+        indicacion_instalacion: observacion,
         fechaprog_instalacion: fechaprog_instalacion,
+        horario_instalacion: horario_instalacion,
+        costo_instalacion: costo_instalacion,
         diapago: diapago,
-        //estado_servicio: estado,
         fecha_update: fecha_actual,
         user_update: user_create,
     }, {
@@ -230,9 +172,9 @@ function Contrato() {
         'Authorization': `Bearer ${token}`
       }
     }).then(() => {
-      getContratos();
+      getOrdenes();
       cerrarModalContrato();
-      alert("Contrato Actualizado con exito");
+      alert("OT Actualizada con exito");
     }).catch((error) => {
       if (error.response && error.response.status === 400){
         alert("Error: "+error.response.data.error);
@@ -253,19 +195,6 @@ function Contrato() {
     })
         .then(response => response.json())
         .then(data => setListaclientes(data))
-}
-
-const editarEstado = (val)=>{
-  if (val.estadoc_instalacion==2) {
-    setInstalado(true)
-  }else{
-    setInstalado(false)
-  }
-  setNum_contrato(val.num_contrato);
-  setCliente_dnicliente(val.cliente_dnicliente);
-  setNombre_estado(val.nombre_estado);
-  setEstado(val.id_estado);
-  ventanaModal4();
 }
 
 function getPlanes(){
@@ -308,15 +237,14 @@ function validardnicliente() {
   const limpiarcamposcontrato = ()=>{
     setPlanes_idplanes(1);
     setCliente_dnicliente("");
-    setNum_contrato();
-    setFecha_contrato(fechaactual);
+    setId_ordentrabajo();
     setObservacion("");
     setFechaprog_instalacion(fecha_actual);
     setDiapago("1");
+    setHorario_instalacion("8-12");
+    setCosto_instalacion();
     setEstadocinstalacion(1);
-    setEstado(2);
     setEditar(false);
-    setInstalado(false); 
     setUser_create(user);
     
   }
@@ -326,8 +254,9 @@ function validardnicliente() {
     setDireccioncli("");
     setDistritocli("");
     setProvinciacli("Lima");
+    setReferenciacli("");
+    setGeolocalizacion("");
     setTelefonocli("");
-    setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
   }
   const limpiarcamposclienteencontrado = () => {
@@ -337,19 +266,10 @@ function validardnicliente() {
     setDistritocli("");
     setProvinciacli("Lima");
     setTelefonocli("");
-    setFechaNacimiento("2001-01-01");
     setFecha_createcli("");
     setUser_create(user);
   }
-  const limpiarcampos_estado = () => {
-    setCliente_dnicliente("");
-    setNum_contrato("");
-    setDetalle_estado("");
-    setEstado(2);
-    setNuevo_estado(3);
-    setNombre_estado("");
-    setUser_create(user);
-  }
+
   const cerrarModalContrato = ()=>{
     limpiarcamposcontrato();
     ventanaModal();
@@ -362,26 +282,34 @@ function validardnicliente() {
     limpiarcamposclienteencontrado();
     ventanaModal3();
   }
-  const cerrarModalEstado = ()=>{
-    limpiarcampos_estado();
-    ventanaModal4();
-  }
+
+    //FUNCION PARA GEOLOCALIZACION
+    function contieneBarra() {
+      if (geolocalizacion.includes('/')) {
+        console.log("si incluye /")
+        let newgeo = geolocalizacion.replace("/",",");
+        return(newgeo)
+      } else {
+        console.log("no incluye /")
+        return(geolocalizacion)
+      }
+    }
 
   //Funcion de Busqueda
   const searcher = (e) =>{
     setBusqueda(e.target.value);
     }
 //Funcion de Filtrado
-const newfilter = contratos.filter(dato => {
+const newfilter = ordenes.filter(dato => {
   return (
-    dato.cliente_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
+    dato.clienteinicial_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase())
 )
 });
 
 let results = [];
 
 if (busqueda === "") {
-  results = contratos;
+  results = ordenes;
 } else {
   results = newfilter;
 }
@@ -390,16 +318,15 @@ if (busqueda === "") {
   useEffect(() =>{
     getPlanes();
     getClientes();
-    getContratos();
-    getEstados();
+    getOrdenes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
     <div className="App">
-        <h1 className="mb-3">Registro de Contratos</h1>
+        <h1 className="mb-3">Registro de Ordenes de Trabajo</h1>
         <button type="button" className="btn btn-info" onClick={agregarContrato}>
-          Registrar Nuevo Contrato
+          Registrar Nueva OT
         </button>
         <br />
         <br />
@@ -408,34 +335,41 @@ if (busqueda === "") {
           <table className="table table-striped">
             <thead>
               <tr>
-                <th scope="col">Contrato</th>
+                <th scope="col">ID OT</th>
                 <th scope="col">DNI</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Referencia</th>
                 <th scope="col">Plan</th>
-                <th scope="col">Fecha Contrato</th>
+                <th scope="col">Fecha OT</th>
                 <th scope="col">Dia de pago</th>
-                <th scope="col">Instalacion Programada</th>
-                <th scope="col">Estado Instalacion</th>
-                <th scope="col">Estado Servicio</th>
+                <th scope="col">Fecha Instalacion</th>
+                <th scope="col">Horario Instalacion</th>
+                <th scope="col">Costo Instalacion</th>
+                <th scope="col">Indicaciones</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {results.map((val, key) => {
                 return (
-                  <tr key={val.num_contrato}>
-                    <td>{val.num_contrato}</td>
-                    <td>{val.cliente_dnicliente}</td>
+                  <tr key={val.id_ordentrabajo}>
+                    <td>{val.id_ordentrabajo}</td>
+                    <td>{val.clienteinicial_dnicliente}</td>
+                    <td>{val.apellidocli}</td>
+                    <td>{val.direccioncli}</td>
+                    <td>{val.telefonocli}</td>
+                    <td>{val.referenciacli}</td>
                     <td>{val.nombreplan}</td>
-                    <td>{val.fecha_contrato}</td>
+                    <td>{val.fecha_ot}</td>
                     <td>{val.diapago}</td>
                     <td>{val.fechaprog_instalacion}</td>
-                    <td>{val.nombre_estadoinstalacion}</td>
-                    <td>{val.nombre_estado}</td>
+                    <td>{val.horario_instalacion}</td>
+                    <td>{val.costo_instalacion}</td>
+                    <td>{val.indicacion_instalacion}</td>
                     <td><button type="button" className="btn btn-info"
-                        onClick={() => {editarContrato(val); }}>Edit</button>
-                    </td>
-                    <td><button type="button" className="btn btn-info"
-                        onClick={() => {editarEstado(val); }}>E</button>
+                        onClick={() => {editarOrden(val); }}>Edit</button>
                     </td>
                   </tr>
                 );
@@ -448,19 +382,8 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Agregar/Modificar Contrato:</h4>
-              <div className="mb-3">
-                <label for="num_contrato" className="form-label">Número de Contrato:</label>
-                {editar ? (
-                  <span className="input-group-text" id="basic-addon1">{num_contrato}</span>
-                ) : (
-                  <input type="number" value={num_contrato} onChange={(event) => {
-                      setNum_contrato(event.target.value);
-                    }}
-                    className="form-control" id="num_contrato" placeholder="Ingrese numero de contrato" aria-describedby="basic-addon1"
-                  ></input>
-                )}
-              </div>
+              <h4 className="">Agregar/Modificar OT:</h4>
+              
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI:</label>
                 { editar ? (
@@ -481,19 +404,7 @@ if (busqueda === "") {
                   </>
                 )}
               </div>
-              <div className="mb-3">
-                <label for="fecha_contrato" className="form-label">Fecha Contrato: </label>
-                {editar ?(
-                  <span className="input-group-text" id="basic-addon1">
-                    {fecha_contrato}
-                  </span>
-                ):(
-                  <input type="date" value={fecha_contrato} onChange={(event) => {setFecha_contrato(event.target.value);
-                  }}
-                  className="form-control" id="fecha_contrato" placeholder="Fecha Contrato" aria-describedby="basic-addon1"
-                ></input>
-                )}
-              </div>
+              
               <div className="mb-3">
                 <label for="planes" className="form-label"> Plan: </label>                
                 <select
@@ -511,10 +422,8 @@ if (busqueda === "") {
                   })}
                 </select>
               </div>     
-                {
-                  instalado?(
-                    null
-                  ):(
+
+
                   <div className="mb-3">
                     <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
                     <input type="date" value={fechaprog_instalacion} onChange={(event) => {
@@ -523,9 +432,21 @@ if (busqueda === "") {
                   className="form-control" id="fecha_instalacion" placeholder="fecha programada para instalar" aria-describedby="basic-addon1"
                 ></input>
                 </div>
-                  )
-                }
-              
+                
+
+              <div className="mb-3">
+                <label for="horario_instalacion" className="form-label">
+                  Rango horario:
+                </label>
+                <select value={horario_instalacion} onChange={(event) => {
+                    setHorario_instalacion(event.target.value);
+                  }}
+                  className="form-control" id="horario_instalacion" aria-label="horario_instalacion" aria-describedby="basic-addon1"
+                >
+                  <option>8am - 1pm</option>
+                  <option>2pm - 6pm</option>
+                </select>
+              </div>
               <div className="mb-3">
                 <label for="diapago" className="form-label">
                   Dia Pago:
@@ -536,12 +457,21 @@ if (busqueda === "") {
                   className="form-control" id="diapago" aria-label="Dia Pago" aria-describedby="basic-addon1"
                 >
                   <option>1</option>
-                  <option>16</option>
+                  <option>15</option>
                 </select>
               </div>
               <div className="mb-3">
+                <label for="costo_instalacion" className="form-label">
+                  Costo Instalacion:
+                </label>
+                <input type="text" value={costo_instalacion}
+                  onChange={(event) => { setCosto_instalacion(event.target.value); }}
+                  className="form-control" id="costo_instalacion" placeholder="Costo instalacion" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
                 <label for="observacion" className="form-label">
-                  Observacion:
+                  Indicacion adicional:
                 </label>
                 <input type="text" value={observacion}
                   onChange={(event) => { setObservacion(event.target.value); }}
@@ -556,7 +486,7 @@ if (busqueda === "") {
               <div>
                 <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
               </div>
-              :<button className="btn btn-success" onClick={addcontrato}>Registrar</button>
+              :<button className="btn btn-success" onClick={addordentrabajo}>Registrar</button>
             }
             <button className="btn btn-danger" onClick={cerrarModalContrato}>Cerrar</button>
           </ModalFooter>
@@ -565,7 +495,7 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Agregar/Modificar Cliente:</h4>
+              <h4 className="">Agregar Cliente:</h4>
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI Cliente:</label>
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
@@ -615,11 +545,19 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="fechanacimiento" className="form-label">Fecha Nacimiento:</label>
-                <input type="date" value={fechanacimiento} onChange={(event) => {
-                    setFechaNacimiento(event.target.value);
+                <label for="referenciacli" className="form-label">Referencia:</label>
+                <input type="text" value={referenciacli} onChange={(event) => {
+                    setReferenciacli(event.target.value);
                   }}
-                  className="form-control" id="fechanacimiento" aria-describedby="basic-addon1"
+                  className="form-control" id="referenciacli" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="geolocalizacion" className="form-label">Coordenadas:</label>
+                <input type="text" value={geolocalizacion} onChange={(event) => {
+                    setGeolocalizacion(event.target.value);
+                  }}
+                  className="form-control" id="geolocalizacion" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
@@ -693,86 +631,7 @@ if (busqueda === "") {
           </ModalFooter>
         </Modal>
 
-
-        <Modal isOpen={modalMostrar4} toggle={ventanaModal4}>
-          <ModalBody>
-            <div className="from-group">
-              <h4 className="">Modificar Estado Servicio:</h4>
-              <div className="mb-3">
-                <label for="numcontrato" className="form-label">Contrato:</label>
-                <span className="input-group-text" id="basic-addon1">
-                    {num_contrato}
-                  </span>
-              </div>
-              <div className="mb-3">
-                <label for="dnicliente" className="form-label">DNI Cliente:</label>
-                <span className="input-group-text" id="basic-addon1">
-                    {cliente_dnicliente}
-                  </span>
-              </div>
-              {instalado?(
-              <>
-              <div className="mb-3">
-                <label for="nombre_estadoanterior" className="form-label">Estado Anterior:</label>
-                <span className="input-group-text" id="basic-addon1">
-                    {nombre_estado}
-                  </span>
-              </div>
-              <div className="mb-3">
-                <label for="nombres" className="form-label">Detalle:</label>
-                  <input type="text" onChange={(event) => {
-                    setDetalle_estado(event.target.value);
-                  }} className="form-control" id="detalle_estado" placeholder="Detalle del cambio estado" aria-describedby="basic-addon1">
-                  </input>
-              </div>
-              <div className="mb-3">
-                <label for="nuevo_estado" className="form-label">Nuevo Estado:</label>
-                <div className="mb-3">
-                <select
-                            className="form-control"
-                            aria-describedby="basic-addon1"
-                            key={nuevo_estado}
-                            value={nuevo_estado}
-                            onChange={(event) => {
-                              setNuevo_estado(event.target.value);
-                            }}
-                          >
-                            {estados.map((estado) => {
-                              return (
-                                <>
-                                  <option value={estado.id_estado}>
-                                    {estado.nombre_estado}
-                                  </option>
-                                </>
-                              );
-                            })}
-                          </select>
-              </div>
-              </div>
-              </>
-              ):(
-                <h3>No se puede modificar el Estado si no se ha instalado el Servicio</h3>
-              )
-              }
-             
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            {instalado?(
-              <button className="btn btn-success" onClick={registrarCambioEstado}>
-              Registrar
-            </button>
-            ):(
-              null
-            )}
-            
-            <button className="btn btn-danger" onClick={cerrarModalEstado}>
-              Cerrar
-            </button>
-          </ModalFooter>
-        </Modal>
-
     </div>
   );
 }
-export default Contrato;
+export default Ordenes_Transporte;

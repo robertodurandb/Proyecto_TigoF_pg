@@ -3,10 +3,10 @@ import './estilos/style.css';
 // import Caja from '../src/componentes/Caja';
 import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
-import Contratos from '../src/componentes/Contrato';
+import Ordenes_Transporte from '../src/componentes/Ordenes_Transporte';
 import Instalacion from '../src/componentes/Instalacion';
 import Consultas from './componentes/Consulta';
-import Inicio from './componentes/Inicio';
+// import Inicio from './componentes/Inicio';
 import ImportPagos from '../src/componentes/ImportPagos';
 import ControlPagos from '../src/componentes/ControlPagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
@@ -28,6 +28,7 @@ function App() {
   const [logged, setLogged] = React.useState(false)
   const [User, setUser] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpenbutton, setIsOpenbutton] = React.useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -78,23 +79,20 @@ function App() {
                 <div className='logo'>TIGO</div>
                 <ul className={isOpen ? 'nav-links2':'nav-links1'}>
                   <li>
-                    <Link to="/" className="links1">Inicio</Link>
+                    <Link to="/" className="links1">Consultas</Link>
                   </li>
                   <li>
-                    <Link to="/Consultas" className="links1">Consultas</Link>
-                  </li>
-                  <li>
-                    <Link to="/Contratos" className="links1">Contratos</Link>
+                    <Link to="/Ordenes_Trabajo" className="links1">Ordenes_Trabajo</Link>
                   </li>
                   <li>
                     <Link to="/Instalaciones" className="links1" role='button'>Instalaciones</Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link to="/ControlPagos" className="links1">Pagos</Link>
                   </li>
                   <li>
                     <Link to="/Pagos" className="links1">Importar</Link>
-                  </li>
+                  </li> */}
                   {/* <li>
                     <Link to="/Tickets" className="links1">Tickets</Link>
                   </li> */}
@@ -108,31 +106,34 @@ function App() {
                     
                   </div>
                   <div class="dropdown">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="dropdown-button" onClick={() => setIsOpenbutton(!isOpenbutton)}>
                       {User}
                     </button>
-                    <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/usuarios">
+                    {isOpenbutton && (
+                      <div className="dropdown-content">
+                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/usuarios">
                         Tabla Usuarios
-                      </Link></button></li>
-                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/planes">
+                      </Link></button>
+                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/planes">
                         Tabla Planes
-                      </Link></button></li>
-                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cliente">
+                      </Link></button>
+                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cliente">
                         Tabla Clientes
-                      </Link></button></li>
-                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
+                      </Link></button>
+                      {/* <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
                         Control de Cambios
-                      </Link></button></li>
-                      <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/logs">
+                      </Link></button>
+                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/logs">
                         Logs Errores (Import)
-                      </Link></button></li>
-                        <li><button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/Passwordupdate">
+                      </Link></button> */}
+                        <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/Passwordupdate">
                         Cambio de contraseña
-                      </Link></button></li>
-                      <li><hr className='dropdown-divider'></hr></li>
-                        <li><button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button></li>
-                    </ul>
+                      </Link></button>
+                      <hr className='dropdown-item'></hr>
+                        <button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button>
+                    </div>
+                    )}
+                    
 
 
                     
@@ -150,14 +151,12 @@ function App() {
               <hr />
               <hr />
               <hr />
+
               </>):null}
               {/* <hr /> */}
-            
+          
             <Routes>
-                <Route path="/Consultas" element={ <Consultas />} />
-            </Routes>
-            <Routes>
-                <Route path="/Contratos" element={ isAdmin() ?(<Contratos />):null} />
+                <Route path="/Ordenes_Trabajo" element={ isAdmin() ?(<Ordenes_Transporte />):null} />
             </Routes>
             <Routes>
                 <Route path="/Pagos" element={<ImportPagos />} />
@@ -190,8 +189,8 @@ function App() {
               <Route path="/usuarios" element={ isAdmin() ?(<Usuarios />):null} />
             </Routes>
               <Routes>
-                <Route path="/" element={<Inicio />} />
-              </Routes>
+                <Route path="/" element={ <Consultas />} />
+            </Routes>
         </Router> 
           )
           :

@@ -3,36 +3,50 @@ import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
-// import Resizer from "react-image-file-resizer";
+import { Link } from 'react-router-dom';
 
 function Instalacion() {
 
   //FECHA ACTUAL
 let fechaactual = `${API.DATENOW}`
 
-    const [listaClientes, setListaClientes] = useState([]);
+    const [ordenesPendientes, setOrdenesPendientes] = useState([]);
     const [instalaciones, setInstalaciones] = useState([]);
     const [busqueda, setBusqueda] = useState("");
-    const [controlbusqueda, setControlbusqueda] = useState(false)
+    const [select_instalados, setSelect_instalados] = useState(false)
 
+    const [id_ordentrabajo, setId_ordentrabajo] = useState();
     const [num_contrato, setNum_contrato] = useState();
     const [dnicliente, setDnicliente] = useState();
     const [plan, setPlan] = useState();
+    const [idplan, setIdplan] = useState();
     //Datos Instalacion
-    const [idinstalacion, setIdinstalacion] = useState();
-    const [fechainstalacion, setFechainstalacion] = useState(fechaactual);
-    const [geolocalizacion, setGeolocalizacion] = useState();
-    const [observacion, setObservacion] = useState();
-    const [apellidocliente, setApellidocliente] = useState();
-    const [nombrecliente, setNombrecliente] = useState();
-    const [user_create, setUser_create] = useState();
+    const [observacion, setObservacion] = useState("");
+    const [apellidocliente, setApellidocliente] = useState("");
+    const [nombrecliente, setNombrecliente] = useState("");
+    const [user_create, setUser_create] = useState("");
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
     const [user_update, setUser_update] = useState();
     const [caja_instalacion, setCajainstalacion] = useState();
+    const [cobro_instalacion, setCobro_instalacion] = useState();
+    const [condicion_equipo, setCondicion_equipo] = useState("Alquiler");
+    const [cobro_equipo, setCobro_equipo] = useState(0);
+    const [tipo_equipo, setTipo_equipo] = useState("");
+    const [dia_pago, setDia_pago] = useState();
+    const [estado_servicio, setEstado_servicio] = useState(1);
+    const [imgcaja_antes, setImgcaja_antes] = useState();
+    const [imgpotencia_antes, setImgpotencia_antes] = useState();
+    const [imgcaja_despues, setImgcaja_despues] = useState();
+    const [imgpotencia_despues, setImgpotencia_despues] = useState();
+    const [imginstalacion_interna, setImginstalacion_interna] = useState();
+    const [imgpotencia_interna, setImgpotencia_interna] = useState();
+    const [imgcontrato, setImgcontrato] = useState();
+    const [imgcasa, setImgcasa] = useState();
+    const [geolocalizacion, setGeolocalizacion] = useState();
     const [editar, setEditar] = useState(false);
-    const [pendientes, setPendientes] = useState(false);
 
     // const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedRow, setSelectedRow] = useState(null);
     const [invalidImage, setinvalidImage] = useState(null);
     const [userInfo, setuserInfo] = useState({
       file:[],
@@ -42,10 +56,12 @@ let fechaactual = `${API.DATENOW}`
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
     const [modalImagen, setModalImagen] = useState(false);
+    const [modalGeo, setModalGeo] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
     const ventanaModalImagen = () => setModalImagen(!modalImagen);
+    const ventanaModalGeo = () => setModalGeo(!modalGeo);
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
@@ -56,10 +72,6 @@ let fechaactual = `${API.DATENOW}`
   const handleImageChange = (event) => {
     const imageFile = event.target.files[0];
     const imageFilname = event.target.files[0].name;
-    // if (!imageFile) {
-    //   setinvalidImage('Please select image.');
-    //    return false;
-    //  }
  
      if (!imageFile.name.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG|gif)$/)) {
       setinvalidImage('Please select valid image JPG,JPEG,PNG');
@@ -74,8 +86,8 @@ let fechaactual = `${API.DATENOW}`
        var ctx = canvas.getContext("2d");
        ctx.drawImage(img, 0, 0);
 
-       var MAX_WIDTH = 500;
-       var MAX_HEIGHT = 500;
+       var MAX_WIDTH = 700;
+       var MAX_HEIGHT = 700;
        var width = img.width;
        var height = img.height;
 
@@ -119,21 +131,158 @@ let fechaactual = `${API.DATENOW}`
   };
   //********************************************** */
   
-
-  const handleSubmit = async (event) => {
+  const handleSubmitImgCajaAntes = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('image', userInfo.file);
+    if (invalidImage==null) {
+      try {
+        await Axios.put(ipbackend+'updatefotocajaantes/'+num_contrato, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+          alert("Se cargó imagen con éxito ")
+          getInstalaciones();
+          ventanaModalImagen();
+          limpiarcampos();
+    } catch (error) {
+        console.error(error);
+    }
+    } else {
+      alert(invalidImage)
+    }
+};
+const handleSubmitImgPotenciaAntes = async (event) => {
+  event.preventDefault();
+  const formData = new FormData();
+  formData.append('image', userInfo.file);
+  if (invalidImage==null) {
+    try {
+      await Axios.put(ipbackend+'updatefotopotenciaantes/'+num_contrato, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+        alert("Se cargó imagen con éxito ")
+        getInstalaciones();
+        ventanaModalImagen();
+        limpiarcampos();
+  } catch (error) {
+      console.error(error);
+  }
+  } else {
+    alert(invalidImage)
+  }
+};
+const handleSubmitImgCajaDespues = async (event) => {
+  event.preventDefault();
+  const formData = new FormData();
+  formData.append('image', userInfo.file);
+  if (invalidImage==null) {
+    try {
+      await Axios.put(ipbackend+'updatefotocajadespues/'+num_contrato, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+        alert("Se cargó imagen con éxito ")
+        getInstalaciones();
+        ventanaModalImagen();
+        limpiarcampos();
+  } catch (error) {
+      console.error(error);
+  }
+  } else {
+    alert(invalidImage)
+  }
+};
+const handleSubmitImgPotenciaDespues = async (event) => {
+  event.preventDefault();
+  const formData = new FormData();
+  formData.append('image', userInfo.file);
+  if (invalidImage==null) {
+    try {
+      await Axios.put(ipbackend+'updatefotopotenciadespues/'+num_contrato, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+        alert("Se cargó imagen con éxito ")
+        getInstalaciones();
+        ventanaModalImagen();
+        limpiarcampos();
+  } catch (error) {
+      console.error(error);
+  }
+  } else {
+    alert(invalidImage)
+  }
+};
+const handleSubmitImgInstalacionInterna = async (event) => {
+  event.preventDefault();
+  const formData = new FormData();
+  formData.append('image', userInfo.file);
+  if (invalidImage==null) {
+    try {
+      await Axios.put(ipbackend+'updatefotoinstalacion/'+num_contrato, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+        alert("Se cargó imagen con éxito ")
+        getInstalaciones();
+        ventanaModalImagen();
+        limpiarcampos();
+  } catch (error) {
+      console.error(error);
+  }
+  } else {
+    alert(invalidImage)
+  }
+};
+const handleSubmitImgPotenciaInterna = async (event) => {
+  event.preventDefault();
+  const formData = new FormData();
+  formData.append('image', userInfo.file);
+  if (invalidImage==null) {
+    try {
+      await Axios.put(ipbackend+'updatefotopotenciainterna/'+num_contrato, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+          }
+      });
+        alert("Se cargó imagen con éxito ")
+        getInstalaciones();
+        ventanaModalImagen();
+        limpiarcampos();
+  } catch (error) {
+      console.error(error);
+  }
+  } else {
+    alert(invalidImage)
+  }
+};
+  const handleSubmitImgContrato = async (event) => {
       event.preventDefault();
       const formData = new FormData();
       formData.append('image', userInfo.file);
-
       if (invalidImage==null) {
         try {
-          await Axios.put(ipbackend+'updateimagen/'+idinstalacion, formData, {
+          await Axios.put(ipbackend+'updatefotocontrato/'+num_contrato, formData, {
               headers: {
                   'Content-Type': 'multipart/form-data',
                   'Authorization': `Bearer ${token}`
               }
           });
             alert("Se cargó imagen con éxito ")
+            getInstalaciones();
             ventanaModalImagen();
             limpiarcampos();
       } catch (error) {
@@ -142,32 +291,64 @@ let fechaactual = `${API.DATENOW}`
       } else {
         alert(invalidImage)
       }
-      
   };
+  const handleSubmitImgCasa = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('image', userInfo.file);
+    if (invalidImage==null) {
+      try {
+        await Axios.put(ipbackend+'updatefotocasa/'+num_contrato, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+          alert("Se cargó imagen con éxito ")
+          getInstalaciones();
+          ventanaModalImagen();
+          limpiarcampos();
+    } catch (error) {
+        console.error(error);
+    }
+    } else {
+      alert(invalidImage)
+    }
+};
 
   
-  //FUNCION PARA GEOLOCALIZACION
-  function contieneBarra() {
-    if (geolocalizacion.includes('/')) {
-      console.log("si incluye /")
-      let newgeo = geolocalizacion.replace("/",",");
-      return(newgeo)
-    } else {
-      console.log("no incluye /")
-      return(geolocalizacion)
-    }
-  }
+  // //FUNCION PARA GEOLOCALIZACION
+  // function contieneBarra() {
+  //   if (geolocalizacion.includes('/')) {
+  //     console.log("si incluye /")
+  //     let newgeo = geolocalizacion.replace("/",",");
+  //     return(newgeo)
+  //   } else {
+  //     console.log("no incluye /")
+  //     return(geolocalizacion)
+  //   }
+  // }
   
 
     const addinstalacion = () => {
-      let newgeo = contieneBarra();
         Axios.post(ipbackend+"createinstalacion", {
-            fechainstalacion: fechainstalacion,
-            geolocalizacion: newgeo,
-            observacion_instalacion: observacion,
+            num_contrato: num_contrato,
+            clienteactual_dnicliente: dnicliente,
+            ordentrabajo_idordentrabajo: id_ordentrabajo,
+            planactual_idplanes: idplan,
+            fecha_inicio_contrato: fecha_actual,
+            condicion_equipo: condicion_equipo,
+            tipo_equipo: tipo_equipo,
+            cobro_equipo: cobro_equipo,
+            cobro_instalacion: cobro_instalacion,
+            comentario_instalacion: observacion,
+            caja_instalacion: caja_instalacion,
+            dia_pago: dia_pago,
+            ciclo_facturacion: 30,
             user_create: user_create,
             fecha_create: fecha_actual,
-            caja_instalacion: caja_instalacion
+            caja_instalacion: caja_instalacion,
+            estado_servicio: estado_servicio
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -177,9 +358,6 @@ let fechaactual = `${API.DATENOW}`
             ventanaModal();
             ventanaModalConfirmar();
             console.log(response.data)
-            let id = "";
-            id = response.data
-            setIdinstalacion(id.idinstalacion)
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -191,10 +369,8 @@ let fechaactual = `${API.DATENOW}`
       };
 
       const confirmarinstalacion = () => {
-        Axios.put(ipbackend+"updatecontrato/"+num_contrato, {
-            estadoc_instalacion: 2,
-            instalacion_idinstalacion: idinstalacion,
-            estado_servicio: 1
+        Axios.put(ipbackend+"updateordentrabajo/"+id_ordentrabajo, {
+            estado_instalacion: 2
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -214,13 +390,15 @@ let fechaactual = `${API.DATENOW}`
       };
 
       const updateinstalacion = () => {
-        let newgeo = contieneBarra();
-        Axios.put(ipbackend+"updateinstalacion/"+idinstalacion, {
-            geolocalizacion: newgeo,
-            observacion_instalacion: observacion,
+        Axios.put(ipbackend+"updateinstalacion/"+num_contrato, {
+            comentario_instalacion: observacion,
             user_update: user_update,
             fecha_update: fecha_actual,
-            caja_instalacion: caja_instalacion
+            caja_instalacion: caja_instalacion,
+            condicion_equipo: condicion_equipo,
+            tipo_equipo: tipo_equipo,
+            cobro_equipo: cobro_equipo,
+            cobro_instalacion: cobro_instalacion
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -228,7 +406,7 @@ let fechaactual = `${API.DATENOW}`
         }).then(() => {
           limpiarcampos();
           ventanaModal();
-          getInstalacionesPendientes();
+          // getInstalacionesPendientes();
           getInstalaciones();
           alert("Instalacion Actualizada con exito");
         }).catch((error) => {
@@ -241,15 +419,37 @@ let fechaactual = `${API.DATENOW}`
           });
       };
 
+      const updateGeolocalizacion = () => {
+        Axios.put(ipbackend+"updatecliente/"+dnicliente, {
+            geolocalizacion: geolocalizacion,
+        },{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(() => {
+          limpiarcampos();
+          ventanaModalGeo();
+          getInstalaciones();
+          alert("Geolocalización Actualizado con exito");
+        }).catch((error) => {
+          if (401 === error.response.status){
+          sessionStorage.removeItem("token");
+          window.location.reload();
+          alert("Sesión expirada, vuelva a iniciar sesión");
+          }
+          return error;
+          });
+      };
+
       const getInstalacionesPendientes = async () => {
         try {
-          const response = await Axios.get(ipbackend+'pendinstacli', {
+          const response = await Axios.get(ipbackend+'orders_pending', {
             headers:{
                 'Authorization': `Bearer ${token}`
             }
           }
           );
-          setListaClientes(response.data);
+          setOrdenesPendientes(response.data);
           setUser_create(user);
           setUser_update(user);
         } catch (error) {
@@ -264,7 +464,7 @@ let fechaactual = `${API.DATENOW}`
 
 const getInstalaciones = async () => {
   try {
-    const response = await Axios.get(ipbackend+'todoinstacli', {
+    const response = await Axios.get(ipbackend+'orders_install', {
       headers:{
           'Authorization': `Bearer ${token}`
       }
@@ -281,46 +481,89 @@ const getInstalaciones = async () => {
   }
 };
 
-      const capturarID = (cliente) =>{
-        setNum_contrato(cliente.num_contrato);
-        setDnicliente(cliente.dnicliente);
+      const capturarIDordentrabajo = (cliente) =>{
+        setId_ordentrabajo(cliente.id_ordentrabajo);
+        setDnicliente(cliente.clienteinicial_dnicliente);
         setPlan(cliente.nombreplan);
+        setIdplan(cliente.planinicial_idplanes);
         setApellidocliente(cliente.apellidocli);
         setNombrecliente(cliente.nombrecli);
+        setCobro_instalacion(cliente.costo_instalacion);
+        setDia_pago(cliente.diapago);
         ventanaModal();   
     }
-    const capturarIDforimage = (cliente) =>{
-      setIdinstalacion(cliente.instalacion_idinstalacion);
-      setNum_contrato(cliente.num_contrato);
-      setDnicliente(cliente.dnicliente);
-      setApellidocliente(cliente.apellidocli);
-      setNombrecliente(cliente.nombrecli);
-      ventanaModalImagen();
+    const capturarIDforimage = () =>{
+      if (num_contrato==undefined) {
+        alert("Debe seleccionar un registro")
+      } else {
+        console.log(imgcontrato)
+        ventanaModalImagen();
+      }
   }
-    const capturarIDinstalacion = (cliente) =>{
+  const capturarIDforgeo = () =>{
+    if (num_contrato==undefined) {
+      alert("Debe seleccionar un registro")
+    } else {
+      console.log(imgcontrato)
+      ventanaModalGeo();
+    }
+}
+    const capturarIDinstalacion = () =>{
+      if (num_contrato==undefined) {
+        alert("Debe seleccionar un registro")
+      } else {
       setEditar(true);
+      ventanaModal();   
+      }
+  }
+    // Función para manejar el clic en una fila
+    const handleRowClick = (cliente) => {    
+      setSelectedRow(cliente.id_ordentrabajo);
       setNum_contrato(cliente.num_contrato);
       setDnicliente(cliente.dnicliente);
       setPlan(cliente.nombreplan);
       setApellidocliente(cliente.apellidocli);
       setNombrecliente(cliente.nombrecli);
-      setIdinstalacion(cliente.instalacion_idinstalacion);
-      setObservacion(cliente.observacion_instalacion);
-      setGeolocalizacion(cliente.geolocalizacion);
+      setCondicion_equipo(cliente.condicion_equipo);
+      setTipo_equipo(cliente.tipo_equipo);
+      setCobro_equipo(cliente.cobro_equipo);
+      setCobro_instalacion(cliente.cobro_instalacion);
       setCajainstalacion(cliente.caja_instalacion);
-      
-      ventanaModal();   
-      console.log(cliente.instalacion_idinstalacion)
-  }
+      setObservacion(cliente.comentario_instalacion);
+      setImgcaja_antes(cliente.nombreimg_caja_antes);
+      setImgpotencia_antes(cliente.nombreimg_potencia_antes);
+      setImgcaja_despues(cliente.nombreimg_caja_despues);
+      setImgpotencia_despues(cliente.nombreimg_potencia_despues);
+      setImginstalacion_interna(cliente.nombreimg_instalacion_interna);
+      setImgpotencia_interna(cliente.nombreimg_potencia_interna);
+      setImgcontrato(cliente.nombreimg_contrato);
+      setImgcasa(cliente.nombreimg_casa);
+      setGeolocalizacion(cliente.geolocalizacion);
+      console.log(cliente.num_contrato)
+      console.log(cliente.id_ordentrabajo)
+      console.log(cliente.imgcontrato)
+      console.log(cliente.geolocalizacion)
+    };
 
       const limpiarcampos = ()=>{
-        setIdinstalacion();
-        setFechainstalacion(fechaactual);
         setFecha_actual(fechaactual);
+        setId_ordentrabajo("");
         setNum_contrato("");
-        setGeolocalizacion("");
         setObservacion("");
         setCajainstalacion("");
+        setCondicion_equipo("Alquiler");
+        setCobro_equipo(0);
+        setinvalidImage(null);
+        setSelectedRow(null);
+        setuserInfo({
+          file:[],
+          filepreview:null
+        })
+
+        setEditar(false);
+      }
+      const limpiarcamposeditar = ()=>{
+        setFecha_actual(fechaactual);
         setinvalidImage(null);
         setuserInfo({
           file:[],
@@ -333,10 +576,40 @@ const getInstalaciones = async () => {
         limpiarcampos();
         ventanaModal();
       }
+      const cerrarModalEditar = ()=>{
+        limpiarcamposeditar();
+        ventanaModal();
+      }
       const cerrarModalImagen = ()=>{
-        limpiarcampos();
        ventanaModalImagen();
       }
+      const cerrarModalGeo = ()=>{
+        ventanaModalGeo();
+       }
+  const verimagen1 = () => {
+    window.open(ipbackend + imgcaja_antes, "_blank");
+  }
+  const verimagen2 = () => {
+    window.open(ipbackend + imgpotencia_antes, "_blank");
+  }
+  const verimagen3 = () => {
+    window.open(ipbackend + imgcaja_despues, "_blank");
+  }
+  const verimagen4 = () => {
+    window.open(ipbackend + imgpotencia_despues, "_blank");
+  }
+  const verimagen5 = () => {
+    window.open(ipbackend + imginstalacion_interna, "_blank");
+  }
+  const verimagen6 = () => {
+    window.open(ipbackend + imgpotencia_interna, "_blank");
+  }
+  const verimagen7 = () => {
+    window.open(ipbackend + imgcontrato, "_blank");
+  }
+  const verimagen8 = () => {
+    window.open(ipbackend + imgcasa, "_blank");
+  }
 
 
        //****************Funcion de Busqueda
@@ -346,19 +619,19 @@ const getInstalaciones = async () => {
         getInstalaciones();
         if(e.target.value=="instalados"){
           console.log("instalados")
-          setControlbusqueda(true)
+          setSelect_instalados(true)
         }
         if(e.target.value=="pendientes"){
           console.log("pendientes")
-          setControlbusqueda(false)
+          setSelect_instalados(false)
         }
         }
-        let results = listaClientes
+        let results = ordenesPendientes
         if (busqueda === "instalados") {
           results = instalaciones
             
           } else{
-            results = listaClientes
+            results = ordenesPendientes
           }
 
         useEffect(() =>{
@@ -370,12 +643,23 @@ const getInstalaciones = async () => {
       return (
         <div className="App">
           <h1 className="mb3">Registro de Instalaciones</h1>
+          {select_instalados ? (
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-primary" onClick={capturarIDinstalacion}>Editar instalación</button>
+              <button type="button" class="btn btn-outline-primary" onClick={capturarIDforimage}>Registrar fotos</button>
+              <button type="button" class="btn btn-outline-primary" onClick={capturarIDforgeo}>Actualizar geolocalización</button>
+            </div>
+          ):(
+            null
+          )}
+          
           <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
             <option value="pendientes">Pendientes</option>
             <option value="instalados">Instalados</option>
           </select>
           <div className="table-responsive">
-              <table className="table table-striped table-hover mt-5 shadow-lg">
+              <table className="table">
+              {/* table-striped table-hover mt-5 shadow-lg */}
                   <thead>
                     <tr className="bg-curso text-white">
                                 <th>DNI</th>
@@ -383,51 +667,70 @@ const getInstalaciones = async () => {
                                 <th>Nombres</th>
                                 <th>Distrito</th>
                                 <th>Direccion</th>
+                                <th>Referencia</th>
                                 <th>Telefono</th>
                                 <th>Fecha programada</th>
+                                <th>Horario programado</th>
                                 {
-                                  controlbusqueda?(
+                                  select_instalados?(
                                     <>
+                                    <th>Condic equipo</th>
+                                    <th>Tipo equipo</th>
+                                    <th>cobro equipo</th>
+                                    <th>cobro instalacion</th>
+                                    <th>Caja instalacion</th>
+                                    <th>Geolocalizacion</th>
                                     <th>Técnico</th>
                                     <th>Fecha Instalacion</th>
                                     </> 
                                   ):(
-                                    <th>Observacion</th>
+                                    <>
+                                    <th>Plan</th>
+                                    <th>Indicaciones</th>
+                                    <th>Geolocalizacion</th>
+                                    </>
                                   )
                                 }
-                                
-                                <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody>
                   {results.map((cliente, key)=>(
-                                <tr key={cliente.num_contrato} value={num_contrato}>
-                                    <td>{cliente.dnicliente}</td>
+                                <tr key={cliente.id_ordentrabajo} value={id_ordentrabajo} onClick={()=>{handleRowClick(cliente)}} className={selectedRow === cliente.id_ordentrabajo  ? 'table-primary' : null}>
+                                    <td>{cliente.clienteinicial_dnicliente}</td>
                                     <td>{cliente.apellidocli}</td>
                                     <td>{cliente.nombrecli}</td>
                                     <td>{cliente.distritocli}</td>
                                     <td>{cliente.direccioncli}</td>
+                                    <th>{cliente.referenciacli}</th>
                                     <td>{cliente.telefonocli}</td>
                                     <td>{cliente.fechaprog_instalacion}</td>
+                                    <td>{cliente.horario_instalacion}</td>
                                     {
-                                      controlbusqueda?(
+                                      select_instalados?(
                                         <>
-                                        <td>{cliente.user_create}</td>
-                                        <td>{cliente.fechainstalacion}</td>
+                                        <td>{cliente.condicion_equipo}</td>
+                                        <td>{cliente.tipo_equipo}</td>
+                                        <td>{cliente.cobro_equipo}</td>
+                                        <td>{cliente.cobro_instalacion}</td>
+                                        <td>{cliente.caja_instalacion}</td>
+                                        <td><Link to={"https://www.google.com/maps/search/?api=1&query="+cliente.geolocalizacion+"&zoom=20"} target="_blank"><a>{cliente.geolocalizacion}</a></Link></td>
+                                        <td>{cliente.tecnico}</td>
+                                        <td>{cliente.fecha_instalacion}</td>
                                         </>
                                       ):(
-                                        <td>{cliente.observacion_contrato}</td>
+                                        <>
+                                        <td>{cliente.nombreplan}</td>
+                                        <td>{cliente.indicacion_instalacion}</td>
+                                        <td><Link to={"https://www.google.com/maps/search/?api=1&query="+cliente.geolocalizacion+"&zoom=20"} target="_blank"><a>{cliente.geolocalizacion}</a></Link></td>
+                                        </>
+                                        
                                       )
                                     }
-                                    {controlbusqueda?(
-                                    <>
-                                    <td><button type="button" className="btn btn-outline-success" 
-                                    onClick={()=>{capturarIDinstalacion(cliente)}}>Editar </button></td>
-                                    <td><button type="button" className="btn btn-outline-success" onClick={()=>{capturarIDforimage(cliente)}}>Img</button></td>
-                                    </>
+                                    {select_instalados?(
+                                    null
                                     ):(
                                       <td><button type="button" className="btn btn-outline-success" 
-                                      onClick={()=>{capturarID(cliente)}}>Registrar
+                                      onClick={()=>{capturarIDordentrabajo(cliente)}}>Registrar
                                       </button></td>
                                     )}
                                     
@@ -441,17 +744,29 @@ const getInstalaciones = async () => {
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Registrar Instalación:</h4>
+              {editar ? (
+                <h4>Editar Instalación</h4>
+              ):(
+                <h4 className="">Registrar Instalación:</h4>
+              )}
+              
               <div className="mb-3">
                 <label for="num_contrato" className="form-label">
                   Número de Contrato:
                 </label>
-                  <span className="input-group-text" id="basic-addon1">
-                    {num_contrato}
-                  </span>
+                { editar ? (
+                  <span className="input-group-text" id="basic-addon1">{num_contrato}</span>
+                ):(
+                  <input type="text" value={num_contrato}
+                  onChange={(event) => {
+                    setNum_contrato(event.target.value);
+                  }}
+                  className="form-control" id="num_contrato" placeholder="número de contrato" aria-describedby="basic-addon1"
+                ></input>
+                )} 
               </div>
               <div className="mb-3">
-                <label for="num_contrato" className="form-label">
+                <label for="dnicliente" className="form-label">
                   DNI Cliente:
                 </label>
                   <span className="input-group-text" id="basic-addon1">
@@ -467,14 +782,49 @@ const getInstalaciones = async () => {
                   </span>
               </div>
               <div className="mb-3">
-                <label for="geolocalización" className="form-label">
-                  Geolocalización:
+                <label for="condicion_equipo" className="form-label">
+                  Condicion Equipo:
                 </label>
-                <input type="text" value={geolocalizacion}
-                  onChange={(event) => {
-                    setGeolocalizacion(event.target.value);
+                <select value={condicion_equipo} onChange={(event) => {
+                    setCondicion_equipo(event.target.value);
                   }}
-                  className="form-control" id="geolocalizacion" placeholder="Ingrese Geolocalización de Maps" aria-describedby="basic-addon1"
+                  className="form-control" id="condicion_equipo" aria-describedby="basic-addon1"
+                >
+                  <option>Alquiler</option>
+                  <option>Venta</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label for="tipo_equipo" className="form-label">
+                  Tipo Equipo:
+                </label>
+                <input type="text" value={tipo_equipo}
+                  onChange={(event) => {
+                    setTipo_equipo(event.target.value);
+                  }}
+                  className="form-control" id="cajainstalacion" placeholder="Marca y/o modelo" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="cobro_equipo" className="form-label">
+                  Cobro por Equipo:
+                </label>
+                <input type="number" value={cobro_equipo}
+                  onChange={(event) => {
+                    setCobro_equipo(event.target.value);
+                  }}
+                  className="form-control" id="cobro_equipo" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="cobro_instalacion" className="form-label">
+                  Cobro por Intalacion:
+                </label>
+                <input type="number" value={cobro_instalacion}
+                  onChange={(event) => {
+                    setCobro_instalacion(event.target.value);
+                  }}
+                  className="form-control" id="cobro_instalacion" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
@@ -489,7 +839,7 @@ const getInstalaciones = async () => {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="geolocalización" className="form-label">
+                <label for="observacion" className="form-label">
                   Observación:
                 </label>
                 <input type="text" value={observacion}
@@ -499,30 +849,37 @@ const getInstalaciones = async () => {
                   className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
                 ></input>
               </div>
+
             </div>
           </ModalBody>
           <ModalFooter>
             {editar ? (
               <div>
-                <button className="btn btn-warning m-2" onClick={updateinstalacion}>
-                  Actualizar
-                </button>
+                <button className="btn btn-success" onClick={updateinstalacion}>
+                      Actualizar
+                    </button>
+                <button className="btn btn-danger" onClick={cerrarModalEditar}>
+                      Cerrar
+                    </button>
               </div>
             ) : (
-              <button className="btn btn-success" onClick={addinstalacion}>
-                Registrar
-              </button>
+                  <div>
+                    <button className="btn btn-success" onClick={addinstalacion}>
+                      Registrar
+                    </button>
+                    <button className="btn btn-danger" onClick={cerrarModal}>
+                      Cerrar
+                    </button>
+                  </div>
             )}
-            <button className="btn btn-danger" onClick={cerrarModal}>
-              Cerrar
-            </button>
+            
           </ModalFooter>
         </Modal>
 
         <Modal isOpen={modalConfirmar} toggle={ventanaModalConfirmar}>
           <ModalBody>
             <div className="from-group h3">
-                  Desea confirmar la instalación para el Cliente:
+                  La instalación ha sido grabada con éxito:
                   <span>
                     {" "+apellidocliente + " " + nombrecliente}
                   </span>
@@ -531,10 +888,7 @@ const getInstalaciones = async () => {
           <ModalFooter>    
               <div>
                 <button className="btn btn-warning m-2" onClick={confirmarinstalacion}>
-                  Confirmar
-                </button>
-                <button className="btn btn-danger" onClick={ventanaModalConfirmar}>
-                  Cancelar
+                  Aceptar
                 </button>
               </div>
             
@@ -544,17 +898,100 @@ const getInstalaciones = async () => {
         <Modal isOpen={modalImagen} toggle={ventanaModalImagen}>
           <ModalBody>
             <div className="from-group h3">
-                  Agregar/actualizar Imagen de la Casa de:
+                  Adjuntar fotos:
                   <span>
                     {" "+apellidocliente + " " + nombrecliente}
                   </span>
             </div>
-            <label className="form-label">Cargar imagen de la casa: (opcional)</label>
-              <form className="input-group mb-3" onSubmit={handleSubmit}>
-            <input type="file" className="form-control" onChange={handleImageChange}/>
-            <br/>
-            <button type="submit" className="btn btn-secondary">Cargar</button>
-              </form>
+            {/* FOTO 1 CAJA ANTES */}
+            <div>
+                <label className="form-label fw-bold">Foto 1 Caja antes: </label>
+                <button onClick={verimagen1}>{imgcaja_antes}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgCajaAntes}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 2 POTENCIA ANTES */}
+              <div>
+                <label className="form-label fw-bold">Foto 2 Potencia antes: </label>
+                <button onClick={verimagen2}>{imgpotencia_antes}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaAntes}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 3 CAJA DESPUES */}
+              <div>
+                <label className="form-label fw-bold">Foto 3 Caja después: </label>
+                <button onClick={verimagen3}>{imgcaja_despues}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgCajaDespues}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 4 POTENCIA DESPUES */}
+              <div>
+                <label className="form-label fw-bold">Foto 4 Potencia después: </label>
+                <button onClick={verimagen4}>{imgpotencia_despues}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaDespues}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 5 INSTALACION INTERIOR */}
+              <div>
+                <label className="form-label fw-bold">Foto 5 Instalación interior: </label>
+                <button onClick={verimagen5}>{imginstalacion_interna}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgInstalacionInterna}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 6 POTENCIA INTERIOR */}
+              <div>
+                <label className="form-label fw-bold">Foto 6 Potencia interior: </label>
+                <button onClick={verimagen6}>{imgpotencia_interna}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaInterna}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+            {/* FOTO 7 CONTRATO */}
+              <div>
+                <label className="form-label fw-bold">Foto 7 Contrato: </label>
+                <button onClick={verimagen7}>{imgcontrato}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgContrato}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+              {/* FOTO 8 CASA */}
+              <div>
+                <label className="form-label fw-bold">Foto 8 Casa: </label>
+                <button onClick={verimagen8}>{imgcasa}</button>
+                <br />
+                <form className="input-group mb-3" onSubmit={handleSubmitImgCasa}>
+                  <input type="file" className="form-control" onChange={handleImageChange} />
+                  <br />
+                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                </form>
+              </div>
+            
           </ModalBody>
           <ModalFooter>    
               <div>
@@ -566,6 +1003,34 @@ const getInstalaciones = async () => {
           </ModalFooter>
         </Modal>
 
+        <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
+          <ModalBody>
+            <div className="from-group h3">
+                  Actualizar Geolocalización:
+                  <span>
+                    {" "+apellidocliente + " " + nombrecliente}
+                  </span>
+                  <br/>
+                  <input type="text" value={geolocalizacion}
+                  onChange={(event) => {
+                    setGeolocalizacion(event.target.value);
+                  }}
+                  className="form-control" id="geolocalizacion" placeholder="Ingresar las coordenadas" aria-describedby="basic-addon1"
+                ></input>
+            </div>
+          </ModalBody>
+          <ModalFooter>    
+              <div>
+                <button className="btn btn-warning m-2" onClick={updateGeolocalizacion}>
+                  Actualizar
+                </button>
+                <button className="btn btn-danger" onClick={cerrarModalGeo}>
+                  Cancelar
+                </button>
+              </div>
+            
+          </ModalFooter>
+        </Modal>
         </div>
       )
 }
