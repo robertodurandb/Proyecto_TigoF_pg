@@ -317,17 +317,17 @@ const handleSubmitImgPotenciaInterna = async (event) => {
 };
 
   
-  // //FUNCION PARA GEOLOCALIZACION
-  // function contieneBarra() {
-  //   if (geolocalizacion.includes('/')) {
-  //     console.log("si incluye /")
-  //     let newgeo = geolocalizacion.replace("/",",");
-  //     return(newgeo)
-  //   } else {
-  //     console.log("no incluye /")
-  //     return(geolocalizacion)
-  //   }
-  // }
+  //FUNCION PARA GEOLOCALIZACION
+  function contieneBarra() {
+    if (geolocalizacion.includes('/')) {
+      console.log("si incluye /")
+      let newgeo = geolocalizacion.replace("/",",");
+      return(newgeo)
+    } else {
+      console.log("no incluye /")
+      return(geolocalizacion)
+    }
+  }
   
 
     const addinstalacion = () => {
@@ -420,8 +420,9 @@ const handleSubmitImgPotenciaInterna = async (event) => {
       };
 
       const updateGeolocalizacion = () => {
+        let newgeo = contieneBarra();
         Axios.put(ipbackend+"updatecliente/"+dnicliente, {
-            geolocalizacion: geolocalizacion,
+            geolocalizacion: newgeo,
         },{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -653,10 +654,13 @@ const getInstalaciones = async () => {
             null
           )}
           
-          <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
-            <option value="pendientes">Pendientes</option>
-            <option value="instalados">Instalados</option>
-          </select>
+          <div className="mb-3">
+            <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
+              <option value="pendientes">Pendientes</option>
+              <option value="instalados">Instalados</option>
+            </select>
+          </div>
+            
           <div className="table-responsive">
               <table className="table">
               {/* table-striped table-hover mt-5 shadow-lg */}
@@ -688,6 +692,7 @@ const getInstalaciones = async () => {
                                     <th>Plan</th>
                                     <th>Indicaciones</th>
                                     <th>Geolocalizacion</th>
+                                    <th>Acción</th>
                                     </>
                                   )
                                 }

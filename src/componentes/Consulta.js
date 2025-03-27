@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Axios from "axios";
-//import '../estilos/style.css';
+import '../estilos/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';

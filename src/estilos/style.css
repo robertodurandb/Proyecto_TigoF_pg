@@ -1,4 +1,15 @@
 /****ESTILOS PARA EL MENÚ DE NAVEGACION****/
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('../imagenes//tigo_option6.jpg'); /* Ruta desde public/ */
+  background-size: cover; /* Cubre toda la pantalla */
+  background-position: center; /* Centra la imagen */
+  background-repeat: no-repeat; /* Evita repetición */
+  background-attachment: fixed; /* Fondo fijo al hacer scroll (opcional) */
+  min-height: 100vh; /* Altura mínima = viewport */
+}
+
 .main1{
   margin: 0px;
   padding: 0px;

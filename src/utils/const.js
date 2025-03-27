@@ -17,8 +17,8 @@ if (mes < 10) {
 }
 
 let API = {
-      URL: "https://proyectotigobpg-production.up.railway.app/api/v1/clientes/",
-   // URL: "http://192.168.18.27:9100/api/v1/clientes/",
+    //  URL: "https://proyectotigobpg-production.up.railway.app/api/v1/clientes/",
+    URL: "http://192.168.18.27:9100/api/v1/clientes/",
     // URL:"http://localhost:9100/api/v1/clientes/",
     // URL:"https://api.tigo.com.pe/api/v1/clientes/",
     //************************************ */

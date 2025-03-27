@@ -112,6 +112,7 @@ function Ordenes_Transporte() {
             getClientes();
             cerrarModalCliente();
             alert("Cliente Registrado con exito");
+            agregarContrato();
           }).catch((error) => {
             if (error.response && error.response.status === 400){
             alert("Error: "+error.response.data.error);
@@ -220,7 +221,7 @@ function validardnicliente() {
   } else {
     setErrordni("");
     if (index == -1) {
-      alert("El DNI ingresado no existe")
+      alert("El DNI ingresado no existe, puede usted continuar registrando..")
     } else {
       ventanaModal3();
       
@@ -325,7 +326,7 @@ if (busqueda === "") {
   return (
     <div className="App">
         <h1 className="mb-3">Registro de Ordenes de Trabajo</h1>
-        <button type="button" className="btn btn-info" onClick={agregarContrato}>
+        <button type="button" className="btn btn-info" onClick={agregarCliente}>
           Registrar Nueva OT
         </button>
         <br />
@@ -335,9 +336,9 @@ if (busqueda === "") {
           <table className="table table-striped">
             <thead>
               <tr>
-                <th scope="col">ID OT</th>
                 <th scope="col">DNI</th>
                 <th scope="col">Apellidos</th>
+                <th scope="col">Nombre</th>
                 <th scope="col">Direccion</th>
                 <th scope="col">Telefono</th>
                 <th scope="col">Referencia</th>
@@ -355,9 +356,9 @@ if (busqueda === "") {
               {results.map((val, key) => {
                 return (
                   <tr key={val.id_ordentrabajo}>
-                    <td>{val.id_ordentrabajo}</td>
                     <td>{val.clienteinicial_dnicliente}</td>
                     <td>{val.apellidocli}</td>
+                    <td>{val.nombrecli}</td>
                     <td>{val.direccioncli}</td>
                     <td>{val.telefonocli}</td>
                     <td>{val.referenciacli}</td>
@@ -382,7 +383,11 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar} toggle={ventanaModal}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Agregar/Modificar OT:</h4>
+              { editar ? (
+                <h4 className="">Modificar Orden de Transporte:</h4>
+              ):(
+                <h4 className="">Registrar Orden de Transporte:</h4>
+              )}
               
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI:</label>
@@ -394,15 +399,7 @@ if (busqueda === "") {
                 ></input>
                 )}
                 <div className="fw-bold">{errordni}</div>
-                { editar ? (
-                  null
-                ) : (
-                  <>
-                  <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar DNI</button>
-                &nbsp;
-                <button type="button"  className="btn btn-secondary" onClick={agregarCliente}>Nuevo Cliente</button>
-                  </>
-                )}
+                
               </div>
               
               <div className="mb-3">
@@ -422,8 +419,6 @@ if (busqueda === "") {
                   })}
                 </select>
               </div>     
-
-
                   <div className="mb-3">
                     <label for="fecha_instalacion" className="form-label"> Fecha Instalacion programada: </label>
                     <input type="date" value={fechaprog_instalacion} onChange={(event) => {
@@ -471,7 +466,7 @@ if (busqueda === "") {
               </div>
               <div className="mb-3">
                 <label for="observacion" className="form-label">
-                  Indicacion adicional:
+                  Indicacion adicional para el técnico:
                 </label>
                 <input type="text" value={observacion}
                   onChange={(event) => { setObservacion(event.target.value); }}
@@ -495,13 +490,15 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Agregar Cliente:</h4>
+              <h4 className="">Ingresar Datos del Cliente:</h4>
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI Cliente:</label>
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);
                   }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1">
                   </input>
+                  <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar si DNI existe</button>
+
               </div>
               <div className="mb-3">
                 <label for="nombres" className="form-label">Nombres:</label>
@@ -583,7 +580,8 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar3} toggle={ventanaModal3}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">DNI encontrado en la Base de Datos Clientes!!</h4>
+              <h4 className="">DNI ya existe en la Base de Datos, no será posible registrar con ese DNI</h4>
+              <p>-------------------------------------------------------------</p>
               <div className="mb-3">
                 <label for="fecha_create" className="form-label">Fecha creación Cliente:</label>
                 <span className="input-group-text" id="basic-addon1">{fecha_createcli}</span>
