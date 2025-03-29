@@ -1,4 +1,5 @@
 //import 'bootstrap/dist/css/bootstrap.css';
+import React, { useState, useEffect, useRef } from "react";
 import './estilos/style.css';
 // import Caja from '../src/componentes/Caja';
 import Planes from '../src/componentes/Planes';
@@ -22,23 +23,18 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import React, { useEffect } from 'react';
+
 
 function App() {
-  const [logged, setLogged] = React.useState(false)
-  const [User, setUser] = React.useState("");
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenbutton, setIsOpenbutton] = React.useState(false);
+  const [logged, setLogged] = useState(false)
+  const [User, setUser] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenbutton, setIsOpenbutton] = useState(false);
+  const dropdownRef = useRef(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-  // Función para manejar el scroll
-  // const handleScroll = () => {
-  //   if (window.scrollY > 50 && isOpen) {
-  //     setIsOpen(false);
-  //   }
-  // };
 
   function checkLogin() {
     let token = sessionStorage.getItem('token')
@@ -54,11 +50,39 @@ function App() {
     let role = sessionStorage.getItem("role");
     return role == "Admin";
 }
+
+  // Manejar el toggle del menú
+  const toggleMenuPrincipal = () => {
+    setIsOpenbutton(!isOpenbutton);
+    };
+
+
   useEffect(() => {
     checkLogin();
-    // window.addEventListener('scroll', handleScroll);
-    // return () => window.removeEventListener('scroll', handleScroll);
-  }, [])
+    // Cierra el menú al hacer clic/touch fuera
+    const handleInteractionOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpenbutton(false);
+        setIsOpen(false);
+      }
+    };
+
+    // Agregamos múltiples tipos de eventos
+    const events = ["mousedown", "touchstart"];
+
+    if (isOpenbutton) {
+      events.forEach((event) => {
+        document.addEventListener(event, handleInteractionOutside);
+      });
+    }
+    return () => {
+      events.forEach((event) => {
+        document.removeEventListener(event, handleInteractionOutside);
+      });
+    };
+  }, [isOpenbutton]);
+
+
 
   function signOut() {
 
@@ -79,13 +103,13 @@ function App() {
                 <div className='logo'>TIGO</div>
                 <ul className={isOpen ? 'nav-links2':'nav-links1'}>
                   <li>
-                    <Link to="/" className="links1">Consultas</Link>
+                    <Link to="/" className="links1" role='button' onClick={() => setIsOpen(false)}>Consultas</Link>
                   </li>
                   <li>
-                    <Link to="/Ordenes_Trabajo" className="links1">Ordenes_Trabajo</Link>
+                    <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>Ordenes_Trabajo</Link>
                   </li>
                   <li>
-                    <Link to="/Instalaciones" className="links1" role='button'>Instalaciones</Link>
+                    <Link to="/Instalaciones" className="links1" role='button'  onClick={() => setIsOpen(false)}>Instalaciones</Link>
                   </li>
                   {/* <li>
                     <Link to="/ControlPagos" className="links1">Pagos</Link>
@@ -105,19 +129,21 @@ function App() {
                     {/**/}
                     
                   </div>
-                  <div class="dropdown">
-                    <button class="dropdown-button" onClick={() => setIsOpenbutton(!isOpenbutton)}>
-                      {User}
+                  <div ref={dropdownRef} className="dropdown">
+                    <button class="dropdown-button" onClick={toggleMenuPrincipal} 
+                    onTouchEnd={toggleMenuPrincipal}
+                    >
+                      {User}{isOpenbutton ? '▲' : '▼'}
                     </button>
                     {isOpenbutton && (
                       <div className="dropdown-content">
-                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/usuarios">
+                      <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/usuarios">
                         Tabla Usuarios
                       </Link></button>
-                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/planes">
+                      <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/planes">
                         Tabla Planes
                       </Link></button>
-                      <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cliente">
+                      <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/cliente">
                         Tabla Clientes
                       </Link></button>
                       {/* <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
@@ -126,23 +152,18 @@ function App() {
                       <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/logs">
                         Logs Errores (Import)
                       </Link></button> */}
-                        <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/Passwordupdate">
+                        <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/Passwordupdate">
                         Cambio de contraseña
                       </Link></button>
                       <hr className='dropdown-item'></hr>
                         <button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button>
                     </div>
                     )}
-                    
-
-
-                    
+                 
                 </div>
-
-                  
-                  
+  
               </nav>
-              {isOpen ? 
+              {/* {isOpen ? 
               (<>
               <hr />
               <hr />
@@ -152,7 +173,7 @@ function App() {
               <hr />
               <hr />
 
-              </>):null}
+              </>):null} */}
               {/* <hr /> */}
           
             <Routes>

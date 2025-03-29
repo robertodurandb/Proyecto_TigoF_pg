@@ -262,9 +262,10 @@ function Consulta() {
     }, [])
 
     return(
-        <div>
+        <div className='App'>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
-            <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <br/>
+            <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
               <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
               <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
             </div>

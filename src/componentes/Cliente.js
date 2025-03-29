@@ -13,7 +13,7 @@ function Cliente() {
     const [provinciacli, setProvinciacli] = useState("");
     const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
     const [telefonocli, setTelefonocli] = useState();
-    const [fecha_nacimiento, setFecha_nacimiento] = useState();
+    const [referenciacli, setReferenciacli] = useState();
     const [listaClientes, setListaClientes] = useState([]);
     const [editar, setEditar] = useState(false);
 
@@ -52,7 +52,7 @@ function Cliente() {
     setProvinciacli(val.provinciacli);
     setNacionalidadcli(val.nacionalidadcli);
     setTelefonocli(val.telefonocli);
-    setFecha_nacimiento(val.fecha_nacimiento);
+    setReferenciacli(val.referenciacli);
     ventanaModal();
   }
   const update = () => {
@@ -64,7 +64,7 @@ function Cliente() {
         provinciacli: provinciacli,
         nacionalidadcli: nacionalidadcli,
         telefonocli: telefonocli,
-        fecha_nacimiento: fecha_nacimiento,
+        referenciacli: referenciacli,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -96,7 +96,7 @@ function Cliente() {
     setProvinciacli("");
     setNacionalidadcli("Peruana");
     setTelefonocli("");
-    setFecha_nacimiento("");
+    setReferenciacli("");
     
     setEditar(false);
   }
@@ -143,7 +143,7 @@ if (busqueda === "") {
                   <th scope="col">Distrito</th>
                   <th scope="col">Provincia</th>
                   <th scope="col">Telefono</th>
-                  <th scope="col">Fecha Nac</th>
+                  <th scope="col">Referencia</th>
                 { 
                   isAdmin() ? (
                     <th scope="col">Accion</th>
@@ -161,7 +161,7 @@ if (busqueda === "") {
                         <td>{val.distritocli}</td>
                         <td>{val.provinciacli}</td>
                         <td>{val.telefonocli}</td>
-                        <td>{val.fecha_nacimiento}</td>
+                        <td>{val.referenciacli}</td>
                         <td>
                         { 
                           isAdmin() ? (
@@ -246,9 +246,9 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="fecha_nacimiento" className="form-label">Fecha Nacimiento:</label>
-                <input type="date" value={fecha_nacimiento} onChange={(event) => {
-                    setFecha_nacimiento(event.target.value);
+                <label for="referenciacli" className="form-label">Referencia:</label>
+                <input type="text" value={referenciacli} onChange={(event) => {
+                    setReferenciacli(event.target.value);
                   }}
                   className="form-control" aria-describedby="basic-addon1"
                 ></input>
