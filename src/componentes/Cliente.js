@@ -18,6 +18,8 @@ function Cliente() {
     const [editar, setEditar] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
+    const maxLengthDireccion = 100;
+    const maxLengthReferencia = 45;
 
     const [modalMostrar, setModalMostrar] = useState(false);
 
@@ -131,142 +133,219 @@ if (busqueda === "") {
       <h1 className="mb-3">Tabla Clientes</h1>
       <br />
       <br />
-        <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI o por Apellidos' className='form-control border border-success'/>
-        <div className="table-responsive">
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">DNI</th>
-                  <th scope="col">Nombres</th>
-                  <th scope="col">Apellidos</th>
-                  <th scope="col">Direccion</th>
-                  <th scope="col">Distrito</th>
-                  <th scope="col">Provincia</th>
-                  <th scope="col">Telefono</th>
-                  <th scope="col">Referencia</th>
-                { 
-                  isAdmin() ? (
-                    <th scope="col">Accion</th>
-                  ):null
-                }
+      <input
+        value={busqueda}
+        onChange={searcher}
+        type="text"
+        placeholder="Busqueda por DNI o por Apellidos"
+        className="form-control border border-success"
+      />
+      <div className="table-responsive">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">DNI</th>
+              <th scope="col">Nombres</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Direccion</th>
+              <th scope="col">Distrito</th>
+              <th scope="col">Provincia</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Referencia</th>
+              {isAdmin() ? <th scope="col">Accion</th> : null}
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((val, key) => {
+              return (
+                <tr key={val.dnicliente}>
+                  <th>{val.dnicliente}</th>
+                  <td>{val.nombrecli}</td>
+                  <td>{val.apellidocli}</td>
+                  <td>{val.direccioncli}</td>
+                  <td>{val.distritocli}</td>
+                  <td>{val.provinciacli}</td>
+                  <td>{val.telefonocli}</td>
+                  <td>{val.referenciacli}</td>
+                  <td>
+                    {isAdmin() ? (
+                      <button
+                        type="button"
+                        className="btn btn-info"
+                        onClick={() => {
+                          editarClientes(val);
+                        }}
+                      >
+                        Editar
+                      </button>
+                    ) : null}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-              {results.map((val, key) => {
-                return <tr key={val.dnicliente}>
-                        <th>{val.dnicliente}</th>
-                        <td>{val.nombrecli}</td>
-                        <td>{val.apellidocli}</td>
-                        <td>{val.direccioncli}</td>
-                        <td>{val.distritocli}</td>
-                        <td>{val.provinciacli}</td>
-                        <td>{val.telefonocli}</td>
-                        <td>{val.referenciacli}</td>
-                        <td>
-                        { 
-                          isAdmin() ? (
-                            <button type="button" className="btn btn-info" 
-                        onClick={()=>{ editarClientes(val) }}>
-                          Editar
-                        </button>
-                          ):null 
-                          }
-                        </td>
-                </tr>
-              })}
-              </tbody>
-            </table>
-        </div>
-        
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-        <Modal isOpen={modalMostrar} toggle={ventanaModal}>
-          <ModalBody>
-            <div className="from-group">
-              <h4 className="">Modificar Datos Cliente:</h4>
-              <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI Cliente:
-                </label>
-                {editar ? (
-                  <span className="input-group-text" id="basic-addon1">
-                    {dnicliente}
-                  </span>
-                ) : (
-                  <input type="text" value={dnicliente} onChange={(event) => {
-                      setDnicliente(event.target.value);
-                    }}
-                    className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1"
-                  ></input>
-                )}
-              </div>
-              <div className="mb-3">
-                <label for="nombres" className="form-label">Nombres:</label>
-                <input type="text" value={nombrecli} onChange={(event) => {
-                    setNombrecli(event.target.value);
-                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="apellidos" className="form-label">Apellidos:</label>
-                <input type="text" value={apellidocli} onChange={(event) => {
-                    setApellidocli(event.target.value);
-                  }} className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="direccion" className="form-label">Direccion: </label>
-                <input type="text" value={direccioncli} onChange={(event) => {
-                    setDireccioncli(event.target.value);
+      <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+        <ModalBody>
+          <div className="from-group">
+            <h4 className="">Modificar Datos Cliente:</h4>
+            <div className="mb-3">
+              <label for="dnicliente" className="form-label">
+                DNI Cliente:
+              </label>
+              {editar ? (
+                <span className="input-group-text" id="basic-addon1">
+                  {dnicliente}
+                </span>
+              ) : (
+                <input
+                  type="text"
+                  value={dnicliente}
+                  onChange={(event) => {
+                    setDnicliente(event.target.value);
                   }}
-                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
+                  className="form-control"
+                  id="dnicliente"
+                  placeholder="Ingrese Documento de Identidad"
+                  aria-describedby="basic-addon1"
                 ></input>
-              </div>
-              <div className="mb-3">
-                <label for="distrito" className="form-label"> Distrito:</label>
-                <input type="text" value={distritocli} onChange={(event) => {
-                    setDistritocli(event.target.value);
-                  }}
-                  className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="provincia" className="form-label">Provincia: </label>
-                <input type="text" value={provinciacli} onChange={(event) => {
-                    setProvinciacli(event.target.value);
-                  }}
-                  className="form-control" id="provincia" placeholder="Ingrese Provincia" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="telefono1" className="form-label">Telefono:</label>
-                <input type="number" value={telefonocli} onChange={(event) => {
-                    setTelefonocli(event.target.value);
-                  }}
-                  className="form-control" id="telefono1" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="referenciacli" className="form-label">Referencia:</label>
-                <input type="text" value={referenciacli} onChange={(event) => {
-                    setReferenciacli(event.target.value);
-                  }}
-                  className="form-control" aria-describedby="basic-addon1"
-                ></input>
-              </div>
+              )}
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <div>
-                <button className="btn btn-warning m-2" onClick={update}>
-                  Actualizar
-                </button>
+            <div className="mb-3">
+              <label for="nombres" className="form-label">
+                Nombres:
+              </label>
+              <input
+                type="text"
+                value={nombrecli}
+                onChange={(event) => {
+                  setNombrecli(event.target.value);
+                }}
+                className="form-control"
+                id="nombres"
+                placeholder="Nombres del Cliente"
+                aria-describedby="basic-addon1"
+              ></input>
             </div>
-            
-            <button className="btn btn-danger" onClick={cerrarModalCliente}>
-              Cerrar
+            <div className="mb-3">
+              <label for="apellidos" className="form-label">
+                Apellidos:
+              </label>
+              <input
+                type="text"
+                value={apellidocli}
+                onChange={(event) => {
+                  setApellidocli(event.target.value);
+                }}
+                className="form-control"
+                id="apellidos"
+                placeholder="Apellidos del Cliente"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="direccion" className="form-label">
+                Direccion:{" "}
+              </label>
+              <input
+                type="text"
+                value={direccioncli}
+                onChange={(event) => {
+                  setDireccioncli(event.target.value);
+                }}
+                maxLength={maxLengthDireccion}
+                className="form-control"
+                id="direccion"
+                placeholder="Dirección del Cliente"
+                aria-describedby="basic-addon1"
+              ></input>
+              <div>{direccioncli.length} caracteres</div>
+              {direccioncli.length >= maxLengthDireccion && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )}
+            </div>
+            <div className="mb-3">
+              <label for="distrito" className="form-label">
+                {" "}
+                Distrito:
+              </label>
+              <input
+                type="text"
+                value={distritocli}
+                onChange={(event) => {
+                  setDistritocli(event.target.value);
+                }}
+                className="form-control"
+                id="distrito"
+                placeholder="Ingrese Distrito"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="provincia" className="form-label">
+                Provincia:{" "}
+              </label>
+              <input
+                type="text"
+                value={provinciacli}
+                onChange={(event) => {
+                  setProvinciacli(event.target.value);
+                }}
+                className="form-control"
+                id="provincia"
+                placeholder="Ingrese Provincia"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="telefono1" className="form-label">
+                Telefono:
+              </label>
+              <input
+                type="number"
+                value={telefonocli}
+                onChange={(event) => {
+                  setTelefonocli(event.target.value);
+                }}
+                className="form-control"
+                id="telefono1"
+                placeholder="Telefono del Cliente"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="referenciacli" className="form-label">
+                Referencia:
+              </label>
+              <input
+                type="text"
+                value={referenciacli}
+                onChange={(event) => {
+                  setReferenciacli(event.target.value);
+                }}
+                maxLength={maxLengthReferencia}
+                className="form-control"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <div>
+            <button className="btn btn-warning m-2" onClick={update}>
+              Actualizar
             </button>
-          </ModalFooter>
-        </Modal>
+          </div>
+
+          <button className="btn btn-danger" onClick={cerrarModalCliente}>
+            Cerrar
+          </button>
+        </ModalFooter>
+      </Modal>
       {/* </div> */}
     </div>
   );

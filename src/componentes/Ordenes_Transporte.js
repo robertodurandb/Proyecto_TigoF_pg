@@ -22,6 +22,9 @@ function Ordenes_Transporte() {
     const [instalado, setInstalado] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
+    const maxLengthDireccion = 100;
+    const maxLengthReferencia = 45;
+    const maxLengthIndicaciones = 100;
 
     //VALIDAR SI EXISTE EL DNI
     const [listaPlanes, setListaPlanes] = useState([]);
@@ -470,8 +473,17 @@ if (busqueda === "") {
                 </label>
                 <input type="text" value={observacion}
                   onChange={(event) => { setObservacion(event.target.value); }}
+                  maxLength={maxLengthIndicaciones}
                   className="form-control" id="observacion" placeholder="Ingrese Observacion" aria-describedby="basic-addon1"
                 ></input>
+                <div>
+                {observacion.length} caracteres
+              </div>
+              {observacion.length >= maxLengthIndicaciones && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )}
               </div>
             </div>
           </ModalBody>
@@ -532,22 +544,37 @@ if (busqueda === "") {
                   }}
                   className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
                 ></input>
+
               </div>
               <div className="mb-3">
                 <label for="direccion" className="form-label">Direccion: </label>
                 <input type="text" value={direccioncli} onChange={(event) => {
                     setDireccioncli(event.target.value);
                   }}
+                  maxLength={maxLengthDireccion}
                   className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
                 ></input>
+                <div>{direccioncli.length} caracteres</div>
+              {direccioncli.length >= maxLengthDireccion && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )}
               </div>
               <div className="mb-3">
                 <label for="referenciacli" className="form-label">Referencia:</label>
                 <input type="text" value={referenciacli} onChange={(event) => {
                     setReferenciacli(event.target.value);
                   }}
+                  maxLength={maxLengthReferencia}
                   className="form-control" id="referenciacli" aria-describedby="basic-addon1"
                 ></input>
+                <div>{referenciacli.length} caracteres</div>
+              {referenciacli.length >= maxLengthReferencia && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )}
               </div>
               <div className="mb-3">
                 <label for="geolocalizacion" className="form-label">Coordenadas:</label>

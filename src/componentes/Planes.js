@@ -17,6 +17,8 @@ function Planes() {
 
     const [modalMostrar, setModalMostrar] = React.useState(false);
 
+    const maxLength = 60;
+
     const ventanaModal = () => setModalMostrar(!modalMostrar);
 
     const agregarPlan=()=>{
@@ -134,117 +136,168 @@ const getPlanes = async () => {
   return (
     <div className="App">
       <h1 className="mb-3">Gestion de Planes</h1>
-        <button type="button" className="btn btn-info" onClick={agregarPlan}>Registrar Nuevo Plan</button>
-        <div className="table-responsive">
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">Nombre Plan</th>
-                  <th scope="col">Descripción</th>
-                  <th scope="col">Precio</th>
-                  <th scope="col">Velocidad</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Acciones</th>
+      <button type="button" className="btn btn-info" onClick={agregarPlan}>
+        Registrar Nuevo Plan
+      </button>
+      <div className="table-responsive">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Nombre Plan</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Velocidad</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {planes.map((val, key) => {
+              return (
+                <tr key={val.idplanes}>
+                  <td>{val.nombreplan}</td>
+                  <td>{val.descplan}</td>
+                  <td>{val.precioplan}</td>
+                  <td>{val.velocidadplan}</td>
+                  <td>{val.nombre_estado}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-info"
+                      onClick={() => {
+                        editarPlan(val);
+                      }}
+                    >
+                      Editar
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-              {planes.map((val, key) => {
-                return <tr key={val.idplanes}>
-                        <td>{val.nombreplan}</td>
-                        <td>{val.descplan}</td>
-                        <td>{val.precioplan}</td>
-                        <td>{val.velocidadplan}</td>
-                        <td>{val.nombre_estado}</td>
-                        <td>
-                        <button type="button" className="btn btn-info" 
-                        onClick={()=>{
-                          editarPlan(val);
-                        }}>
-                          Editar
-                        </button>
-                        </td>
-                </tr>
-                        })}
-              </tbody>
-            </table>
-        </div>
-        
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
-                <ModalBody>
-                <div className='from-group'>
-                <h4 className=''>Agregar/Modificar Plan:</h4>
-                <div className='mb-3'>
-                        <label for='nombreplan' className="form-label">Nombre Plan:</label>
-                        <input type="text" value={nombreplan}
-                                onChange={(event) => { setNombreplan(event.target.value); }}
-                                className="form-control" id="nombreplan" placeholder="Ingrese Nombre del Plan" aria-describedby="basic-addon1"
-                        ></input>
+      <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+        <ModalBody>
+          <div className="from-group">
+            <h4 className="">Agregar/Modificar Plan:</h4>
+            <div className="mb-3">
+              <label for="nombreplan" className="form-label">
+                Nombre Plan:
+              </label>
+              <input
+                type="text"
+                value={nombreplan}
+                onChange={(event) => {
+                  setNombreplan(event.target.value);
+                }}
+                className="form-control"
+                id="nombreplan"
+                placeholder="Ingrese Nombre del Plan"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="descplan" className="form-label">
+                Descripción Plan:
+              </label>
+              <input
+                type="text"
+                value={descplan}
+                onChange={(event) => {
+                  setDescplan(event.target.value);
+                }}
+                maxLength={maxLength} // Esto evita que se ingrese más caracteres
+                className="form-control"
+                id="descplan"
+                placeholder="Ingrese la descripción del plan"
+                aria-describedby="basic-addon1"
+              ></input>
+              <div>
+                {descplan.length} caracteres
+              </div>
+              {descplan.length >= maxLength && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
                 </div>
-                <div className="mb-3">
-                        <label for='descplan' className="form-label">
-                          Descripción Plan:
-                        </label>
-                        <input type="text" value={descplan}
-                          onChange={(event) => { setDescplan(event.target.value); }}
-                          className="form-control" id="descplan" placeholder="Ingrese la descripción del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='precioplan' className="form-label">
-                          Precio Plan:
-                        </label>
-                        <input type="text" value={precioplan}
-                          onChange={(event) => { setPrecioplan(event.target.value); }}
-                          className="form-control" id="precioplan" placeholder="Ingrese Precio del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                        <label for='velocidadplan' className="form-label">
-                          Velocidad Plan:
-                        </label>
-                        <input type="text" value={velocidadplan}
-                          onChange={(event) => { setVelocidadplan(event.target.value); }}
-                          className="form-control" id="velocidadplan" placeholder="Ingrese Velocidad del plan" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
-                <div className="mb-3">
-                          <label for='estado' className="form-label">
-                            Estado:
-                          </label>
-                          <select
-                            className="form-control"
-                            aria-describedby="basic-addon1"
-                            key={estado}
-                            value={estado}
-                            onChange={(event) => {
-                              setEstado(event.target.value);
-                            }}
-                          >
-                            {estados.map((estado) => {
-                              return (
-                                <>
-                                  <option value={estado.id_estado}>
-                                    {estado.nombre_estado}
-                                  </option>
-                                </>
-                              );
-                            })}
-                          </select>
-                </div>
-                </div>
-                </ModalBody>
-                <ModalFooter>
-                          {
-                            editar? 
-                            <div>
-                            <button className="btn btn-warning m-2" onClick={update}>Actualizar</button>
-                            </div>
-                            :<button className="btn btn-success" onClick={add}>Registrar</button>
-                          }
-                    <button className='btn btn-danger' onClick={limpiarcampos}>Cerrar</button>
-                </ModalFooter>
-            </Modal>
+              )}
+            </div>
+            <div className="mb-3">
+              <label for="precioplan" className="form-label">
+                Precio Plan:
+              </label>
+              <input
+                type="text"
+                value={precioplan}
+                onChange={(event) => {
+                  setPrecioplan(event.target.value);
+                }}
+                className="form-control"
+                id="precioplan"
+                placeholder="Ingrese Precio del plan"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="velocidadplan" className="form-label">
+                Velocidad Plan:
+              </label>
+              <input
+                type="text"
+                value={velocidadplan}
+                onChange={(event) => {
+                  setVelocidadplan(event.target.value);
+                }}
+                className="form-control"
+                id="velocidadplan"
+                placeholder="Ingrese Velocidad del plan"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="estado" className="form-label">
+                Estado:
+              </label>
+              <select
+                className="form-control"
+                aria-describedby="basic-addon1"
+                key={estado}
+                value={estado}
+                onChange={(event) => {
+                  setEstado(event.target.value);
+                }}
+              >
+                {estados.map((estado) => {
+                  return (
+                    <>
+                      <option value={estado.id_estado}>
+                        {estado.nombre_estado}
+                      </option>
+                    </>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          {editar ? (
+            <div>
+              <button className="btn btn-warning m-2" onClick={update}>
+                Actualizar
+              </button>
+            </div>
+          ) : (
+            <button className="btn btn-success" onClick={add}>
+              Registrar
+            </button>
+          )}
+          <button className="btn btn-danger" onClick={limpiarcampos}>
+            Cerrar
+          </button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

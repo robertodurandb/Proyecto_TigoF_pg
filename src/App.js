@@ -11,7 +11,7 @@ import Consultas from './componentes/Consulta';
 import ImportPagos from '../src/componentes/ImportPagos';
 import ControlPagos from '../src/componentes/ControlPagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
-import Gestiontickets from '../src/componentes/Gestiontickets';
+// import Gestiontickets from '../src/componentes/Gestiontickets';
 import Cortes from '../src/componentes/Cortes_Activaciones';
 import Logs from '../src/componentes/Logs_Carga';
 
@@ -48,7 +48,7 @@ function App() {
   }
   function isAdmin() {
     let role = sessionStorage.getItem("role");
-    return role == "Admin";
+    return role === "Admin";
 }
 
   // Manejar el toggle del menú
@@ -131,7 +131,7 @@ function App() {
                   </div>
                   <div ref={dropdownRef} className="dropdown">
                     <button class="dropdown-button" onClick={toggleMenuPrincipal} 
-                    onTouchEnd={toggleMenuPrincipal}
+                    
                     >
                       {User}{isOpenbutton ? '▲' : '▼'}
                     </button>

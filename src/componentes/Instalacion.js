@@ -53,6 +53,8 @@ let fechaactual = `${API.DATENOW}`
       filepreview:null,
   });
 
+    const maxLengthObservacion = 100;
+
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
     const [modalImagen, setModalImagen] = useState(false);
@@ -645,344 +647,521 @@ const getInstalaciones = async () => {
         <div className="App">
           <h1 className="mb3">Registro de Instalaciones</h1>
           {select_instalados ? (
-            <div class="btn-group" role="group" aria-label="Basic outlined example">
-              <button type="button" class="btn btn-outline-primary" onClick={capturarIDinstalacion}>Editar instalación</button>
-              <button type="button" class="btn btn-outline-primary" onClick={capturarIDforimage}>Registrar fotos</button>
-              <button type="button" class="btn btn-outline-primary" onClick={capturarIDforgeo}>Actualizar geolocalización</button>
+            <div
+              class="btn-group"
+              role="group"
+              aria-label="Basic outlined example"
+            >
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                onClick={capturarIDinstalacion}
+              >
+                Editar instalación
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                onClick={capturarIDforimage}
+              >
+                Registrar fotos
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                onClick={capturarIDforgeo}
+              >
+                Actualizar geolocalización
+              </button>
             </div>
-          ):(
-            null
-          )}
-          
+          ) : null}
+
           <div className="mb-3">
-            <select type='text' value={busqueda} onChange={searcher} className='form-select form-select-lg mt-3'>
+            <select
+              type="text"
+              value={busqueda}
+              onChange={searcher}
+              className="form-select form-select-lg mt-3"
+            >
               <option value="pendientes">Pendientes</option>
               <option value="instalados">Instalados</option>
             </select>
           </div>
-            
-          <div className="table-responsive">
-              <table className="table">
-              {/* table-striped table-hover mt-5 shadow-lg */}
-                  <thead>
-                    <tr className="bg-curso text-white">
-                                <th>DNI</th>
-                                <th>Apellidos</th>
-                                <th>Nombres</th>
-                                <th>Distrito</th>
-                                <th>Direccion</th>
-                                <th>Referencia</th>
-                                <th>Telefono</th>
-                                <th>Fecha programada</th>
-                                <th>Horario programado</th>
-                                {
-                                  select_instalados?(
-                                    <>
-                                    <th>Condic equipo</th>
-                                    <th>Tipo equipo</th>
-                                    <th>cobro equipo</th>
-                                    <th>cobro instalacion</th>
-                                    <th>Caja instalacion</th>
-                                    <th>Geolocalizacion</th>
-                                    <th>Técnico</th>
-                                    <th>Fecha Instalacion</th>
-                                    </> 
-                                  ):(
-                                    <>
-                                    <th>Plan</th>
-                                    <th>Indicaciones</th>
-                                    <th>Geolocalizacion</th>
-                                    <th>Acción</th>
-                                    </>
-                                  )
-                                }
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {results.map((cliente, key)=>(
-                                <tr key={cliente.id_ordentrabajo} value={id_ordentrabajo} onClick={()=>{handleRowClick(cliente)}} className={selectedRow === cliente.id_ordentrabajo  ? 'table-primary' : null}>
-                                    <td>{cliente.clienteinicial_dnicliente}</td>
-                                    <td>{cliente.apellidocli}</td>
-                                    <td>{cliente.nombrecli}</td>
-                                    <td>{cliente.distritocli}</td>
-                                    <td>{cliente.direccioncli}</td>
-                                    <th>{cliente.referenciacli}</th>
-                                    <td>{cliente.telefonocli}</td>
-                                    <td>{cliente.fechaprog_instalacion}</td>
-                                    <td>{cliente.horario_instalacion}</td>
-                                    {
-                                      select_instalados?(
-                                        <>
-                                        <td>{cliente.condicion_equipo}</td>
-                                        <td>{cliente.tipo_equipo}</td>
-                                        <td>{cliente.cobro_equipo}</td>
-                                        <td>{cliente.cobro_instalacion}</td>
-                                        <td>{cliente.caja_instalacion}</td>
-                                        <td><Link to={"https://www.google.com/maps/search/?api=1&query="+cliente.geolocalizacion+"&zoom=20"} target="_blank"><a>{cliente.geolocalizacion}</a></Link></td>
-                                        <td>{cliente.tecnico}</td>
-                                        <td>{cliente.fecha_instalacion}</td>
-                                        </>
-                                      ):(
-                                        <>
-                                        <td>{cliente.nombreplan}</td>
-                                        <td>{cliente.indicacion_instalacion}</td>
-                                        <td><Link to={"https://www.google.com/maps/search/?api=1&query="+cliente.geolocalizacion+"&zoom=20"} target="_blank"><a>{cliente.geolocalizacion}</a></Link></td>
-                                        </>
-                                        
-                                      )
-                                    }
-                                    {select_instalados?(
-                                    null
-                                    ):(
-                                      <td><button type="button" className="btn btn-outline-success" 
-                                      onClick={()=>{capturarIDordentrabajo(cliente)}}>Registrar
-                                      </button></td>
-                                    )}
-                                    
-                                </tr>
-                        ))}  
-                  </tbody>
-                </table>
-          </div>
-            
 
-            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
-          <ModalBody>
-            <div className="from-group">
-              {editar ? (
-                <h4>Editar Instalación</h4>
-              ):(
-                <h4 className="">Registrar Instalación:</h4>
-              )}
-              
-              <div className="mb-3">
-                <label for="num_contrato" className="form-label">
-                  Número de Contrato:
-                </label>
-                { editar ? (
-                  <span className="input-group-text" id="basic-addon1">{num_contrato}</span>
-                ):(
-                  <input type="text" value={num_contrato}
-                  onChange={(event) => {
-                    setNum_contrato(event.target.value);
-                  }}
-                  className="form-control" id="num_contrato" placeholder="número de contrato" aria-describedby="basic-addon1"
-                ></input>
-                )} 
-              </div>
-              <div className="mb-3">
-                <label for="dnicliente" className="form-label">
-                  DNI Cliente:
-                </label>
+          <div className="table-responsive">
+            <table className="table">
+              {/* table-striped table-hover mt-5 shadow-lg */}
+              <thead>
+                <tr className="bg-curso text-white">
+                  <th>DNI</th>
+                  <th>Apellidos</th>
+                  <th>Nombres</th>
+                  <th>Distrito</th>
+                  <th>Direccion</th>
+                  <th>Referencia</th>
+                  <th>Telefono</th>
+                  <th>Fecha programada</th>
+                  <th>Horario programado</th>
+                  {select_instalados ? (
+                    <>
+                      <th>Condic equipo</th>
+                      <th>Tipo equipo</th>
+                      <th>cobro equipo</th>
+                      <th>cobro instalacion</th>
+                      <th>Caja instalacion</th>
+                      <th>Geolocalizacion</th>
+                      <th>Técnico</th>
+                      <th>Fecha Instalacion</th>
+                    </>
+                  ) : (
+                    <>
+                      <th>Plan</th>
+                      <th>Indicaciones</th>
+                      <th>Geolocalizacion</th>
+                      <th>Acción</th>
+                    </>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((cliente, key) => (
+                  <tr
+                    key={cliente.id_ordentrabajo}
+                    value={id_ordentrabajo}
+                    onClick={() => {
+                      handleRowClick(cliente);
+                    }}
+                    className={
+                      selectedRow === cliente.id_ordentrabajo
+                        ? "table-primary"
+                        : null
+                    }
+                  >
+                    <td>{cliente.clienteinicial_dnicliente}</td>
+                    <td>{cliente.apellidocli}</td>
+                    <td>{cliente.nombrecli}</td>
+                    <td>{cliente.distritocli}</td>
+                    <td>{cliente.direccioncli}</td>
+                    <th>{cliente.referenciacli}</th>
+                    <td>{cliente.telefonocli}</td>
+                    <td>{cliente.fechaprog_instalacion}</td>
+                    <td>{cliente.horario_instalacion}</td>
+                    {select_instalados ? (
+                      <>
+                        <td>{cliente.condicion_equipo}</td>
+                        <td>{cliente.tipo_equipo}</td>
+                        <td>{cliente.cobro_equipo}</td>
+                        <td>{cliente.cobro_instalacion}</td>
+                        <td>{cliente.caja_instalacion}</td>
+                        <td>
+                          <Link
+                            to={
+                              "https://www.google.com/maps/search/?api=1&query=" +
+                              cliente.geolocalizacion +
+                              "&zoom=20"
+                            }
+                            target="_blank"
+                          >
+                            <a>{cliente.geolocalizacion}</a>
+                          </Link>
+                        </td>
+                        <td>{cliente.tecnico}</td>
+                        <td>{cliente.fecha_instalacion}</td>
+                      </>
+                    ) : (
+                      <>
+                        <td>{cliente.nombreplan}</td>
+                        <td>{cliente.indicacion_instalacion}</td>
+                        <td>
+                          <Link
+                            to={
+                              "https://www.google.com/maps/search/?api=1&query=" +
+                              cliente.geolocalizacion +
+                              "&zoom=20"
+                            }
+                            target="_blank"
+                          >
+                            <a>{cliente.geolocalizacion}</a>
+                          </Link>
+                        </td>
+                      </>
+                    )}
+                    {select_instalados ? null : (
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn-outline-success"
+                          onClick={() => {
+                            capturarIDordentrabajo(cliente);
+                          }}
+                        >
+                          Registrar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+            <ModalBody>
+              <div className="from-group">
+                {editar ? (
+                  <h4>Editar Instalación</h4>
+                ) : (
+                  <h4 className="">Registrar Instalación:</h4>
+                )}
+
+                <div className="mb-3">
+                  <label for="num_contrato" className="form-label">
+                    Número de Contrato:
+                  </label>
+                  {editar ? (
+                    <span className="input-group-text" id="basic-addon1">
+                      {num_contrato}
+                    </span>
+                  ) : (
+                    <input
+                      type="text"
+                      value={num_contrato}
+                      onChange={(event) => {
+                        setNum_contrato(event.target.value);
+                      }}
+                      className="form-control"
+                      id="num_contrato"
+                      placeholder="número de contrato"
+                      aria-describedby="basic-addon1"
+                    ></input>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label for="dnicliente" className="form-label">
+                    DNI Cliente:
+                  </label>
                   <span className="input-group-text" id="basic-addon1">
                     {dnicliente}
                   </span>
-              </div>
-              <div className="mb-3">
-                <label for="num_contrato" className="form-label">
-                  Plan Contratado:
-                </label>
+                </div>
+                <div className="mb-3">
+                  <label for="num_contrato" className="form-label">
+                    Plan Contratado:
+                  </label>
                   <span className="input-group-text" id="basic-addon1">
                     {plan}
                   </span>
+                </div>
+                <div className="mb-3">
+                  <label for="condicion_equipo" className="form-label">
+                    Condicion Equipo:
+                  </label>
+                  <select
+                    value={condicion_equipo}
+                    onChange={(event) => {
+                      setCondicion_equipo(event.target.value);
+                    }}
+                    className="form-control"
+                    id="condicion_equipo"
+                    aria-describedby="basic-addon1"
+                  >
+                    <option>Alquiler</option>
+                    <option>Venta</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label for="tipo_equipo" className="form-label">
+                    Tipo Equipo:
+                  </label>
+                  <input
+                    type="text"
+                    value={tipo_equipo}
+                    onChange={(event) => {
+                      setTipo_equipo(event.target.value);
+                    }}
+                    className="form-control"
+                    id="cajainstalacion"
+                    placeholder="Marca y/o modelo"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="cobro_equipo" className="form-label">
+                    Cobro por Equipo:
+                  </label>
+                  <input
+                    type="number"
+                    value={cobro_equipo}
+                    onChange={(event) => {
+                      setCobro_equipo(event.target.value);
+                    }}
+                    className="form-control"
+                    id="cobro_equipo"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="cobro_instalacion" className="form-label">
+                    Cobro por Intalacion:
+                  </label>
+                  <input
+                    type="number"
+                    value={cobro_instalacion}
+                    onChange={(event) => {
+                      setCobro_instalacion(event.target.value);
+                    }}
+                    className="form-control"
+                    id="cobro_instalacion"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="caja_instalacion" className="form-label">
+                    Caja & Spliter:
+                  </label>
+                  <input
+                    type="text"
+                    value={caja_instalacion}
+                    onChange={(event) => {
+                      setCajainstalacion(event.target.value);
+                    }}
+                    className="form-control"
+                    id="cajainstalacion"
+                    placeholder="Ingrese la Caja & Spliter"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="observacion" className="form-label">
+                    Observación:
+                  </label>
+                  <input
+                    type="text"
+                    value={observacion}
+                    onChange={(event) => {
+                      setObservacion(event.target.value);
+                    }}
+                    maxLength={maxLengthObservacion}
+                    className="form-control"
+                    id="observacion"
+                    placeholder="Observación"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                  {/* <div>
+                {observacion.length} caracteres
               </div>
-              <div className="mb-3">
-                <label for="condicion_equipo" className="form-label">
-                  Condicion Equipo:
-                </label>
-                <select value={condicion_equipo} onChange={(event) => {
-                    setCondicion_equipo(event.target.value);
-                  }}
-                  className="form-control" id="condicion_equipo" aria-describedby="basic-addon1"
+              {observacion.length >= maxLengthObservacion && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )} */}
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              {editar ? (
+                <div>
+                  <button
+                    className="btn btn-success"
+                    onClick={updateinstalacion}
+                  >
+                    Actualizar
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={cerrarModalEditar}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <button className="btn btn-success" onClick={addinstalacion}>
+                    Registrar
+                  </button>
+                  <button className="btn btn-danger" onClick={cerrarModal}>
+                    Cerrar
+                  </button>
+                </div>
+              )}
+            </ModalFooter>
+          </Modal>
+
+          <Modal isOpen={modalConfirmar} toggle={ventanaModalConfirmar}>
+            <ModalBody>
+              <div className="from-group h3">
+                La instalación ha sido grabada con éxito:
+                <span>{" " + apellidocliente + " " + nombrecliente}</span>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <div>
+                <button
+                  className="btn btn-warning m-2"
+                  onClick={confirmarinstalacion}
                 >
-                  <option>Alquiler</option>
-                  <option>Venta</option>
-                </select>
-              </div>
-              <div className="mb-3">
-                <label for="tipo_equipo" className="form-label">
-                  Tipo Equipo:
-                </label>
-                <input type="text" value={tipo_equipo}
-                  onChange={(event) => {
-                    setTipo_equipo(event.target.value);
-                  }}
-                  className="form-control" id="cajainstalacion" placeholder="Marca y/o modelo" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="cobro_equipo" className="form-label">
-                  Cobro por Equipo:
-                </label>
-                <input type="number" value={cobro_equipo}
-                  onChange={(event) => {
-                    setCobro_equipo(event.target.value);
-                  }}
-                  className="form-control" id="cobro_equipo" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="cobro_instalacion" className="form-label">
-                  Cobro por Intalacion:
-                </label>
-                <input type="number" value={cobro_instalacion}
-                  onChange={(event) => {
-                    setCobro_instalacion(event.target.value);
-                  }}
-                  className="form-control" id="cobro_instalacion" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="caja_instalacion" className="form-label">
-                  Caja & Spliter:
-                </label>
-                <input type="text" value={caja_instalacion}
-                  onChange={(event) => {
-                    setCajainstalacion(event.target.value);
-                  }}
-                  className="form-control" id="cajainstalacion" placeholder="Ingrese la Caja & Spliter" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-              <div className="mb-3">
-                <label for="observacion" className="form-label">
-                  Observación:
-                </label>
-                <input type="text" value={observacion}
-                  onChange={(event) => {
-                    setObservacion(event.target.value);
-                  }}
-                  className="form-control" id="observacion" placeholder="Observación" aria-describedby="basic-addon1"
-                ></input>
-              </div>
-
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            {editar ? (
-              <div>
-                <button className="btn btn-success" onClick={updateinstalacion}>
-                      Actualizar
-                    </button>
-                <button className="btn btn-danger" onClick={cerrarModalEditar}>
-                      Cerrar
-                    </button>
-              </div>
-            ) : (
-                  <div>
-                    <button className="btn btn-success" onClick={addinstalacion}>
-                      Registrar
-                    </button>
-                    <button className="btn btn-danger" onClick={cerrarModal}>
-                      Cerrar
-                    </button>
-                  </div>
-            )}
-            
-          </ModalFooter>
-        </Modal>
-
-        <Modal isOpen={modalConfirmar} toggle={ventanaModalConfirmar}>
-          <ModalBody>
-            <div className="from-group h3">
-                  La instalación ha sido grabada con éxito:
-                  <span>
-                    {" "+apellidocliente + " " + nombrecliente}
-                  </span>
-            </div>
-          </ModalBody>
-          <ModalFooter>    
-              <div>
-                <button className="btn btn-warning m-2" onClick={confirmarinstalacion}>
                   Aceptar
                 </button>
               </div>
-            
-          </ModalFooter>
-        </Modal>
+            </ModalFooter>
+          </Modal>
 
-        <Modal isOpen={modalImagen} toggle={ventanaModalImagen}>
-          <ModalBody>
-            <div className="from-group h3">
-                  Adjuntar fotos:
-                  <span>
-                    {" "+apellidocliente + " " + nombrecliente}
-                  </span>
-            </div>
-            {/* FOTO 1 CAJA ANTES */}
-            <div>
-                <label className="form-label fw-bold">Foto 1 Caja antes: </label>
+          <Modal isOpen={modalImagen} toggle={ventanaModalImagen}>
+            <ModalBody>
+              <div className="from-group h3">
+                Adjuntar fotos:
+                <span>{" " + apellidocliente + " " + nombrecliente}</span>
+              </div>
+              {/* FOTO 1 CAJA ANTES */}
+              <div>
+                <label className="form-label fw-bold">
+                  Foto 1 Caja antes:{" "}
+                </label>
                 <button onClick={verimagen1}>{imgcaja_antes}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgCajaAntes}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgCajaAntes}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 2 POTENCIA ANTES */}
               <div>
-                <label className="form-label fw-bold">Foto 2 Potencia antes: </label>
+                <label className="form-label fw-bold">
+                  Foto 2 Potencia antes:{" "}
+                </label>
                 <button onClick={verimagen2}>{imgpotencia_antes}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaAntes}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgPotenciaAntes}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 3 CAJA DESPUES */}
               <div>
-                <label className="form-label fw-bold">Foto 3 Caja después: </label>
+                <label className="form-label fw-bold">
+                  Foto 3 Caja después:{" "}
+                </label>
                 <button onClick={verimagen3}>{imgcaja_despues}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgCajaDespues}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgCajaDespues}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 4 POTENCIA DESPUES */}
               <div>
-                <label className="form-label fw-bold">Foto 4 Potencia después: </label>
+                <label className="form-label fw-bold">
+                  Foto 4 Potencia después:{" "}
+                </label>
                 <button onClick={verimagen4}>{imgpotencia_despues}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaDespues}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgPotenciaDespues}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 5 INSTALACION INTERIOR */}
               <div>
-                <label className="form-label fw-bold">Foto 5 Instalación interior: </label>
+                <label className="form-label fw-bold">
+                  Foto 5 Instalación interior:{" "}
+                </label>
                 <button onClick={verimagen5}>{imginstalacion_interna}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgInstalacionInterna}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgInstalacionInterna}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 6 POTENCIA INTERIOR */}
               <div>
-                <label className="form-label fw-bold">Foto 6 Potencia interior: </label>
+                <label className="form-label fw-bold">
+                  Foto 6 Potencia interior:{" "}
+                </label>
                 <button onClick={verimagen6}>{imgpotencia_interna}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgPotenciaInterna}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgPotenciaInterna}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
-            {/* FOTO 7 CONTRATO */}
+              {/* FOTO 7 CONTRATO */}
               <div>
                 <label className="form-label fw-bold">Foto 7 Contrato: </label>
                 <button onClick={verimagen7}>{imgcontrato}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgContrato}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgContrato}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
               {/* FOTO 8 CASA */}
@@ -990,53 +1169,65 @@ const getInstalaciones = async () => {
                 <label className="form-label fw-bold">Foto 8 Casa: </label>
                 <button onClick={verimagen8}>{imgcasa}</button>
                 <br />
-                <form className="input-group mb-3" onSubmit={handleSubmitImgCasa}>
-                  <input type="file" className="form-control" onChange={handleImageChange} />
+                <form
+                  className="input-group mb-3"
+                  onSubmit={handleSubmitImgCasa}
+                >
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImageChange}
+                  />
                   <br />
-                  <button type="submit" className="btn btn-secondary">Cargar</button>
+                  <button type="submit" className="btn btn-secondary">
+                    Cargar
+                  </button>
                 </form>
               </div>
-            
-          </ModalBody>
-          <ModalFooter>    
+            </ModalBody>
+            <ModalFooter>
               <div>
                 <button className="btn btn-danger" onClick={cerrarModalImagen}>
                   Cerrar
                 </button>
               </div>
-            
-          </ModalFooter>
-        </Modal>
+            </ModalFooter>
+          </Modal>
 
-        <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
-          <ModalBody>
-            <div className="from-group h3">
-                  Actualizar Geolocalización:
-                  <span>
-                    {" "+apellidocliente + " " + nombrecliente}
-                  </span>
-                  <br/>
-                  <input type="text" value={geolocalizacion}
+          <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
+            <ModalBody>
+              <div className="from-group h3">
+                Actualizar Geolocalización:
+                <span>{" " + apellidocliente + " " + nombrecliente}</span>
+                <br />
+                <input
+                  type="text"
+                  value={geolocalizacion}
                   onChange={(event) => {
                     setGeolocalizacion(event.target.value);
                   }}
-                  className="form-control" id="geolocalizacion" placeholder="Ingresar las coordenadas" aria-describedby="basic-addon1"
+                  className="form-control"
+                  id="geolocalizacion"
+                  placeholder="Ingresar las coordenadas"
+                  aria-describedby="basic-addon1"
                 ></input>
-            </div>
-          </ModalBody>
-          <ModalFooter>    
+              </div>
+            </ModalBody>
+            <ModalFooter>
               <div>
-                <button className="btn btn-warning m-2" onClick={updateGeolocalizacion}>
+                <button
+                  className="btn btn-warning m-2"
+                  onClick={updateGeolocalizacion}
+                >
                   Actualizar
                 </button>
                 <button className="btn btn-danger" onClick={cerrarModalGeo}>
                   Cancelar
                 </button>
               </div>
-            
-          </ModalFooter>
-        </Modal>
+            </ModalFooter>
+          </Modal>
         </div>
-      )
+      );
 }
 export default Instalacion;
