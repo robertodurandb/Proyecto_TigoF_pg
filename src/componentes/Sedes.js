@@ -8,14 +8,15 @@ function Sedes() {
     const [idsede, setIdsede] = useState();
     const [nombresede, setNombresede] = useState("");
     const [empresa, setEmpresa] = useState("");
-    const [estado, setEstado] = useState(1);
+    const [estadosede, setEstadosede] = useState(1);
     const [estados, setEstados] = useState([]);
     const [sedes, setSedes] = useState([]);
     const [editar, setEditar] = useState(false);
 
     const [modalMostrar, setModalMostrar] = React.useState(false);
 
-    const maxLength = 20;
+    const maxLength = 5;
+    const maxLengthNombre = 20;
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
 
@@ -29,7 +30,7 @@ function Sedes() {
     Axios.post(ipbackend+"createsede", {
       nombre_sede: nombresede,
       empresa: empresa,
-      estado: estado,
+      estado: estadosede,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -60,15 +61,15 @@ function Sedes() {
         .then(data => setEstados(data))
   }
 
-const getPlanes = async () => {
+const getSedes = async () => {
   try {
-    const response = await Axios.get(ipbackend+'getplanes', {
+    const response = await Axios.get(ipbackend+'getsedes', {
       headers:{
           'Authorization': `Bearer ${token}`
       }
     }
     );
-    setPlanes(response.data);
+    setSedes(response.data);
   } catch (error) {
     console.error('Error fetching data:', error);
     if (error.response && error.response.status === 401){
@@ -79,33 +80,29 @@ const getPlanes = async () => {
   }
 };
 
-  const editarPlan = (val)=>{
+  const editarSede = (val)=>{
     setEditar(true);
-    setIdplanes(val.idplanes);
-    setNombreplan(val.nombreplan);
-    setDescplan(val.descplan);
-    setPrecioplan(val.precioplan);
-    setVelocidadplan(val.velocidadplan)
-    setEstado(val.estado_plan);
+    setIdsede(val.id_sede);
+    setNombresede(val.nombre_sede);
+    setEmpresa(val.empresa);
+    setEstadosede(val.estado);
     ventanaModal();
     }
 
   
   const update = () => {
-    Axios.put(ipbackend+"updateplan/"+idplanes, {
-        nombreplan: nombreplan,
-        descplan: descplan,
-        precioplan: precioplan,
-        velocidadplan: velocidadplan,
-        estado_plan: estado,
+    Axios.put(ipbackend+"updatesede/"+idsede, {
+        nombre_sede: nombresede,
+        empresa: empresa,
+        estado: estadosede,
     },{
       headers: {
         'Authorization': `Bearer ${token}`
       }
     }).then(() => {
-      getPlanes();
+      getSedes();
       limpiarcampos();
-      alert("Plan Actualizado con exito");
+      alert("Sede Actualizada con exito");
     }).catch((error) => {
       if (401 === error.response.status){
       sessionStorage.removeItem("token");
@@ -116,54 +113,48 @@ const getPlanes = async () => {
       });
   };
   const limpiarcampos = ()=>{
-    setIdplanes("");
-    setNombreplan("");
-    setDescplan("");
-    setPrecioplan("");
-    setVelocidadplan("");
-    setEstado(1);
+    setIdsede("");
+    setNombresede("");
+    setEmpresa("");
+    setEstadosede(1);
     setEditar(false);
     ventanaModal();
   }
       useEffect(() =>{
-        getPlanes()
+        getSedes()
         getEstados()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
   return (
     <div className="App">
-      <h1 className="mb-3">Gestion de Planes</h1>
-      <button type="button" className="btn btn-info" onClick={agregarPlan}>
-        Registrar Nuevo Plan
+      <h1 className="mb-3">Tabla Sedes</h1>
+      <button type="button" className="btn btn-info" onClick={agregarSede}>
+        Registrar Nueva Sede
       </button>
       <div className="table-responsive">
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">Nombre Plan</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Velocidad</th>
+              <th scope="col">Nombre Sede</th>
+              <th scope="col">Empresa</th>
               <th scope="col">Estado</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {planes.map((val, key) => {
+            {sedes.map((val, key) => {
               return (
-                <tr key={val.idplanes}>
-                  <td>{val.nombreplan}</td>
-                  <td>{val.descplan}</td>
-                  <td>{val.precioplan}</td>
-                  <td>{val.velocidadplan}</td>
+                <tr key={val.id_sede}>
+                  <td>{val.nombre_sede}</td>
+                  <td>{val.empresa}</td>
                   <td>{val.nombre_estado}</td>
                   <td>
                     <button
                       type="button"
                       className="btn btn-info"
                       onClick={() => {
-                        editarPlan(val);
+                        editarSede(val);
                       }}
                     >
                       Editar
@@ -179,79 +170,56 @@ const getPlanes = async () => {
       <Modal isOpen={modalMostrar} toggle={ventanaModal}>
         <ModalBody>
           <div className="from-group">
-            <h4 className="">Agregar/Modificar Plan:</h4>
+            <h4 className="">Agregar/Modificar Sede:</h4>
             <div className="mb-3">
-              <label for="nombreplan" className="form-label">
-                Nombre Plan:
+              <label for="nombresede" className="form-label">
+                Nombre Sede:
               </label>
               <input
                 type="text"
-                value={nombreplan}
+                value={nombresede}
                 onChange={(event) => {
-                  setNombreplan(event.target.value);
+                  setNombresede(event.target.value);
                 }}
+                maxLength={maxLengthNombre} // Esto evita que se ingrese mas caracteres
                 className="form-control"
-                id="nombreplan"
-                placeholder="Ingrese Nombre del Plan"
-                aria-describedby="basic-addon1"
-              ></input>
-            </div>
-            <div className="mb-3">
-              <label for="descplan" className="form-label">
-                Descripción Plan:
-              </label>
-              <input
-                type="text"
-                value={descplan}
-                onChange={(event) => {
-                  setDescplan(event.target.value);
-                }}
-                maxLength={maxLength} // Esto evita que se ingrese más caracteres
-                className="form-control"
-                id="descplan"
-                placeholder="Ingrese la descripción del plan"
+                id="nombresede"
+                placeholder="Ingrese Nombre Sede"
                 aria-describedby="basic-addon1"
               ></input>
               <div>
-                {descplan.length} caracteres
+                {nombresede.length} caracteres
               </div>
-              {descplan.length >= maxLength && (
+              {nombresede.length >= maxLengthNombre && (
                 <div style={{ color: "red" }}>
                   Has alcanzado el límite de caracteres
                 </div>
               )}
             </div>
             <div className="mb-3">
-              <label for="precioplan" className="form-label">
-                Precio Plan:
+              <label for="empresa" className="form-label">
+                Empresa:
               </label>
               <input
                 type="text"
-                value={precioplan}
+                value={empresa}
                 onChange={(event) => {
-                  setPrecioplan(event.target.value);
+                  setEmpresa(event.target.value);
                 }}
+                maxLength={maxLength} // Esto evita que se ingrese más caracteres
                 className="form-control"
-                id="precioplan"
-                placeholder="Ingrese Precio del plan"
+                id="empresa"
+                placeholder="V&K O TIGO"
                 aria-describedby="basic-addon1"
               ></input>
-            </div>
-            <div className="mb-3">
-              <label for="velocidadplan" className="form-label">
-                Velocidad Plan:
-              </label>
-              <input
-                type="text"
-                value={velocidadplan}
-                onChange={(event) => {
-                  setVelocidadplan(event.target.value);
-                }}
-                className="form-control"
-                id="velocidadplan"
-                placeholder="Ingrese Velocidad del plan"
-                aria-describedby="basic-addon1"
-              ></input>
+              <div>
+                {empresa.length} caracteres
+              </div>
+              {empresa.length >= maxLength && (
+                <div style={{ color: "red" }}>
+                  Has alcanzado el límite de caracteres
+                </div>
+              )}
             </div>
             <div className="mb-3">
               <label for="estado" className="form-label">
@@ -260,10 +228,10 @@ const getPlanes = async () => {
               <select
                 className="form-control"
                 aria-describedby="basic-addon1"
-                key={estado}
-                value={estado}
+                key={estadosede}
+                value={estadosede}
                 onChange={(event) => {
-                  setEstado(event.target.value);
+                  setEstadosede(event.target.value);
                 }}
               >
                 {estados.map((estado) => {
@@ -300,4 +268,4 @@ const getPlanes = async () => {
   );
 }
 
-export default Planes;
+export default Sedes;

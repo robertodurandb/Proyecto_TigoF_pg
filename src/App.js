@@ -4,6 +4,7 @@ import './estilos/style.css';
 // import Caja from '../src/componentes/Caja';
 import Planes from '../src/componentes/Planes';
 import Clientes from '../src/componentes/Cliente';
+import Sedes from '../src/componentes/Sedes';
 import Ordenes_Transporte from '../src/componentes/Ordenes_Transporte';
 import Instalacion from '../src/componentes/Instalacion';
 import Consultas from './componentes/Consulta';
@@ -146,6 +147,9 @@ function App() {
                       <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/cliente">
                         Tabla Clientes
                       </Link></button>
+                      <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/sedes">
+                        Tabla Sedes
+                      </Link></button>
                       {/* <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
                         Control de Cambios
                       </Link></button>
@@ -208,6 +212,9 @@ function App() {
               </Routes>
               <Routes>
               <Route path="/usuarios" element={ isAdmin() ?(<Usuarios />):null} />
+            </Routes>
+            <Routes>
+              <Route path="/sedes" element={ isAdmin() ?(<Sedes />):null} />
             </Routes>
               <Routes>
                 <Route path="/" element={ <Consultas />} />
