@@ -12,9 +12,13 @@ function Cliente() {
     const [distritocli, setDistritocli] = useState("");
     const [provinciacli, setProvinciacli] = useState("");
     const [nacionalidadcli, setNacionalidadcli] = useState("Peruana");
-    const [telefonocli, setTelefonocli] = useState();
+    const [telefonocli, setTelefonocli] = useState("");
+    const [telefonocli2, setTelefonocli2] = useState("");
+    const [sedecli, setSedecli] = useState(null);
     const [referenciacli, setReferenciacli] = useState();
+    const [geolocalizacion, setGeolocalizacion] = useState();
     const [listaClientes, setListaClientes] = useState([]);
+    const [sedes, setSedes] = useState([]);
     const [editar, setEditar] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
@@ -42,6 +46,16 @@ function Cliente() {
       let role = sessionStorage.getItem("role");
       return role == "Admin";
   }
+
+  function getSedes(){
+    fetch(ipbackend+'getsedes', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+        .then(response => response.json())
+        .then(data => setSedes(data))
+  }
   
   const editarClientes = (val)=>{
     setEditar(true);
@@ -54,11 +68,17 @@ function Cliente() {
     setProvinciacli(val.provinciacli);
     setNacionalidadcli(val.nacionalidadcli);
     setTelefonocli(val.telefonocli);
+    setTelefonocli2(val.telefonocli2);
+    setSedecli(val.sedecli);
     setReferenciacli(val.referenciacli);
+    setGeolocalizacion(val.geolocalizacion);
     ventanaModal();
   }
   const update = () => {
-    Axios.put(ipbackend+"updatecliente/"+dnicliente, {
+    if (sedecli===null) {
+      alert('Por favor selecciona una opción Sede válida');
+    } else {
+      Axios.put(ipbackend+"updatecliente/"+dnicliente, {
         nombrecli: nombrecli,
         apellidocli: apellidocli,
         direccioncli: direccioncli,
@@ -66,7 +86,10 @@ function Cliente() {
         provinciacli: provinciacli,
         nacionalidadcli: nacionalidadcli,
         telefonocli: telefonocli,
+        telefonocli2: telefonocli2,
+        sedecli: sedecli,
         referenciacli: referenciacli,
+        geolocalizacion: geolocalizacion
     },{
       headers: {
         'Authorization': `Bearer ${token}`
@@ -83,6 +106,9 @@ function Cliente() {
       }
       return error;
       });
+    }
+    
+    
   };
   
   const cerrarModalCliente = ()=>{
@@ -98,8 +124,10 @@ function Cliente() {
     setProvinciacli("");
     setNacionalidadcli("Peruana");
     setTelefonocli("");
+    setTelefonocli2("");
+    setSedecli(null);
     setReferenciacli("");
-    
+    setGeolocalizacion("");
     setEditar(false);
   }
 
@@ -125,6 +153,7 @@ if (busqueda === "") {
 
   useEffect(() =>{
     getClientes();
+    getSedes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
@@ -147,10 +176,12 @@ if (busqueda === "") {
               <th scope="col">DNI</th>
               <th scope="col">Nombres</th>
               <th scope="col">Apellidos</th>
+              <th scope="col">Sede</th>
               <th scope="col">Direccion</th>
               <th scope="col">Distrito</th>
               <th scope="col">Provincia</th>
               <th scope="col">Telefono</th>
+              <th scope="col">Ubicación</th>
               <th scope="col">Referencia</th>
               {isAdmin() ? <th scope="col">Accion</th> : null}
             </tr>
@@ -162,10 +193,12 @@ if (busqueda === "") {
                   <th>{val.dnicliente}</th>
                   <td>{val.nombrecli}</td>
                   <td>{val.apellidocli}</td>
+                  <td>{val.sedecli}</td>
                   <td>{val.direccioncli}</td>
                   <td>{val.distritocli}</td>
                   <td>{val.provinciacli}</td>
                   <td>{val.telefonocli}</td>
+                  <td>{val.geolocalizacion}</td>
                   <td>{val.referenciacli}</td>
                   <td>
                     {isAdmin() ? (
@@ -245,6 +278,33 @@ if (busqueda === "") {
                 aria-describedby="basic-addon1"
               ></input>
             </div>
+
+            <div className="mb-3">
+                          <label for='sedes' className="form-label">
+                            Sedes:
+                          </label>
+                          <select
+                            className="form-control"
+                            aria-describedby="basic-addon1"
+                            key={sedecli}
+                            value={sedecli}
+                            onChange={(event) => {
+                              setSedecli(event.target.value);
+                            }}
+                          >
+                            <option value="">- Seleccione una opción -</option>
+                            {sedes.map((sede) => {
+                              return (
+                                <>
+                                  <option value={sede.id_sede}>
+                                    {sede.nombre_sede}
+                                  </option>
+                                </>
+                              );
+                            })}
+                          </select>                         
+                </div>
+
             <div className="mb-3">
               <label for="direccion" className="form-label">
                 Direccion:{" "}
@@ -303,7 +363,7 @@ if (busqueda === "") {
             </div>
             <div className="mb-3">
               <label for="telefono1" className="form-label">
-                Telefono:
+                Telefono 1:
               </label>
               <input
                 type="number"
@@ -318,6 +378,22 @@ if (busqueda === "") {
               ></input>
             </div>
             <div className="mb-3">
+              <label for="telefono2" className="form-label">
+                Telefono 2:
+              </label>
+              <input
+                type="number"
+                value={telefonocli2}
+                onChange={(event) => {
+                  setTelefonocli2(event.target.value);
+                }}
+                className="form-control"
+                id="telefono2"
+                placeholder="Ingrese un segundo teléfono"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
               <label for="referenciacli" className="form-label">
                 Referencia:
               </label>
@@ -326,6 +402,21 @@ if (busqueda === "") {
                 value={referenciacli}
                 onChange={(event) => {
                   setReferenciacli(event.target.value);
+                }}
+                maxLength={maxLengthReferencia}
+                className="form-control"
+                aria-describedby="basic-addon1"
+              ></input>
+            </div>
+            <div className="mb-3">
+              <label for="geolocalización" className="form-label">
+                Ubicación maps:
+              </label>
+              <input
+                type="text"
+                value={geolocalizacion}
+                onChange={(event) => {
+                  setGeolocalizacion(event.target.value);
                 }}
                 maxLength={maxLengthReferencia}
                 className="form-control"

@@ -502,7 +502,8 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Ingresar Datos del Cliente:</h4>
+              <h4 className="">Paso 1: Datos del Cliente</h4>
+              <p>***************************************</p>
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI Cliente:</label>
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
@@ -596,7 +597,7 @@ if (busqueda === "") {
           </ModalBody>
           <ModalFooter>
             <button className="btn btn-success" onClick={addcliente}>
-              Registrar
+              Guardar y Siguiente
             </button>
             <button className="btn btn-danger" onClick={cerrarModalCliente}>
               Cerrar

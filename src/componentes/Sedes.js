@@ -9,6 +9,7 @@ function Sedes() {
     const [nombresede, setNombresede] = useState("");
     const [empresa, setEmpresa] = useState("");
     const [estadosede, setEstadosede] = useState(1);
+    const [distritosede, setDistritosede] = useState("");
     const [estados, setEstados] = useState([]);
     const [sedes, setSedes] = useState([]);
     const [editar, setEditar] = useState(false);
@@ -30,6 +31,7 @@ function Sedes() {
     Axios.post(ipbackend+"createsede", {
       nombre_sede: nombresede,
       empresa: empresa,
+      distritosede: distritosede,
       estado: estadosede,
     },{
       headers: {
@@ -48,8 +50,6 @@ function Sedes() {
       return error;
       });
   };
-
-//ACA ME QUEDO 01/04/2025 06:40AM
 
   function getEstados(){
     fetch(ipbackend+'getestados', {
@@ -86,6 +86,7 @@ const getSedes = async () => {
     setNombresede(val.nombre_sede);
     setEmpresa(val.empresa);
     setEstadosede(val.estado);
+    setDistritosede(val.distritosede);
     ventanaModal();
     }
 
@@ -94,6 +95,7 @@ const getSedes = async () => {
     Axios.put(ipbackend+"updatesede/"+idsede, {
         nombre_sede: nombresede,
         empresa: empresa,
+        distritosede: distritosede,
         estado: estadosede,
     },{
       headers: {
@@ -116,6 +118,7 @@ const getSedes = async () => {
     setIdsede("");
     setNombresede("");
     setEmpresa("");
+    setDistritosede("");
     setEstadosede(1);
     setEditar(false);
     ventanaModal();
@@ -138,6 +141,7 @@ const getSedes = async () => {
             <tr>
               <th scope="col">Nombre Sede</th>
               <th scope="col">Empresa</th>
+              <th scope="col">Distrito Sede</th>
               <th scope="col">Estado</th>
               <th scope="col">Acciones</th>
             </tr>
@@ -148,6 +152,7 @@ const getSedes = async () => {
                 <tr key={val.id_sede}>
                   <td>{val.nombre_sede}</td>
                   <td>{val.empresa}</td>
+                  <td>{val.distritosede}</td>
                   <td>{val.nombre_estado}</td>
                   <td>
                     <button
@@ -220,6 +225,23 @@ const getSedes = async () => {
                   Has alcanzado el límite de caracteres
                 </div>
               )}
+            </div>
+            <div className="mb-3">
+              <label for="distritosede" className="form-label">
+                Distrito Sede:
+              </label>
+              <input
+                type="text"
+                value={distritosede}
+                onChange={(event) => {
+                  setDistritosede(event.target.value);
+                }}
+                maxLength="45" // Esto evita que se ingrese más caracteres
+                className="form-control"
+                id="empresa"
+                placeholder="Ingrese algún distrito"
+                aria-describedby="basic-addon1"
+              ></input>
             </div>
             <div className="mb-3">
               <label for="estado" className="form-label">

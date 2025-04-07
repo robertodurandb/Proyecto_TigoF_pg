@@ -28,7 +28,7 @@ function Usuarios() {
 
   const add = () => {
     Axios.post(ipbackend+"createuser",{
-      id_user: iduser,
+      id_user: iduser.toLowerCase(),
       nombre_user: nombre_user,
       apellido_user: apellido_user,
       perfil_user: perfil_user,
@@ -93,7 +93,6 @@ function Usuarios() {
   }
   const update = () => {
     Axios.put(ipbackend+"updateuser/"+iduser, {
-        id_user: iduser,
         nombre_user: nombre_user,
         apellido_user: apellido_user,
         perfil_user: perfil_user,
@@ -174,14 +173,26 @@ function Usuarios() {
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>
                 <div className='from-group'>
-                <h4 className=''>Agregar/Modificar Usuario:</h4>
-                <div className='mb-3'>
-                        <label for='usuario' className="form-label">Usuario:</label>
-                        <input type="text" value={iduser}
-                                onChange={(event) => { setIduser(event.target.value); }}
-                                className="form-control" id="usuario" placeholder="Ingrese Id Usuario" aria-describedby="basic-addon1"
-                        ></input>
-                </div>
+                {
+                  editar?(
+                    <h4 className=''>Actualizar Usuario:</h4>
+                  ):(
+                    <h4 className=''>Agregar Nuevo Usuario:</h4>
+                  )
+                }
+            <div className='mb-3'>
+              <label for='usuario' className="form-label">Usuario:</label>
+              {
+                editar ? (
+                  <span className="input-group-text" id="basic-addon1">{iduser}</span>
+                ) : (
+                  <input type="text" value={iduser}
+                    onChange={(event) => { setIduser(event.target.value); }}
+                    className="form-control" id="usuario" placeholder="Ingrese Id Usuario" aria-describedby="basic-addon1"
+                  ></input>
+                )
+              }
+            </div>
                 <div className="mb-3">
                         <label for='nombre' className="form-label">
                           Nombre Usuario:
@@ -227,7 +238,7 @@ function Usuarios() {
                           ></input>
                 </div>
                 }
-                <div className="mb-3">
+                  <div className="mb-3">
                           <label for='estado' className="form-label">
                             Estado:
                           </label>
