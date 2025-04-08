@@ -28,7 +28,7 @@ let fechaactual = `${API.DATENOW}`
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
     const [user_update, setUser_update] = useState();
     const [caja_instalacion, setCajainstalacion] = useState();
-    const [cobro_instalacion, setCobro_instalacion] = useState();
+    const [cobro_instalacion, setCobro_instalacion] = useState(0);
     const [condicion_equipo, setCondicion_equipo] = useState("Alquiler");
     const [cobro_equipo, setCobro_equipo] = useState(0);
     const [tipo_equipo, setTipo_equipo] = useState("");
@@ -43,6 +43,8 @@ let fechaactual = `${API.DATENOW}`
     const [imgcontrato, setImgcontrato] = useState();
     const [imgcasa, setImgcasa] = useState();
     const [geolocalizacion, setGeolocalizacion] = useState();
+    const [latitud, setLatitud]  = useState();
+    const [longitud, setLongitud] = useState();
     const [editar, setEditar] = useState(false);
 
     // const [selectedImage, setSelectedImage] = useState(null);
@@ -319,7 +321,7 @@ const handleSubmitImgPotenciaInterna = async (event) => {
 };
 
   
-  //FUNCION PARA GEOLOCALIZACION
+  //FUNCION PARA VER GEOLOCALIZACION
   function contieneBarra() {
     if (geolocalizacion.includes('/')) {
       console.log("si incluye /")
@@ -331,43 +333,72 @@ const handleSubmitImgPotenciaInterna = async (event) => {
     }
   }
   
+  // FUNCION PARA OBTENER LAS COORDENADAS DEL TECNICO CON UN BOTÓN
+  // En tu formulario de instalación
+const obtenerUbicacion = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Guardar en el estado del formulario
+        setLatitud(latitude)
+        setLongitud(longitude)
+        console.log("se obtuvieron las coordenadas con exito")
+        console.log("latitud: "+latitude)
+        console.log("longitud: "+longitude)
+      },
+      (error) => {
+        console.error("Error obteniendo ubicación:", error);
+        // Puedes manejar el error o pedir que ingresen las coordenadas manualmente
+      }
+    );
+  } else {
+    alert("Geolocalización no es soportada por este navegador.");
+  }
+};
 
     const addinstalacion = () => {
+      if (latitud==null) {
+        alert("Error al obtener geolocalización")
+      } else {
         Axios.post(ipbackend+"createinstalacion", {
-            num_contrato: num_contrato,
-            clienteactual_dnicliente: dnicliente,
-            ordentrabajo_idordentrabajo: id_ordentrabajo,
-            planactual_idplanes: idplan,
-            fecha_inicio_contrato: fecha_actual,
-            condicion_equipo: condicion_equipo,
-            tipo_equipo: tipo_equipo,
-            cobro_equipo: cobro_equipo,
-            cobro_instalacion: cobro_instalacion,
-            comentario_instalacion: observacion,
-            caja_instalacion: caja_instalacion,
-            dia_pago: dia_pago,
-            ciclo_facturacion: 30,
-            user_create: user_create,
-            fecha_create: fecha_actual,
-            caja_instalacion: caja_instalacion,
-            estado_servicio: estado_servicio
-        },{
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then((response) => {
-            ventanaModal();
-            ventanaModalConfirmar();
-            console.log(response.data)
-        }).catch((error) => {
-          if (401 === error.response.status){
-          sessionStorage.removeItem("token");
-          window.location.reload();
-          alert("Sesión expirada, vuelva a iniciar sesión");
-          }
-          return error;
-          });
+          num_contrato: num_contrato,
+          clienteactual_dnicliente: dnicliente,
+          ordentrabajo_idordentrabajo: id_ordentrabajo,
+          planactual_idplanes: idplan,
+          fecha_inicio_contrato: fecha_actual,
+          condicion_equipo: condicion_equipo,
+          tipo_equipo: tipo_equipo,
+          cobro_equipo: cobro_equipo,
+          cobro_instalacion: cobro_instalacion,
+          comentario_instalacion: observacion,
+          caja_instalacion: caja_instalacion,
+          dia_pago: dia_pago,
+          latitud: latitud,
+          longitud: longitud,
+          ciclo_facturacion: 30,
+          user_create: user_create,
+          fecha_create: fecha_actual,
+          caja_instalacion: caja_instalacion,
+          estado_servicio: estado_servicio
+      },{
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+          ventanaModal();
+          ventanaModalConfirmar();
+          console.log(response.data)
+      }).catch((error) => {
+        if (401 === error.response.status){
+        sessionStorage.removeItem("token");
+        window.location.reload();
+        alert("Sesión expirada, vuelva a iniciar sesión");
+        }
+        return error;
+        });
+      }
       };
 
       const confirmarinstalacion = () => {
@@ -484,16 +515,24 @@ const getInstalaciones = async () => {
   }
 };
 
-      const capturarIDordentrabajo = (cliente) =>{
-        setId_ordentrabajo(cliente.id_ordentrabajo);
-        setDnicliente(cliente.clienteinicial_dnicliente);
-        setPlan(cliente.nombreplan);
-        setIdplan(cliente.planinicial_idplanes);
-        setApellidocliente(cliente.apellidocli);
-        setNombrecliente(cliente.nombrecli);
-        setCobro_instalacion(cliente.costo_instalacion);
-        setDia_pago(cliente.diapago);
+      const capturarIDordentrabajo = () =>{
+        if (selectedRow == undefined) {
+          alert("Debe seleccionar un registro")
+        } else {
+          console.log("ID OT: "+selectedRow)
+        console.log(dnicliente)
+        setId_ordentrabajo(selectedRow);
+        // setDnicliente(cliente.clienteinicial_dnicliente);
+        // setPlan(cliente.nombreplan);
+        // setIdplan(cliente.planinicial_idplanes);
+        // setApellidocliente(cliente.apellidocli);
+        // setNombrecliente(cliente.nombrecli);
+        // setCobro_instalacion(cliente.costo_instalacion);
+        // setDia_pago(cliente.diapago);
+        obtenerUbicacion();
         ventanaModal();   
+        }
+        
     }
     const capturarIDforimage = () =>{
       if (num_contrato==undefined) {
@@ -503,14 +542,14 @@ const getInstalaciones = async () => {
         ventanaModalImagen();
       }
   }
-  const capturarIDforgeo = () =>{
-    if (num_contrato==undefined) {
-      alert("Debe seleccionar un registro")
-    } else {
-      console.log(imgcontrato)
-      ventanaModalGeo();
-    }
-}
+//   const capturarIDforgeo = () =>{
+//     if (num_contrato==undefined) {
+//       alert("Debe seleccionar un registro")
+//     } else {
+//       console.log(imgcontrato)
+//       ventanaModalGeo();
+//     }
+// }
     const capturarIDinstalacion = () =>{
       if (num_contrato==undefined) {
         alert("Debe seleccionar un registro")
@@ -556,6 +595,9 @@ const getInstalaciones = async () => {
         setCajainstalacion("");
         setCondicion_equipo("Alquiler");
         setCobro_equipo(0);
+        setCobro_instalacion(0);
+        setLatitud();
+        setLongitud();
         setinvalidImage(null);
         setSelectedRow(null);
         setuserInfo({
@@ -666,15 +708,16 @@ const getInstalaciones = async () => {
               >
                 Registrar fotos
               </button>
-              <button
+            </div>
+          ) : (
+            <button
                 type="button"
                 class="btn btn-outline-primary"
-                onClick={capturarIDforgeo}
+                onClick={capturarIDordentrabajo}
               >
-                Actualizar geolocalización
+                Registrar Instalación
               </button>
-            </div>
-          ) : null}
+          )}
 
           <div className="mb-3">
             <select
@@ -842,6 +885,14 @@ const getInstalaciones = async () => {
                   </label>
                   <span className="input-group-text" id="basic-addon1">
                     {dnicliente}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <label for="coordenadas" className="form-label">
+                    Coordenadas: (latitud, longitud)
+                  </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {latitud},{longitud}
                   </span>
                 </div>
                 <div className="mb-3">
