@@ -60,12 +60,12 @@ let fechaactual = `${API.DATENOW}`
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
     const [modalImagen, setModalImagen] = useState(false);
-    const [modalGeo, setModalGeo] = useState(false);
+    // const [modalGeo, setModalGeo] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
     const ventanaModalImagen = () => setModalImagen(!modalImagen);
-    const ventanaModalGeo = () => setModalGeo(!modalGeo);
+    // const ventanaModalGeo = () => setModalGeo(!modalGeo);
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser")
@@ -90,8 +90,8 @@ let fechaactual = `${API.DATENOW}`
        var ctx = canvas.getContext("2d");
        ctx.drawImage(img, 0, 0);
 
-       var MAX_WIDTH = 700;
-       var MAX_HEIGHT = 700;
+       var MAX_WIDTH = 800;
+       var MAX_HEIGHT = 800;
        var width = img.width;
        var height = img.height;
 
@@ -322,16 +322,16 @@ const handleSubmitImgPotenciaInterna = async (event) => {
 
   
   //FUNCION PARA VER GEOLOCALIZACION
-  function contieneBarra() {
-    if (geolocalizacion.includes('/')) {
-      console.log("si incluye /")
-      let newgeo = geolocalizacion.replace("/",",");
-      return(newgeo)
-    } else {
-      console.log("no incluye /")
-      return(geolocalizacion)
-    }
-  }
+  // function contieneBarra() {
+  //   if (geolocalizacion.includes('/')) {
+  //     console.log("si incluye /")
+  //     let newgeo = geolocalizacion.replace("/",",");
+  //     return(newgeo)
+  //   } else {
+  //     console.log("no incluye /")
+  //     return(geolocalizacion)
+  //   }
+  // }
   
   // FUNCION PARA OBTENER LAS COORDENADAS DEL TECNICO CON UN BOTÓN
   // En tu formulario de instalación
@@ -380,7 +380,9 @@ const obtenerUbicacion = () => {
           user_create: user_create,
           fecha_create: fecha_actual,
           caja_instalacion: caja_instalacion,
-          estado_servicio: estado_servicio
+          estado_servicio: estado_servicio,
+          latitud: latitud,
+          longitud: longitud
       },{
         headers: {
           'Authorization': `Bearer ${token}`
@@ -452,28 +454,28 @@ const obtenerUbicacion = () => {
           });
       };
 
-      const updateGeolocalizacion = () => {
-        let newgeo = contieneBarra();
-        Axios.put(ipbackend+"updatecliente/"+dnicliente, {
-            geolocalizacion: newgeo,
-        },{
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }).then(() => {
-          limpiarcampos();
-          ventanaModalGeo();
-          getInstalaciones();
-          alert("Geolocalización Actualizado con exito");
-        }).catch((error) => {
-          if (401 === error.response.status){
-          sessionStorage.removeItem("token");
-          window.location.reload();
-          alert("Sesión expirada, vuelva a iniciar sesión");
-          }
-          return error;
-          });
-      };
+      // const updateGeolocalizacion = () => {
+      //   let newgeo = contieneBarra();
+      //   Axios.put(ipbackend+"updatecliente/"+dnicliente, {
+      //       geolocalizacion: newgeo,
+      //   },{
+      //     headers: {
+      //       'Authorization': `Bearer ${token}`
+      //     }
+      //   }).then(() => {
+      //     limpiarcampos();
+      //     ventanaModalGeo();
+      //     getInstalaciones();
+      //     alert("Geolocalización Actualizado con exito");
+      //   }).catch((error) => {
+      //     if (401 === error.response.status){
+      //     sessionStorage.removeItem("token");
+      //     window.location.reload();
+      //     alert("Sesión expirada, vuelva a iniciar sesión");
+      //     }
+      //     return error;
+      //     });
+      // };
 
       const getInstalacionesPendientes = async () => {
         try {
@@ -581,10 +583,28 @@ const getInstalaciones = async () => {
       setImgcontrato(cliente.nombreimg_contrato);
       setImgcasa(cliente.nombreimg_casa);
       setGeolocalizacion(cliente.geolocalizacion);
+      setLatitud(cliente.latitud);
+      setLongitud(cliente.longitud);
       console.log(cliente.num_contrato)
       console.log(cliente.id_ordentrabajo)
       console.log(cliente.imgcontrato)
       console.log(cliente.geolocalizacion)
+    };
+
+    // Función para manejar el clic en una fila de las OTs pendientes
+    const handleRowClick_ot = (cliente) => {    
+      setSelectedRow(cliente.id_ordentrabajo);
+      setDnicliente(cliente.clienteinicial_dnicliente);
+      setIdplan(cliente.planinicial_idplanes);
+      setDia_pago(cliente.diapago);
+      setPlan(cliente.nombreplan);
+      setApellidocliente(cliente.apellidocli);
+      setNombrecliente(cliente.nombrecli);
+      setGeolocalizacion(cliente.geolocalizacion);
+      setCobro_instalacion(cliente.costo_instalacion);
+      console.log(cliente.planinicial_idplanes)
+      console.log(cliente.id_ordentrabajo)
+      console.log("Esta seleccionando una fila de los pendientes de instalacion")
     };
 
       const limpiarcampos = ()=>{
@@ -594,8 +614,10 @@ const getInstalaciones = async () => {
         setObservacion("");
         setCajainstalacion("");
         setCondicion_equipo("Alquiler");
+        setTipo_equipo("")
         setCobro_equipo(0);
         setCobro_instalacion(0);
+        setGeolocalizacion("")
         setLatitud();
         setLongitud();
         setinvalidImage(null);
@@ -628,9 +650,9 @@ const getInstalaciones = async () => {
       const cerrarModalImagen = ()=>{
        ventanaModalImagen();
       }
-      const cerrarModalGeo = ()=>{
-        ventanaModalGeo();
-       }
+      // const cerrarModalGeo = ()=>{
+      //   ventanaModalGeo();
+      //  }
   const verimagen1 = () => {
     window.open(ipbackend + imgcaja_antes, "_blank");
   }
@@ -752,7 +774,8 @@ const getInstalaciones = async () => {
                       <th>cobro equipo</th>
                       <th>cobro instalacion</th>
                       <th>Caja instalacion</th>
-                      <th>Geolocalizacion</th>
+                      <th>Ubicación</th>
+                      <th>Geolocalización</th>
                       <th>Técnico</th>
                       <th>Fecha Instalacion</th>
                     </>
@@ -760,8 +783,7 @@ const getInstalaciones = async () => {
                     <>
                       <th>Plan</th>
                       <th>Indicaciones</th>
-                      <th>Geolocalizacion</th>
-                      <th>Acción</th>
+                      <th>Ubicación</th>
                     </>
                   )}
                 </tr>
@@ -772,7 +794,7 @@ const getInstalaciones = async () => {
                     key={cliente.id_ordentrabajo}
                     value={id_ordentrabajo}
                     onClick={() => {
-                      handleRowClick(cliente);
+                      {select_instalados?(handleRowClick(cliente)):(handleRowClick_ot(cliente))};
                     }}
                     className={
                       selectedRow === cliente.id_ordentrabajo
@@ -798,14 +820,22 @@ const getInstalaciones = async () => {
                         <td>{cliente.caja_instalacion}</td>
                         <td>
                           <Link
+                            to={cliente.geolocalizacion}
+                            target="_blank"
+                          >
+                            <a>{cliente.geolocalizacion}</a>
+                          </Link>
+                        </td>
+                        <td>
+                        <Link
                             to={
                               "https://www.google.com/maps/search/?api=1&query=" +
-                              cliente.geolocalizacion +
+                              cliente.latitud+","+cliente.longitud+
                               "&zoom=20"
                             }
                             target="_blank"
                           >
-                            <a>{cliente.geolocalizacion}</a>
+                            <a>{cliente.latitud},{cliente.longitud}</a>
                           </Link>
                         </td>
                         <td>{cliente.tecnico}</td>
@@ -817,11 +847,7 @@ const getInstalaciones = async () => {
                         <td>{cliente.indicacion_instalacion}</td>
                         <td>
                           <Link
-                            to={
-                              "https://www.google.com/maps/search/?api=1&query=" +
-                              cliente.geolocalizacion +
-                              "&zoom=20"
-                            }
+                            to={cliente.geolocalizacion}
                             target="_blank"
                           >
                             <a>{cliente.geolocalizacion}</a>
@@ -829,7 +855,7 @@ const getInstalaciones = async () => {
                         </td>
                       </>
                     )}
-                    {select_instalados ? null : (
+                    {/* {select_instalados ? null : (
                       <td>
                         <button
                           type="button"
@@ -841,7 +867,7 @@ const getInstalaciones = async () => {
                           Registrar
                         </button>
                       </td>
-                    )}
+                    )} */}
                   </tr>
                 ))}
               </tbody>
@@ -889,7 +915,7 @@ const getInstalaciones = async () => {
                 </div>
                 <div className="mb-3">
                   <label for="coordenadas" className="form-label">
-                    Coordenadas: (latitud, longitud)
+                    Coordenadas detectadas: (latitud, longitud)
                   </label>
                   <span className="input-group-text" id="basic-addon1">
                     {latitud},{longitud}
@@ -1245,7 +1271,7 @@ const getInstalaciones = async () => {
             </ModalFooter>
           </Modal>
 
-          <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
+          {/* <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
             <ModalBody>
               <div className="from-group h3">
                 Actualizar Geolocalización:
@@ -1277,7 +1303,7 @@ const getInstalaciones = async () => {
                 </button>
               </div>
             </ModalFooter>
-          </Modal>
+          </Modal> */}
         </div>
       );
 }

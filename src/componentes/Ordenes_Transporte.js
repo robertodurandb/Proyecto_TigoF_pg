@@ -16,8 +16,10 @@ function Ordenes_Transporte() {
     const [horario_instalacion, setHorario_instalacion] = useState("8am - 1pm")
     const [diapago, setDiapago] = useState(1);
     const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
-    const [costo_instalacion, setCosto_instalacion] = useState()
+    const [costo_instalacion, setCosto_instalacion] = useState(0);
+    const [sedecli, setSedecli] = useState(null)
     const [ordenes, setOrdenes] = useState([]);
+    const [sedes, setSedes] = useState([]);
     const [editar, setEditar] = useState(false);
     const [instalado, setInstalado] = useState(false);
 
@@ -99,6 +101,7 @@ function Ordenes_Transporte() {
               dnicliente: cliente_dnicliente,
               nombrecli: nombrecli,
               apellidocli: apellidocli,
+              sedecli: sedecli,
               direccioncli: direccioncli,
               distritocli: distritocli,
               provinciacli: provinciacli,
@@ -127,6 +130,16 @@ function Ordenes_Transporte() {
           alert("El Documento de Identidad debe tener minimo 8 caracteres")
       }
     } 
+
+    function getSedes(){
+      fetch(ipbackend+'getsedes', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+          .then(response => response.json())
+          .then(data => setSedes(data))
+    }
 
     const getOrdenes = async () => {
       try {
@@ -246,7 +259,7 @@ function validardnicliente() {
     setFechaprog_instalacion(fecha_actual);
     setDiapago("1");
     setHorario_instalacion("8-12");
-    setCosto_instalacion();
+    setCosto_instalacion(0);
     setEstadocinstalacion(1);
     setEditar(false);
     setUser_create(user);
@@ -323,6 +336,7 @@ if (busqueda === "") {
     getPlanes();
     getClientes();
     getOrdenes();
+    getSedes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
@@ -389,22 +403,16 @@ if (busqueda === "") {
               { editar ? (
                 <h4 className="">Modificar Orden de Transporte:</h4>
               ):(
-                <h4 className="">Registrar Orden de Transporte:</h4>
+                <>
+                <h4 className="">Paso 2: Datos de la Orden de Transporte:</h4>
+                <p>*******************************************</p>
+                </>
               )}
               
               <div className="mb-3">
                 <label for="dnicliente" className="form-label">DNI:</label>
-                { editar ? (
-                  <span className="input-group-text" id="basic-addon1">{cliente_dnicliente}</span>
-                ) : (
-                  <input type="text" value={cliente_dnicliente} onChange={(event) => {setCliente_dnicliente(event.target.value);}}
-                  className="form-control" id="dnicliente" placeholder="DNI del cliente" aria-describedby="basic-addon1"
-                ></input>
-                )}
-                <div className="fw-bold">{errordni}</div>
-                
+                <span className="input-group-text" id="basic-addon1">{cliente_dnicliente}</span>                
               </div>
-              
               <div className="mb-3">
                 <label for="planes" className="form-label"> Plan: </label>                
                 <select
@@ -510,6 +518,7 @@ if (busqueda === "") {
                     setCliente_dnicliente(event.target.value);
                   }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1">
                   </input>
+                  <p>{errordni}</p>
                   <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar si DNI existe</button>
 
               </div>
@@ -527,6 +536,32 @@ if (busqueda === "") {
                   }} className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
                 ></input>
               </div>
+              <div className="mb-3">
+                          <label for='sedes' className="form-label">
+                            Sedes:
+                          </label>
+                          <select
+                            className="form-control"
+                            aria-describedby="basic-addon1"
+                            key={sedecli}
+                            value={sedecli}
+                            onChange={(event) => {
+                              setSedecli(event.target.value);
+                            }}
+                          >
+                            <option value="">- Seleccione una opción -</option>
+                            {sedes.map((sede) => {
+                              return (
+                                <>
+                                  <option value={sede.id_sede}>
+                                    {sede.nombre_sede}
+                                  </option>
+                                </>
+                              );
+                            })}
+                          </select>                         
+                </div>
+
               <div className="mb-3">
                 <label for="provincia" className="form-label">Provincia: </label>
                 <select value={provinciacli} onChange={(event) => {
@@ -578,7 +613,7 @@ if (busqueda === "") {
               )}
               </div>
               <div className="mb-3">
-                <label for="geolocalizacion" className="form-label">Coordenadas:</label>
+                <label for="geolocalizacion" className="form-label">Geolocalización URL Maps:</label>
                 <input type="text" value={geolocalizacion} onChange={(event) => {
                     setGeolocalizacion(event.target.value);
                   }}
