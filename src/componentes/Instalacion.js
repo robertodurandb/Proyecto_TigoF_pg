@@ -393,10 +393,9 @@ const obtenerUbicacion = () => {
           ventanaModalConfirmar();
           console.log(response.data)
       }).catch((error) => {
-        if (401 === error.response.status){
-        sessionStorage.removeItem("token");
-        window.location.reload();
-        alert("Sesión expirada, vuelva a iniciar sesión");
+        if (error.response && error.response.status === 400){
+        alert("Error: "+error.response.data.error);
+        console.log(error.response.data.error)//d
         }
         return error;
         });
@@ -420,7 +419,7 @@ const obtenerUbicacion = () => {
             window.location.reload();
             alert("Sesión expirada, vuelva a iniciar sesión");
             }
-          // return error;
+           return error;
           });
       };
 
