@@ -13,6 +13,7 @@ let fechaactual = `${API.DATENOW}`
     const [ordenesPendientes, setOrdenesPendientes] = useState([]);
     const [instalaciones, setInstalaciones] = useState([]);
     const [busqueda, setBusqueda] = useState("");
+    const [busquedadni, setBusquedadni] = useState("");
     const [select_instalados, setSelect_instalados] = useState(false)
 
     const [id_ordentrabajo, setId_ordentrabajo] = useState();
@@ -678,7 +679,7 @@ const getInstalaciones = async () => {
   }
 
 
-       //****************Funcion de Busqueda
+       //****************Funcion de Busqueda de INSTALADOS y PENDIENTES
        const searcher = (e) =>{
         setBusqueda(e.target.value);
         getInstalacionesPendientes();
@@ -699,6 +700,26 @@ const getInstalaciones = async () => {
           } else{
             results = ordenesPendientes
           }
+
+        //Funcion de Busqueda DNI
+  const searcherdni = (e) =>{
+    setBusquedadni(e.target.value);
+    console.log(busquedadni)
+    }
+// Funcion de Filtrado por dni
+const newfilter = results.filter(dato => {
+  return (
+    dato.dnicliente.toLowerCase().includes(busquedadni.toLocaleLowerCase())
+)
+});
+
+// let resultsdni = [];
+
+if (busquedadni === "") {
+  results = results;
+} else {
+  results = newfilter;
+}
 
         useEffect(() =>{
           getInstalacionesPendientes();
@@ -729,7 +750,11 @@ const getInstalaciones = async () => {
               >
                 Registrar fotos
               </button>
+              <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'
+              />
             </div>
+            
+            
           ) : (
             <button
                 type="button"
