@@ -95,7 +95,7 @@ function Ordenes_Transporte() {
   /************************************ */
   const addcliente = () => {
     if (cliente_dnicliente.length>7) {
-      let newgeo = contieneBarra();
+      // let newgeo = contieneBarra();
         Axios.post(ipbackend+"createcliente", 
           {  
               dnicliente: cliente_dnicliente,
@@ -107,7 +107,7 @@ function Ordenes_Transporte() {
               provinciacli: provinciacli,
               telefonocli: telefonocli,
               referenciacli: referenciacli,
-              geolocalizacion: newgeo,
+              geolocalizacion: geolocalizacion,
               fecha_create: fecha_actual,
               user_create: user_create,
           },{
@@ -301,16 +301,16 @@ function validardnicliente() {
   }
 
     //FUNCION PARA GEOLOCALIZACION
-    function contieneBarra() {
-      if (geolocalizacion.includes('/')) {
-        console.log("si incluye /")
-        let newgeo = geolocalizacion.replace("/",",");
-        return(newgeo)
-      } else {
-        console.log("no incluye /")
-        return(geolocalizacion)
-      }
-    }
+    // function contieneBarra() {
+    //   if (geolocalizacion.includes('/')) {
+    //     console.log("si incluye /")
+    //     let newgeo = geolocalizacion.replace("/",",");
+    //     return(newgeo)
+    //   } else {
+    //     console.log("no incluye /")
+    //     return(geolocalizacion)
+    //   }
+    // }
 
   //Funcion de Busqueda
   const searcher = (e) =>{
