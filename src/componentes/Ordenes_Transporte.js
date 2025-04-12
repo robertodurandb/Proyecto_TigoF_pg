@@ -117,7 +117,6 @@ function Ordenes_Transporte() {
           }).then(() => {
             getClientes();
             cerrarModalCliente();
-            alert("Cliente Registrado con exito");
             agregarContrato();
           }).catch((error) => {
             if (error.response && error.response.status === 400){
@@ -404,7 +403,7 @@ if (busqueda === "") {
                 <h4 className="">Modificar Orden de Transporte:</h4>
               ):(
                 <>
-                <h4 className="">Paso 2: Datos de la Orden de Transporte:</h4>
+                <h4 className="">Paso 2: Datos de la Orden de Trabajo:</h4>
                 <p>*******************************************</p>
                 </>
               )}

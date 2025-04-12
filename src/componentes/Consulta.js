@@ -35,6 +35,8 @@ function Consulta() {
     //TABLA INSTALACION
     const [tecnico_instalador, setTecnico_instalador] = useState();
     const [geolocalizacion, setGeolocalizacion] = useState();
+    const [latitud, setLatitud] = useState();
+    const [longitud, setLongitud] = useState();
     const [estado_servicio, setEstado_servicio] = useState();
     const [fechainstalacion, setFechainstalacion] = useState();
     const [imgcaja_antes, setImgcaja_antes] = useState();
@@ -194,6 +196,8 @@ function Consulta() {
             setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
             setReferenciacli(table.getSelectedRowModel().flatRows[0].original.referenciacli);
             setGeolocalizacion(table.getSelectedRowModel().flatRows[0].original.geolocalizacion);
+            setLatitud(table.getSelectedRowModel().flatRows[0].original.latitud);
+            setLongitud(table.getSelectedRowModel().flatRows[0].original.longitud);
             setTelefonocli(table.getSelectedRowModel().flatRows[0].original.telefonocli);
             setFechaot(table.getSelectedRowModel().flatRows[0].original.fecha_ot);
             setFechainstalacion(table.getSelectedRowModel().flatRows[0].original.fecha_instalacion);
@@ -411,8 +415,23 @@ function Consulta() {
                         <div className="col-6">{referenciacli}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Ubicación Casa:</div>
-                        <div className="col-6"><Link to={"https://www.google.com/maps/search/?api=1&query="+geolocalizacion+"&zoom=20"} target="_blank"><a>{geolocalizacion}</a></Link></div>
+                        <div className='col-4'>Ubicación:</div>
+                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Ubicación (instalación):</div>
+                        <div className="col-6">
+                            <Link
+                                                        to={
+                                                          "https://www.google.com/maps/search/?api=1&query=" +
+                                                          latitud+","+longitud+
+                                                          "&zoom=20"
+                                                        }
+                                                        target="_blank"
+                                                      >
+                                                        <a>{latitud},{longitud}</a>
+                                                      </Link>
+                        </div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Caja/Spliter:</div>
