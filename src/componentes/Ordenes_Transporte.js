@@ -299,18 +299,6 @@ function validardnicliente() {
     ventanaModal3();
   }
 
-    //FUNCION PARA GEOLOCALIZACION
-    // function contieneBarra() {
-    //   if (geolocalizacion.includes('/')) {
-    //     console.log("si incluye /")
-    //     let newgeo = geolocalizacion.replace("/",",");
-    //     return(newgeo)
-    //   } else {
-    //     console.log("no incluye /")
-    //     return(geolocalizacion)
-    //   }
-    // }
-
   //Funcion de Busqueda
   const searcher = (e) =>{
     setBusqueda(e.target.value);

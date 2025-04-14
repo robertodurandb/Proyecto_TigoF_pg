@@ -31,7 +31,10 @@ body {
   list-style: none;
 }
 .nav-links2 {
-  flex-direction: column;
+  display: flex;
+  list-style: none;
+  /* Agrega estilos específicos para móvil */
+  /* flex-direction: column;
   position: absolute;
   list-style: none;
   width: 100%;
@@ -41,7 +44,7 @@ body {
   margin: 0;
   padding-top: 10px;
   text-align: center;
-  transition: all 0.3;
+  transition: all 0.3; */
 }
 .links1 {
   color: white;
@@ -52,9 +55,9 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-.links1:hover {
+/* .links1:hover {
   color: #f39c12;
-}
+} */
 .logo {
   font-size: 24px;
   font-weight: bold;
@@ -81,11 +84,33 @@ body {
   .nav-links1 {
     display: none;
   }
+  .nav-links2 {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #333; /* Color de fondo del menú desplegado */
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    z-index: 1000;
+  }
   .links1 {
+    /* color: white; */
+    text-decoration: none;
+    /* transition: color 0.3; */
+    font-size: 22px;
     color: white;
     text-decoration: none;
-    transition: color 0.3;
+    transition: color 0.3s;
     font-size: 22px;
+    padding: 0.5rem 0;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  .links1:hover {
+    background-color: #555; /* Color al hacer hover */
   }
 }
 
