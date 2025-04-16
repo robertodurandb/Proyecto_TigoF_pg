@@ -149,8 +149,8 @@ let fechaactual = `${API.DATENOW}`
             }
         });
           alert("Se cargó imagen con éxito ")
-          getInstalaciones();
           ventanaModalImagen();
+          getInstalaciones();
           limpiarcampos();
     } catch (error) {
         console.error(error);
@@ -172,9 +172,10 @@ const handleSubmitImgPotenciaAntes = async (event) => {
           }
       });
         alert("Se cargó imagen con éxito ")
-        getInstalaciones();
         ventanaModalImagen();
+        getInstalaciones();
         limpiarcampos();
+
   } catch (error) {
       console.error(error);
   }
@@ -524,13 +525,6 @@ const getInstalaciones = async () => {
           console.log("ID OT: "+selectedRow)
         console.log(dnicliente)
         setId_ordentrabajo(selectedRow);
-        // setDnicliente(cliente.clienteinicial_dnicliente);
-        // setPlan(cliente.nombreplan);
-        // setIdplan(cliente.planinicial_idplanes);
-        // setApellidocliente(cliente.apellidocli);
-        // setNombrecliente(cliente.nombrecli);
-        // setCobro_instalacion(cliente.costo_instalacion);
-        // setDia_pago(cliente.diapago);
         obtenerUbicacion();
         ventanaModal();   
         }
@@ -544,14 +538,7 @@ const getInstalaciones = async () => {
         ventanaModalImagen();
       }
   }
-//   const capturarIDforgeo = () =>{
-//     if (num_contrato==undefined) {
-//       alert("Debe seleccionar un registro")
-//     } else {
-//       console.log(imgcontrato)
-//       ventanaModalGeo();
-//     }
-// }
+
     const capturarIDinstalacion = () =>{
       if (num_contrato==undefined) {
         alert("Debe seleccionar un registro")
@@ -731,8 +718,11 @@ if (busquedadni === "") {
         <div className="App">
           <h1 className="mb3">Registro de Instalaciones</h1>
           {select_instalados ? (
+            <>
+            <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'
+              />
             <div
-              class="btn-group"
+              className="btn-group mt-2"
               role="group"
               aria-label="Basic outlined example"
             >
@@ -750,9 +740,10 @@ if (busquedadni === "") {
               >
                 Registrar fotos
               </button>
-              <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'
-              />
+              
             </div>
+            </>
+            
             
             
           ) : (

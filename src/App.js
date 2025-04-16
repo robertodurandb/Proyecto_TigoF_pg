@@ -27,6 +27,7 @@ import {
   useNavigate,
   Outlet
 } from "react-router-dom";
+import { Button } from "reactstrap";
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -49,20 +50,36 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenbutton, setIsOpenbutton] = useState(false);
   const dropdownRef = useRef(null);
+  const burgerRef = useRef(null);
 
+  //MENU DEL BOTÓN HAMBURGUESA PARA CELULARES
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(prev => !prev);
+    // Cerramos el menú principal si está abierto
+    if (isOpenbutton) setIsOpenbutton(false);
   };
 
+  //MENU PRINCIPAL DE CONFIGURACIÓN Y TABLAS
   const toggleMenuPrincipal = () => {
-    setIsOpenbutton(!isOpenbutton);
+    setIsOpenbutton(prev => !prev);
+    // Cerramos el menú hamburguesa si está abierto
+    if (isOpen) setIsOpen(false);
+  };
+
+  // Cerrar ambos menús
+  const closeAllMenus = () => {
+    //setIsOpen(false);
+    setIsOpenbutton(false);
+    console.log("se cierra solo el menu principal")
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpenbutton(false);
-        setIsOpen(false);
+        if (burgerRef.current && !burgerRef.current.contains(event.target)){
+          console.log("se cierran todos los menús");
+           closeAllMenus();
+        }
       }
     };
   
@@ -70,6 +87,9 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
     if (isOpenbutton || isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
+      console.log("se estan agregando los listeners xq el menu esta abierto")
+      console.log("Boton hamburguesa is: "+isOpen)
+      console.log("menu principal is: "+isOpenbutton)
     }
     return () => {
       // Limpiamos los listeners cuando el componente se desmonta o el estado cambia
@@ -96,8 +116,11 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
           </li>
         </ul>
 
-        <div className='burger' aria-label='Abrir menu de navegacion' 
-        onClick={toggleMenu}
+        <div 
+          className='burger' 
+          aria-label='Abrir menu de navegacion' 
+          ref={burgerRef}
+          onClick={toggleMenu}
         >
           <div className='line'></div>
           <div className='line'></div>
@@ -222,205 +245,3 @@ export default function Root() {
     </Router>
   );
 }
-
-// function App() {
-//   const [logged, setLogged] = useState(false)
-//   const [User, setUser] = useState("");
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [isOpenbutton, setIsOpenbutton] = useState(false);
-//   const dropdownRef = useRef(null);
-//   const navigate = useNavigate();
-
-//   const toggleMenu = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   function checkLogin() {
-//     let token = sessionStorage.getItem('token')
-
-//     if (token) {
-//       setLogged(true)
-//     } else {
-//       setLogged(false)
-//     }
-//     setUser(sessionStorage.getItem('currentUser'));
-//   }
-
-//   function isAdmin() {
-//     let role = sessionStorage.getItem("role");
-//     return role === "Admin";
-//   }
-
-//   // Manejar el toggle del menú
-//   const toggleMenuPrincipal = () => {
-//     setIsOpenbutton(!isOpenbutton);
-//   };
-
-
-  // useEffect(() => {
-  //   checkLogin();
-  //   // Cierra el menú al hacer clic/touch fuera
-  //   const handleInteractionOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setIsOpenbutton(false);
-  //       setIsOpen(false);
-  //     }
-  //   };
-
-  //   // Agregamos múltiples tipos de eventos
-  //   const events = ["mousedown", "touchstart"];
-
-  //   if (isOpenbutton) {
-  //     events.forEach((event) => {
-  //       document.addEventListener(event, handleInteractionOutside);
-  //     });
-  //   }
-  //   return () => {
-  //     events.forEach((event) => {
-  //       document.removeEventListener(event, handleInteractionOutside);
-  //     });
-  //   };
-  // }, [isOpenbutton]);
-
-//   function signOut() {
-
-//     sessionStorage.removeItem("token")
-//     sessionStorage.removeItem("currentUser")
-//     sessionStorage.removeItem("role")
-//     // checkLogin()
-//     setLogged(false);
-//     navigate('/');
-//   }
-
-//   return (
-//     <div className='main1'>
-//       {logged ? (
-//         <Router>
-//           <nav className="navbar1">
-//             <div className='logo'>TIGO</div>
-//             <ul className={isOpen ? 'nav-links2' : 'nav-links1'}>
-//               <li>
-//                 <Link to="/" className="links1" role='button' onClick={() => setIsOpen(false)}>Consultas</Link>
-//               </li>
-//               <li>
-//                 <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>Ordenes_Trabajo</Link>
-//               </li>
-//               <li>
-//                 <Link to="/Instalaciones" className="links1" role='button' onClick={() => setIsOpen(false)}>Instalaciones</Link>
-//               </li>
-//               {/* <li>
-//                     <Link to="/ControlPagos" className="links1">Pagos</Link>
-//                   </li>
-//                   <li>
-//                     <Link to="/Pagos" className="links1">Importar</Link>
-//                   </li> */}
-//               {/* <li>
-//                     <Link to="/Tickets" className="links1">Tickets</Link>
-//                   </li> */}
-//             </ul>
-
-//             <div className='burger' aria-label='Abrir menu de navegacion' onClick={toggleMenu}>
-//               <div className='line'></div>
-//               <div className='line'></div>
-//               <div className='line'></div>
-//               {/**/}
-
-//             </div>
-//             <div ref={dropdownRef} className="dropdown">
-//               <button class="dropdown-button" onClick={toggleMenuPrincipal}
-//               >
-//                 {User}{isOpenbutton ? '▲' : '▼'}
-//               </button>
-//               {isOpenbutton && (
-//                 <div className="dropdown-content">
-//                   {isAdmin() && (
-//                     <>
-//                       <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/usuarios">
-//                         Tabla Usuarios
-//                       </Link></button>
-//                       <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/planes">
-//                         Tabla Planes
-//                       </Link></button>
-//                       <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/cliente">
-//                         Tabla Clientes
-//                       </Link></button>
-//                       <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/sedes">
-//                         Tabla Sedes
-//                       </Link></button>
-//                     </>
-//                   )}
-
-//                   {/* <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/cortes">
-//                         Control de Cambios
-//                       </Link></button>
-//                       <button className="dropdown-item"><Link className='text-decoration-none text-reset' to="/logs">
-//                         Logs Errores (Import)
-//                       </Link></button> */}
-//                   <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}><Link className='text-decoration-none text-reset' to="/Passwordupdate">
-//                     Cambio de contraseña
-//                   </Link>
-//                   </button>
-//                   <hr className='dropdown-item'></hr>
-//                   <button className="dropdown-item" onClick={signOut}>Cerrar Sesión</button>
-//                 </div>
-//               )}
-//             </div>
-//           </nav>
-//           {/* {isOpen ? 
-//               (<>
-//               <hr />
-//               <hr />
-//               <hr />
-//               <hr />
-//               <hr />
-//               <hr />
-//               <hr />
-
-//               </>):null} */}
-//           {/* <hr /> */}
-
-//           <Routes>
-//             <Route path="/Ordenes_Trabajo" element={
-//               <ProtectedRoute requiredRole="Admin">
-//                 <Ordenes_Transporte />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/Pagos" element={<ImportPagos />} />
-//             <Route path="/ControlPagos" element={<ControlPagos />} />
-//             <Route path="/cliente" element={<Clientes />} />
-//             <Route path="/cortes" element={<Cortes />} />
-//             <Route path="/logs" element={<Logs />} />
-//             <Route path="/Instalaciones" element={<Instalacion />} />
-//             <Route path="/passwordupdate" element={<Passwordupdate />} />
-//             {/* <Route path="/tickets" element={<Gestiontickets />} /> */}
-//             <Route path="/planes" element={
-//               <ProtectedRoute requiredRole={"Admin"}>
-//                 <Planes />
-//               </ProtectedRoute>
-//             }/>
-//             <Route path="/usuarios" element={
-//               <ProtectedRoute requiredRole={"Admin"}>
-//                 <Usuarios />
-//               </ProtectedRoute>
-//             }/>
-//             <Route path="/sedes" element={
-//               <ProtectedRoute requiredRole={"Admin"}>
-//                 <Sedes />
-//               </ProtectedRoute>
-//             }/>
-//             <Route path="/" element={<Consultas />} />
-//           </Routes>
-//         </Router>
-//       )
-//         :
-//         (
-//           <Login loginCallback={checkLogin}></Login>
-//         )
-//       }
-//     </div>
-
-//   );
-
-// }
-
-// export default App;
