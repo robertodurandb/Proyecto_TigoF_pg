@@ -274,6 +274,7 @@ function validardnicliente() {
     setGeolocalizacion("");
     setTelefonocli("");
     setFecha_createcli("");
+    setSedecli("");
   }
   const limpiarcamposclienteencontrado = () => {
     setNombrecli("");
@@ -298,6 +299,20 @@ function validardnicliente() {
     limpiarcamposclienteencontrado();
     ventanaModal3();
   }
+
+  // Función para manejar el cambio en el select de sedes
+  const handleSedeChange = (event) => {
+    const sedeId = event.target.value;
+    setSedecli(sedeId);
+    
+    // Buscar la sede seleccionada y copiar su dirección
+    const sedeSeleccionada = sedes.find(sede => sede.id_sede.toString() === sedeId);
+    if (sedeSeleccionada) {
+      setDistritocli(sedeSeleccionada.distritosede);
+    } else {
+      setDistritocli('');
+    }
+  };
 
   //Funcion de Busqueda
   const searcher = (e) =>{
@@ -524,17 +539,26 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
+                <label for="provincia" className="form-label">Provincia: </label>
+                <select value={provinciacli} onChange={(event) => {
+                    setProvinciacli(event.target.value);
+                  }}
+                  className="form-control" id="provincia" aria-label="provincia" aria-describedby="basic-addon1"
+                >
+                  <option>Lima</option>
+                  <option>Piura</option>
+                </select>
+              </div>
+              <div className="mb-3">
                           <label for='sedes' className="form-label">
-                            Sedes:
+                            Sede:
                           </label>
                           <select
                             className="form-control"
                             aria-describedby="basic-addon1"
                             key={sedecli}
                             value={sedecli}
-                            onChange={(event) => {
-                              setSedecli(event.target.value);
-                            }}
+                            onChange={handleSedeChange}
                           >
                             <option value="">- Seleccione una opción -</option>
                             {sedes.map((sede) => {
@@ -548,18 +572,6 @@ if (busqueda === "") {
                             })}
                           </select>                         
                 </div>
-
-              <div className="mb-3">
-                <label for="provincia" className="form-label">Provincia: </label>
-                <select value={provinciacli} onChange={(event) => {
-                    setProvinciacli(event.target.value);
-                  }}
-                  className="form-control" id="provincia" aria-label="provincia" aria-describedby="basic-addon1"
-                >
-                  <option>Lima</option>
-                  <option>Piura</option>
-                </select>
-              </div>
               <div className="mb-3">
                 <label for="distrito" className="form-label"> Distrito:</label>
                 <input type="text" value={distritocli} onChange={(event) => {

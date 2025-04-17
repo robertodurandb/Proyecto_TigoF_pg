@@ -27,8 +27,10 @@ let fechaactual = `${API.DATENOW}`
     const [nombrecliente, setNombrecliente] = useState("");
     const [user_create, setUser_create] = useState("");
     const [fecha_actual, setFecha_actual] = useState(fechaactual);
-    const [user_update, setUser_update] = useState();
-    const [caja_instalacion, setCajainstalacion] = useState();
+    const [user_update, setUser_update] = useState("");
+    const [caja_instalacion, setCajainstalacion] = useState("");
+    const [splitter_instalacion, setSplitterinstalacion] = useState("");
+    const [user_mk, setUser_mk] = useState("");
     const [cobro_instalacion, setCobro_instalacion] = useState(0);
     const [condicion_equipo, setCondicion_equipo] = useState("Alquiler");
     const [cobro_equipo, setCobro_equipo] = useState(0);
@@ -375,13 +377,14 @@ const obtenerUbicacion = () => {
           cobro_instalacion: cobro_instalacion,
           comentario_instalacion: observacion,
           caja_instalacion: caja_instalacion,
+          splitter_instalacion: splitter_instalacion,
+          user_mk: user_mk,
           dia_pago: dia_pago,
           latitud: latitud,
           longitud: longitud,
           ciclo_facturacion: 30,
           user_create: user_create,
           fecha_create: fecha_actual,
-          caja_instalacion: caja_instalacion,
           estado_servicio: estado_servicio,
           latitud: latitud,
           longitud: longitud
@@ -431,6 +434,8 @@ const obtenerUbicacion = () => {
             user_update: user_update,
             fecha_update: fecha_actual,
             caja_instalacion: caja_instalacion,
+            splitter_instalacion: splitter_instalacion,
+            user_mk: user_mk,
             condicion_equipo: condicion_equipo,
             tipo_equipo: tipo_equipo,
             cobro_equipo: cobro_equipo,
@@ -560,6 +565,8 @@ const getInstalaciones = async () => {
       setCobro_equipo(cliente.cobro_equipo);
       setCobro_instalacion(cliente.cobro_instalacion);
       setCajainstalacion(cliente.caja_instalacion);
+      setSplitterinstalacion(cliente.splitter_instalacion);
+      setUser_mk(cliente.user_mk);
       setObservacion(cliente.comentario_instalacion);
       setImgcaja_antes(cliente.nombreimg_caja_antes);
       setImgpotencia_antes(cliente.nombreimg_potencia_antes);
@@ -600,6 +607,8 @@ const getInstalaciones = async () => {
         setNum_contrato("");
         setObservacion("");
         setCajainstalacion("");
+        setSplitterinstalacion("");
+        setUser_mk("");
         setCondicion_equipo("Alquiler");
         setTipo_equipo("")
         setCobro_equipo(0);
@@ -788,7 +797,8 @@ if (busquedadni === "") {
                       <th>Tipo equipo</th>
                       <th>cobro equipo</th>
                       <th>cobro instalacion</th>
-                      <th>Caja instalacion</th>
+                      <th>CT Splitter</th>
+                      <th>User_MK</th>
                       <th>Ubicación</th>
                       <th>Geolocalización</th>
                       <th>Técnico</th>
@@ -832,7 +842,8 @@ if (busquedadni === "") {
                         <td>{cliente.tipo_equipo}</td>
                         <td>{cliente.cobro_equipo}</td>
                         <td>{cliente.cobro_instalacion}</td>
-                        <td>{cliente.caja_instalacion}</td>
+                        <td>{cliente.caja_instalacion}{cliente.splitter_instalacion}</td>
+                        <td>{cliente.user_mk}</td>
                         <td>
                           <Link
                             to={cliente.geolocalizacion}
@@ -963,7 +974,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="tipo_equipo" className="form-label">
-                    Tipo Equipo:
+                    Equipo (ONT):
                   </label>
                   <input
                     type="text"
@@ -972,7 +983,7 @@ if (busquedadni === "") {
                       setTipo_equipo(event.target.value);
                     }}
                     className="form-control"
-                    id="cajainstalacion"
+                    id="Equipo ONT"
                     placeholder="Marca y/o modelo"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1009,7 +1020,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="caja_instalacion" className="form-label">
-                    Caja & Spliter:
+                    Caja Terminal(CT)
                   </label>
                   <input
                     type="text"
@@ -1017,9 +1028,44 @@ if (busquedadni === "") {
                     onChange={(event) => {
                       setCajainstalacion(event.target.value);
                     }}
+                    maxLength={10}
                     className="form-control"
                     id="cajainstalacion"
-                    placeholder="Ingrese la Caja & Spliter"
+                    placeholder="Ingrese la Caja CT"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="splitter_instalacion" className="form-label">
+                    Splitter:
+                  </label>
+                  <input
+                    type="text"
+                    value={splitter_instalacion}
+                    onChange={(event) => {
+                      setSplitterinstalacion(event.target.value);
+                    }}
+                    maxLength={10}
+                    className="form-control"
+                    id="splitter_instalacion"
+                    placeholder="Ingrese el Splitter"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="user_mk" className="form-label">
+                    Usuario (MK):
+                  </label>
+                  <input
+                    type="text"
+                    value={user_mk}
+                    onChange={(event) => {
+                      setUser_mk(event.target.value);
+                    }}
+                    maxLength={20}
+                    className="form-control"
+                    id="observacion"
+                    placeholder="Observación"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>
@@ -1039,14 +1085,6 @@ if (busquedadni === "") {
                     placeholder="Observación"
                     aria-describedby="basic-addon1"
                   ></input>
-                  {/* <div>
-                {observacion.length} caracteres
-              </div>
-              {observacion.length >= maxLengthObservacion && (
-                <div style={{ color: "red" }}>
-                  Has alcanzado el límite de caracteres
-                </div>
-              )} */}
                 </div>
               </div>
             </ModalBody>
