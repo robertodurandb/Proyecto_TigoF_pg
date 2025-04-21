@@ -730,7 +730,7 @@ function Consulta() {
                               maxLength={maxLengthDetalle}
                               className="form-control" id="detalle_estado" placeholder="Detalle del cambio estado" aria-describedby="basic-addon1">
                               </input>
-                              <div>{detalle_estado.length} caracteres</div>
+                              {/* <div>{detalle_estado.length} caracteres</div> */}
                           </div>
                         </div>
                       </ModalBody>
