@@ -35,7 +35,7 @@ let fechaactual = `${API.DATENOW}`
     const [condicion_equipo, setCondicion_equipo] = useState("Alquiler");
     const [cobro_equipo, setCobro_equipo] = useState(0);
     const [tipo_equipo, setTipo_equipo] = useState("");
-    const [dia_pago, setDia_pago] = useState();
+    const [dia_pago, setDia_pago] = useState("");
     const [estado_servicio, setEstado_servicio] = useState(1);
     const [imgcaja_antes, setImgcaja_antes] = useState();
     const [imgpotencia_antes, setImgpotencia_antes] = useState();
@@ -982,6 +982,7 @@ if (busquedadni === "") {
                     onChange={(event) => {
                       setTipo_equipo(event.target.value);
                     }}
+                    maxLength={100}
                     className="form-control"
                     id="Equipo ONT"
                     placeholder="Marca y/o modelo"
@@ -1065,7 +1066,7 @@ if (busquedadni === "") {
                     maxLength={20}
                     className="form-control"
                     id="observacion"
-                    placeholder="Observación"
+                    placeholder="user_mikrotik"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>

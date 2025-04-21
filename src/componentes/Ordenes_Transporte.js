@@ -14,7 +14,7 @@ function Ordenes_Transporte() {
     const [observacion, setObservacion] = useState("");
     const [fechaprog_instalacion, setFechaprog_instalacion] = useState(fechaactual);
     const [horario_instalacion, setHorario_instalacion] = useState("8am - 1pm")
-    const [diapago, setDiapago] = useState(1);
+    const [diapago, setDiapago] = useState("01");
     const [estadoc_instalacion, setEstadocinstalacion] = useState(1);
     const [costo_instalacion, setCosto_instalacion] = useState(0);
     const [sedecli, setSedecli] = useState(null)
@@ -256,7 +256,7 @@ function validardnicliente() {
     setId_ordentrabajo();
     setObservacion("");
     setFechaprog_instalacion(fecha_actual);
-    setDiapago("1");
+    setDiapago("01");
     setHorario_instalacion("8-12");
     setCosto_instalacion(0);
     setEstadocinstalacion(1);
@@ -464,7 +464,7 @@ if (busqueda === "") {
                   }}
                   className="form-control" id="diapago" aria-label="Dia Pago" aria-describedby="basic-addon1"
                 >
-                  <option>1</option>
+                  <option>01</option>
                   <option>15</option>
                 </select>
               </div>

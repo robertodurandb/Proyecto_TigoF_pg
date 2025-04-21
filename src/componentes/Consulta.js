@@ -27,10 +27,12 @@ function Consulta() {
     const [distritocli, setDistritocli] = useState();
     const [referenciacli, setReferenciacli] = useState();
     const [telefonocli, setTelefonocli] = useState();
+    const [telefonocli2, setTelefonocli2] = useState();
     const [nombreplan, setNombreplan] = useState();
-    const [fechaot, setFechaot] = useState();
     const [precioplan, setPrecioplan] = useState();
-    const [velocidadplan, setVelocidadplan] = useState();
+    const [descplan, setDescplan] = useState();
+    const [sedecli, setSedecli] = useState();
+    const [user_mk, setUser_mk] = useState();
     
     //TABLA INSTALACION
     const [tecnico_instalador, setTecnico_instalador] = useState();
@@ -39,6 +41,7 @@ function Consulta() {
     const [longitud, setLongitud] = useState();
     const [estado_servicio, setEstado_servicio] = useState();
     const [fechainstalacion, setFechainstalacion] = useState();
+    const [fechacontrato, setFechacontrato] = useState();
     const [imgcaja_antes, setImgcaja_antes] = useState();
     const [imgpotencia_antes, setImgpotencia_antes] = useState();
     const [imgcaja_despues, setImgcaja_despues] = useState();
@@ -49,32 +52,42 @@ function Consulta() {
     const [imgcasa, setImgcasa] = useState();
     const [comentario_instalacion, setComentario_instalacion] = useState();
     const [caja_instalacion, setCaja_instalacion] = useState();
+    const [splitter_instalacion, setSplitter_instalacion] = useState();
     const [tipo_equipo, setTipo_equipo] = useState();
     const [condicion_equipo, setCondicion_equipo] = useState();
     const [cobro_equipo, setCobroequipo] = useState();
     const [cobro_instalacion, setCobroinstalacion] = useState();
     const [diapago, setDiapago] = useState();
-    const [ciclo_facturacion, setCiclo_facturacion] = useState();
     const [fecha_ultimo_pago, setFecha_ultimo_pago] = useState();
     const [fecha_proximo_pago, setFecha_proximo_pago] = useState();
+    const [estado_anterior, setEstado_anterior] = useState();
+    const [estado_actual, setEstado_actual] = useState();
+    const [detalle_estado, setDetalle_estado] = useState();
+    const [user_create, setUser_create] = useState();
+    const [estados, setEstados] = useState([]);
+
+    const maxLengthDetalle = 120;
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
     const [rowSelection, setRowSelection] = useState({})
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 20,
       })
-      const [columnFilters, setColumnFilters] = React.useState([])
+      const [columnFilters, setColumnFilters] = useState([])
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrarFotos, setModalMostrarFotos] = useState(false);
+    const [modalEstadoServicio, setModalEstadoServicio] = useState(false);
 
     let ipbackend = `${API.URL}`
     let token = sessionStorage.getItem("token");
+    let user = sessionStorage.getItem("currentUser");
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalfotos = () => setModalMostrarFotos(!modalMostrarFotos);
+    const ventanaModalEstadoServicio = () => setModalEstadoServicio(!modalEstadoServicio);
 
     const getClientes = async () => {
         try {
@@ -85,6 +98,7 @@ function Consulta() {
           }
           );
           setListaClientes(response.data);
+          setUser_create(user);
         } catch (error) {
           console.error('Error fetching data:', error);
           if (error.response && error.response.status === 401){
@@ -94,8 +108,43 @@ function Consulta() {
             }
         }
       };
+      function getEstados(){
+        fetch(ipbackend+'getestados', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+            .then(response => response.json())
+            .then(data => setEstados(data))
+      }
+
+      const cerrarModalEstadoServicio = ()=>{
+        limpiarcampos();
+        ventanaModalEstadoServicio();
+      }
+      const limpiarcampos = () => {
+        setDnicli("");
+        setNum_contrato("");
+        setDetalle_estado("");
+        setEstado_actual();
+        setEstado_anterior();
+        setEstado_servicio("");
+        setUser_create(user);
+      }
 
       const columns = [
+          {
+            header: 'Servicio',
+            accessorKey: 'nombre_estado',
+          },
+          {
+            header: 'Sede',
+            accessorKey: 'nombre_sede',
+          },
+          {
+            header: 'Dia pago',
+            accessorKey: 'dia_pago',
+          },
           {
             header: 'DNI',
             accessorKey: 'clienteactual_dnicliente',
@@ -121,8 +170,12 @@ function Consulta() {
             accessorKey: 'direccioncli',
           },
           {
-            header: 'Servicio',
-            accessorKey: 'nombre_estado',
+            header: 'Caja Terminal',
+            accessorKey: 'caja_instalacion',
+          },
+          {
+            header: 'Splitter',
+            accessorKey: 'splitter_instalacion',
           },
         ];
         const data = listaClientes;
@@ -194,25 +247,28 @@ function Consulta() {
             setDiapago(table.getSelectedRowModel().flatRows[0].original.dia_pago);
             setDireccioncli(table.getSelectedRowModel().flatRows[0].original.direccioncli);
             setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
+            setSedecli(table.getSelectedRowModel().flatRows[0].original.nombre_sede);
+            setUser_mk(table.getSelectedRowModel().flatRows[0].original.user_mk);
             setReferenciacli(table.getSelectedRowModel().flatRows[0].original.referenciacli);
             setGeolocalizacion(table.getSelectedRowModel().flatRows[0].original.geolocalizacion);
             setLatitud(table.getSelectedRowModel().flatRows[0].original.latitud);
             setLongitud(table.getSelectedRowModel().flatRows[0].original.longitud);
             setTelefonocli(table.getSelectedRowModel().flatRows[0].original.telefonocli);
-            setFechaot(table.getSelectedRowModel().flatRows[0].original.fecha_ot);
+            setTelefonocli2(table.getSelectedRowModel().flatRows[0].original.telefonocli2);
             setFechainstalacion(table.getSelectedRowModel().flatRows[0].original.fecha_instalacion);
+            setFechacontrato(table.getSelectedRowModel().flatRows[0].original.fecha_inicio_contrato);
             setTecnico_instalador(table.getSelectedRowModel().flatRows[0].original.tecnico_instalador);
             setComentario_instalacion(table.getSelectedRowModel().flatRows[0].original.comentario_instalacion);
             setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
-            setVelocidadplan(table.getSelectedRowModel().flatRows[0].original.velocidadplan);
+            setDescplan(table.getSelectedRowModel().flatRows[0].original.descplan);
             setPrecioplan(table.getSelectedRowModel().flatRows[0].original.precioplan);
             setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado); 
             setCaja_instalacion(table.getSelectedRowModel().flatRows[0].original.caja_instalacion);
+            setSplitter_instalacion(table.getSelectedRowModel().flatRows[0].original.splitter_instalacion);
             setTipo_equipo(table.getSelectedRowModel().flatRows[0].original.tipo_equipo);
             setCondicion_equipo(table.getSelectedRowModel().flatRows[0].original.condicion_equipo);
             setCobroequipo(table.getSelectedRowModel().flatRows[0].original.cobro_equipo);
             setCobroinstalacion(table.getSelectedRowModel().flatRows[0].original.cobro_instalacion);
-            setCiclo_facturacion(table.getSelectedRowModel().flatRows[0].original.ciclo_facturacion);
             setFecha_ultimo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_ultimo_pago);
             setFecha_proximo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_proximo_pago);
             mostrarCliente();
@@ -229,11 +285,14 @@ function Consulta() {
             setDiapago(table.getSelectedRowModel().flatRows[0].original.dia_pago);
             setDireccioncli(table.getSelectedRowModel().flatRows[0].original.direccioncli);
             setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
+            setSedecli(table.getSelectedRowModel().flatRows[0].original.nombre_sede);
+            setUser_mk(table.getSelectedRowModel().flatRows[0].original.user_mk);
             setReferenciacli(table.getSelectedRowModel().flatRows[0].original.referenciacli);
             setGeolocalizacion(table.getSelectedRowModel().flatRows[0].original.geolocalizacion);
             setTelefonocli(table.getSelectedRowModel().flatRows[0].original.telefonocli);
-            setFechaot(table.getSelectedRowModel().flatRows[0].original.fecha_ot);
+            setTelefonocli2(table.getSelectedRowModel().flatRows[0].original.telefonocli2);
             setFechainstalacion(table.getSelectedRowModel().flatRows[0].original.fecha_instalacion);
+            setFechacontrato(table.getSelectedRowModel().flatRows[0].original.fecha_contrato);
             setTecnico_instalador(table.getSelectedRowModel().flatRows[0].original.tecnico_instalador);
             setComentario_instalacion(table.getSelectedRowModel().flatRows[0].original.comentario_instalacion);
             setImgcaja_antes(table.getSelectedRowModel().flatRows[0].original.nombreimg_caja_antes);
@@ -245,23 +304,78 @@ function Consulta() {
             setImgcontrato(table.getSelectedRowModel().flatRows[0].original.nombreimg_contrato);
             setImgcasa(table.getSelectedRowModel().flatRows[0].original.nombreimg_casa);
             setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
-            setVelocidadplan(table.getSelectedRowModel().flatRows[0].original.velocidadplan);
+            setDescplan(table.getSelectedRowModel().flatRows[0].original.descplan);
             setPrecioplan(table.getSelectedRowModel().flatRows[0].original.precioplan);
             setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado); 
             setCaja_instalacion(table.getSelectedRowModel().flatRows[0].original.caja_instalacion);
+            setSplitter_instalacion(table.getSelectedRowModel().flatRows[0].original.splitter_instalacion);
             setTipo_equipo(table.getSelectedRowModel().flatRows[0].original.tipo_equipo);
             setCondicion_equipo(table.getSelectedRowModel().flatRows[0].original.condicion_equipo);
             setCobroequipo(table.getSelectedRowModel().flatRows[0].original.cobro_equipo);
             setCobroinstalacion(table.getSelectedRowModel().flatRows[0].original.cobro_instalacion);
-            setCiclo_facturacion(table.getSelectedRowModel().flatRows[0].original.ciclo_facturacion);
             setFecha_ultimo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_ultimo_pago);
             setFecha_proximo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_proximo_pago);
             ventanaModalfotos();
         }
-    }
+    };
+
+    const modificarEstadoServicio = () => {
+        if (table.getSelectedRowModel().flatRows[0]==undefined) {
+            alert("Debe seleccionar un registro")
+        }else{
+            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
+            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
+            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
+            setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
+            setEstado_anterior(table.getSelectedRowModel().flatRows[0].original.estado_servicio);
+            ventanaModalEstadoServicio();
+        }
+    };
+
+    const registrarCambioEstado = () => {
+        Axios.post(ipbackend+"createcambioestado", 
+          {  
+              num_contrato: num_contrato,
+              detalle: detalle_estado,
+              estado_anterior: estado_anterior,
+              estado_actual: estado_actual,
+              user_create: user_create,
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          .then(Axios.put(ipbackend+"updateinstalacion/"+num_contrato,
+            {
+              estado_servicio: estado_actual,
+            },{
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }))
+            .then(() => {
+            getClientes();
+            cerrarModalEstadoServicio();
+            alert("Estado Servicio actualizado correctamente");
+          }).catch((error) => {
+            if (error.response && error.response.status === 400){
+            alert("Error: "+error.response.data.error);
+            console.log(error.response.data.error)
+            }
+            return error;
+            });
+      }
+
+      // Función para manejar el cambio en el select de estados
+  const handleEstadoChange = (event) => {
+    const estadoId = event.target.value;
+    setEstado_actual(estadoId);
+  };
 
     useEffect(() =>{
         getClientes()
+        getEstados()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -272,6 +386,7 @@ function Consulta() {
             <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
               <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
               <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
+              <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServicio}>Suspender/Cortar</button>
             </div>
             {/* <input value={filtering} type='text' placeholder='Búsqueda de registros' className='form-control border border-success'
             onChange={(e) => setFiltering(e.target.value)}
@@ -391,6 +506,10 @@ function Consulta() {
                         <div className="col-6">{estado_servicio}</div>
                     </div>
                     <div className='row mb-2'>
+                        <div className='col-4'>Usuario Mikrotik:</div>
+                        <div className="col-6">{user_mk}</div>
+                    </div>
+                    <div className='row mb-2'>
                         <div className='col-4'>DNI Cliente:</div>
                         <div className='col-6'>{dnicli}</div>
                     </div>
@@ -399,8 +518,12 @@ function Consulta() {
                         <div className="col-6">{apellidocli+" "}{nombrecli}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Telefono Cliente:</div>
-                        <div className="col-6">{telefonocli}</div>
+                        <div className='col-4'>Sede:</div>
+                        <div className="col-6">{sedecli}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Telefonos:</div>
+                        <div className="col-6">{telefonocli} / {telefonocli2}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Direccion Cliente:</div>
@@ -419,7 +542,7 @@ function Consulta() {
                         <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Ubicación (instalación):</div>
+                        <div className='col-4'>Ubicación2:</div>
                         <div className="col-6">
                             <Link
                                                         to={
@@ -434,26 +557,29 @@ function Consulta() {
                         </div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Caja/Spliter:</div>
-                        <div className="col-6">{caja_instalacion}</div>
+                        <div className='col-4'>CT/Spliter:</div>
+                        <div className="col-6">{caja_instalacion} / {splitter_instalacion}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Plan Actual:</div>
                         <div className="col-6">{nombreplan}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Velocidad Plan:</div>
-                        <div className="col-6">{velocidadplan}</div>
+                        <div className='col-4'>descripción Plan:</div>
+                        <div className="col-6">{descplan}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Precio Plan:</div>
-                        <div className="col-6">{precioplan}</div>
+                        <div className="col-6">S/. {precioplan}.00</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Dia de Pago:</div>
+                        <div className="col-6">{diapago}</div>
                     </div>
                     <div className='corte'>----------------------------------------------------------------</div>
-                    
                     <div className='row mb-2'>
-                        <div className='col-4'>Fecha de la OT:</div>
-                        <div className="col-6">{fechaot}</div>
+                        <div className='col-4'>Fecha Contrato:</div>
+                        <div className="col-6">{fechacontrato}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Fecha Instalacion:</div>
@@ -484,14 +610,6 @@ function Consulta() {
                         <div className="col-6">{cobro_instalacion}</div>
                     </div>
                     <div className='corte'>----------------------------------------------------------------</div>            
-                    <div className='row mb-2'>
-                        <div className='col-4'>Dia Pago:</div>
-                        <div className="col-6">{diapago}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Ciclo facturación:</div>
-                        <div className="col-6">{ciclo_facturacion}</div>
-                    </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Fecha último pago:</div>
                         <div className="col-6">{fecha_ultimo_pago}</div>
@@ -550,6 +668,81 @@ function Consulta() {
                     <button className='btn btn-danger' onClick={ventanaModalfotos}>Cerrar</button>
                 </ModalFooter>
             </Modal>
+
+            {/* MODAL PARA CORTAR SERVICIO */}
+
+            <Modal isOpen={modalEstadoServicio} toggle={ventanaModalEstadoServicio}>
+                      <ModalBody>
+                        <div className="from-group">
+                          <h4 className="">Modificar Estado Servicio:</h4>
+                          <div className="mb-3">
+                            <label for="nombre_estadoanterior" className="form-label">Estado Actual:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {estado_servicio}
+                              </span>
+                          </div>
+                          <div className="mb-3">
+                            <label for="numcontrato" className="form-label">Contrato:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {num_contrato}
+                              </span>
+                          </div>
+                          <div className="mb-3">
+                            <label for="dnicliente" className="form-label">DNI Cliente:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {dnicli}
+                              </span>
+                          </div>
+                          <div className="mb-3">
+                            <label for="nombrecliente" className="form-label">Nombres:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {apellidocli} {nombrecli}
+                              </span>
+                          </div>
+                            <div className="mb-3">
+                                <label for='estado_nuevo' className="form-label">
+                                    Estado nuevo:
+                                </label>
+                                <select
+                                    className="form-control"
+                                    aria-describedby="basic-addon1"
+                                    key={estado_actual}
+                                    value={estado_actual}
+                                    onChange={handleEstadoChange}
+                                >
+                                    <option value="">- Seleccione una opción -</option>
+                                    {estados.map((estado) => {
+                                        return (
+                                            <>
+                                                <option value={estado.id_estado}>
+                                                    {estado.nombre_estado}
+                                                </option>
+                                            </>
+                                        );
+                                    })}
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                            <label for="nombres" className="form-label">Detalle:</label>
+                              <input type="text" onChange={(event) => {
+                                setDetalle_estado(event.target.value);
+                              }}
+                              maxLength={maxLengthDetalle}
+                              className="form-control" id="detalle_estado" placeholder="Detalle del cambio estado" aria-describedby="basic-addon1">
+                              </input>
+                              <div>{detalle_estado.length} caracteres</div>
+                          </div>
+                        </div>
+                      </ModalBody>
+                      <ModalFooter>
+                          <button className="btn btn-success" onClick={registrarCambioEstado}>
+                          Registrar
+                        </button>         
+                        <button className="btn btn-danger" onClick={cerrarModalEstadoServicio}>
+                          Cerrar
+                        </button>
+                      </ModalFooter>
+                    </Modal>
 
 
         </div>
