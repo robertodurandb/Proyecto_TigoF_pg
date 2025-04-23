@@ -103,13 +103,21 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
       <nav className="navbar1">
         <div className='logo'>TIGO</div>
         <ul className={isOpen ? 'nav-links2' : 'nav-links1'}>
-          <li>
+          
+          {isAdmin && (
+            <>
+            <li>
             <Link to="/" className="links1" role='button' onClick={() => setIsOpen(false)}>Consultas</Link>
           </li>
-          {isAdmin && (
+          {/* <li>
+            <Link to="/Cortes" className="links1" role='button' onClick={() => setIsOpen(false)}>Registro_Cortes</Link>
+          </li> */}
             <li>
               <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>Ordenes_Trabajo</Link>
             </li>
+
+            </>
+            
           )}
           <li>
             <Link to="/Instalaciones" className="links1" role='button' onClick={() => setIsOpen(false)}>Instalaciones</Link>

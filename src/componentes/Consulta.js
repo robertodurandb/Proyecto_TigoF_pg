@@ -20,6 +20,7 @@ function Consulta() {
 
     //Datos para el Modal
     const [num_contrato, setNum_contrato] = useState();
+    const [contrato, setContrato] = useState();
     const [dnicli, setDnicli] = useState();
     const [nombrecli, setNombrecli] = useState();
     const [apellidocli, setApellidocli] = useState();
@@ -124,7 +125,8 @@ function Consulta() {
       }
       const limpiarcampos = () => {
         setDnicli("");
-        setNum_contrato("");
+        setNum_contrato();
+        setContrato("");
         setDetalle_estado("");
         setEstado_actual();
         setEstado_anterior();
@@ -241,6 +243,7 @@ function Consulta() {
             alert("Debe seleccionar un registro")
         }else{
             setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
             setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
             setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
@@ -279,6 +282,7 @@ function Consulta() {
             alert("Debe seleccionar un registro")
         }else{
             setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
             setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
             setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
@@ -324,6 +328,7 @@ function Consulta() {
             alert("Debe seleccionar un registro")
         }else{
             setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
             setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
             setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
@@ -500,6 +505,10 @@ function Consulta() {
                     <div className='row mb-2'>
                         <div className='col-4'>Num_Contrato:</div>
                         <div className='col-6'>{num_contrato}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Contrato Fisico:</div>
+                        <div className='col-6'>{contrato}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Estado Servicio:</div>
@@ -682,9 +691,13 @@ function Consulta() {
                               </span>
                           </div>
                           <div className="mb-3">
-                            <label for="numcontrato" className="form-label">Contrato:</label>
+                            <label for="numcontrato" className="form-label">N° Contrato:</label>
                             <span className="input-group-text" id="basic-addon1">
                                 {num_contrato}
+                              </span>
+                              <label for="numcontrato" className="form-label">Contrato Físico:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {contrato}
                               </span>
                           </div>
                           <div className="mb-3">
