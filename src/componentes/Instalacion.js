@@ -18,6 +18,7 @@ let fechaactual = `${API.DATENOW}`
 
     const [id_ordentrabajo, setId_ordentrabajo] = useState();
     const [num_contrato, setNum_contrato] = useState();
+    const [contrato, setContrato] = useState();
     const [dnicliente, setDnicliente] = useState();
     const [plan, setPlan] = useState();
     const [idplan, setIdplan] = useState();
@@ -366,7 +367,7 @@ const obtenerUbicacion = () => {
         alert("Error al obtener geolocalización")
       } else {
         Axios.post(ipbackend+"createinstalacion", {
-          num_contrato: num_contrato,
+          contrato: contrato,
           clienteactual_dnicliente: dnicliente,
           ordentrabajo_idordentrabajo: id_ordentrabajo,
           planactual_idplanes: idplan,
@@ -556,6 +557,7 @@ const getInstalaciones = async () => {
     const handleRowClick = (cliente) => {    
       setSelectedRow(cliente.id_ordentrabajo);
       setNum_contrato(cliente.num_contrato);
+      setContrato(cliente.contrato);
       setDnicliente(cliente.dnicliente);
       setPlan(cliente.nombreplan);
       setApellidocliente(cliente.apellidocli);
@@ -579,6 +581,7 @@ const getInstalaciones = async () => {
       setGeolocalizacion(cliente.geolocalizacion);
       setLatitud(cliente.latitud);
       setLongitud(cliente.longitud);
+      console.log(cliente.contrato);
       console.log(cliente.num_contrato)
       console.log(cliente.id_ordentrabajo)
       console.log(cliente.imgcontrato)
@@ -605,6 +608,7 @@ const getInstalaciones = async () => {
         setFecha_actual(fechaactual);
         setId_ordentrabajo("");
         setNum_contrato("");
+        setContrato("");
         setObservacion("");
         setCajainstalacion("");
         setSplitterinstalacion("");
@@ -910,22 +914,22 @@ if (busquedadni === "") {
                 )}
 
                 <div className="mb-3">
-                  <label for="num_contrato" className="form-label">
-                    Número de Contrato:
+                  <label for="contrato" className="form-label">
+                    Contrato físico:
                   </label>
                   {editar ? (
                     <span className="input-group-text" id="basic-addon1">
-                      {num_contrato}
+                      {contrato}
                     </span>
                   ) : (
                     <input
                       type="text"
-                      value={num_contrato}
+                      value={contrato}
                       onChange={(event) => {
-                        setNum_contrato(event.target.value);
+                        setContrato(event.target.value);
                       }}
                       className="form-control"
-                      id="num_contrato"
+                      id="contrato"
                       placeholder="número de contrato"
                       aria-describedby="basic-addon1"
                     ></input>
@@ -948,7 +952,7 @@ if (busquedadni === "") {
                   </span>
                 </div>
                 <div className="mb-3">
-                  <label for="num_contrato" className="form-label">
+                  <label for="plan" className="form-label">
                     Plan Contratado:
                   </label>
                   <span className="input-group-text" id="basic-addon1">
