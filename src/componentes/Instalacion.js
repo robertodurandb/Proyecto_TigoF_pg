@@ -842,7 +842,7 @@ if (busquedadni === "") {
                         <td>{cliente.tipo_equipo}</td>
                         <td>{cliente.cobro_equipo}</td>
                         <td>{cliente.cobro_instalacion}</td>
-                        <td>{cliente.caja_instalacion}{cliente.splitter_instalacion}</td>
+                        <td>{cliente.caja_instalacion} / {cliente.splitter_instalacion}</td>
                         <td>{cliente.user_mk}</td>
                         <td>
                           <Link
