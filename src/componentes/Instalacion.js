@@ -792,7 +792,7 @@ if (busquedadni === "") {
                   <th>Distrito</th>
                   <th>Direccion</th>
                   <th>Referencia</th>
-                  <th>Telefono</th>
+                  <th>Telefonos</th>
                   <th>Fecha programada</th>
                   <th>Horario programado</th>
                   {select_instalados ? (
@@ -837,7 +837,7 @@ if (busquedadni === "") {
                     <td>{cliente.distritocli}</td>
                     <td>{cliente.direccioncli}</td>
                     <th>{cliente.referenciacli}</th>
-                    <td>{cliente.telefonocli}</td>
+                    <td>{cliente.telefonocli} {cliente.telefonocli2}</td>
                     <td>{cliente.fechaprog_instalacion}</td>
                     <td>{cliente.horario_instalacion}</td>
                     {select_instalados ? (
@@ -915,7 +915,7 @@ if (busquedadni === "") {
 
                 <div className="mb-3">
                   <label for="contrato" className="form-label">
-                    Contrato físico:
+                    N° Contrato Físico:
                   </label>
                   {editar ? (
                     <span className="input-group-text" id="basic-addon1">
@@ -930,7 +930,6 @@ if (busquedadni === "") {
                       }}
                       className="form-control"
                       id="contrato"
-                      placeholder="número de contrato"
                       aria-describedby="basic-addon1"
                     ></input>
                   )}
@@ -953,7 +952,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="plan" className="form-label">
-                    Plan Contratado:
+                    Plan Solicitado:
                   </label>
                   <span className="input-group-text" id="basic-addon1">
                     {plan}
@@ -961,7 +960,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="condicion_equipo" className="form-label">
-                    Condicion Equipo:
+                    Condicion Equipo principal (ONT):
                   </label>
                   <select
                     value={condicion_equipo}
@@ -978,7 +977,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="tipo_equipo" className="form-label">
-                    Equipo (ONT):
+                    Equipos entregados (ONT, cámara, etc):
                   </label>
                   <input
                     type="text"
@@ -989,13 +988,12 @@ if (busquedadni === "") {
                     maxLength={100}
                     className="form-control"
                     id="Equipo ONT"
-                    placeholder="Marca y/o modelo"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>
                 <div className="mb-3">
                   <label for="cobro_equipo" className="form-label">
-                    Cobro por Equipo:
+                    Cobro por Equipos:
                   </label>
                   <input
                     type="number"
@@ -1010,7 +1008,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="cobro_instalacion" className="form-label">
-                    Cobro por Intalacion:
+                    Cobro por la Intalacion:
                   </label>
                   <input
                     type="number"
@@ -1025,7 +1023,7 @@ if (busquedadni === "") {
                 </div>
                 <div className="mb-3">
                   <label for="caja_instalacion" className="form-label">
-                    Caja Terminal(CT)
+                    Caja Terminal(CT):
                   </label>
                   <input
                     type="text"
@@ -1033,10 +1031,9 @@ if (busquedadni === "") {
                     onChange={(event) => {
                       setCajainstalacion(event.target.value);
                     }}
-                    maxLength={10}
+                    maxLength={40}
                     className="form-control"
                     id="cajainstalacion"
-                    placeholder="Ingrese la Caja CT"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>
@@ -1050,16 +1047,15 @@ if (busquedadni === "") {
                     onChange={(event) => {
                       setSplitterinstalacion(event.target.value);
                     }}
-                    maxLength={10}
+                    maxLength={40}
                     className="form-control"
                     id="splitter_instalacion"
-                    placeholder="Ingrese el Splitter"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>
                 <div className="mb-3">
                   <label for="user_mk" className="form-label">
-                    Usuario (MK):
+                    Usuario Winbox cliente:
                   </label>
                   <input
                     type="text"
@@ -1070,13 +1066,12 @@ if (busquedadni === "") {
                     maxLength={20}
                     className="form-control"
                     id="observacion"
-                    placeholder="user_mikrotik"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>
                 <div className="mb-3">
                   <label for="observacion" className="form-label">
-                    Observación:
+                    Observación y/o Comentario:
                   </label>
                   <input
                     type="text"
@@ -1087,7 +1082,6 @@ if (busquedadni === "") {
                     maxLength={maxLengthObservacion}
                     className="form-control"
                     id="observacion"
-                    placeholder="Observación"
                     aria-describedby="basic-addon1"
                   ></input>
                 </div>

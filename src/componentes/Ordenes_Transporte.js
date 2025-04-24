@@ -39,6 +39,7 @@ function Ordenes_Transporte() {
     const [distritocli, setDistritocli] = useState("");
     const [provinciacli, setProvinciacli] = useState("Lima");
     const [telefonocli, setTelefonocli] = useState();
+    const [telefonocli2, setTelefonocli2] = useState();
     const [referenciacli, setReferenciacli] = useState('');
     const [geolocalizacion, setGeolocalizacion] = useState('');
     const [user_create, setUser_create] = useState();
@@ -106,6 +107,7 @@ function Ordenes_Transporte() {
               distritocli: distritocli,
               provinciacli: provinciacli,
               telefonocli: telefonocli,
+              telefonocli2: telefonocli2,
               referenciacli: referenciacli,
               geolocalizacion: geolocalizacion,
               fecha_create: fecha_actual,
@@ -272,7 +274,8 @@ function validardnicliente() {
     setProvinciacli("Lima");
     setReferenciacli("");
     setGeolocalizacion("");
-    setTelefonocli("");
+    setTelefonocli();
+    setTelefonocli2();
     setFecha_createcli("");
     setSedecli("");
   }
@@ -359,7 +362,7 @@ if (busqueda === "") {
                 <th scope="col">Apellidos</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Direccion</th>
-                <th scope="col">Telefono</th>
+                <th scope="col">Telefonos</th>
                 <th scope="col">Referencia</th>
                 <th scope="col">Plan</th>
                 <th scope="col">Fecha OT</th>
@@ -379,7 +382,7 @@ if (busqueda === "") {
                     <td>{val.apellidocli}</td>
                     <td>{val.nombrecli}</td>
                     <td>{val.direccioncli}</td>
-                    <td>{val.telefonocli}</td>
+                    <td>{val.telefonocli} {val.telefonocli2}</td>
                     <td>{val.referenciacli}</td>
                     <td>{val.nombreplan}</td>
                     <td>{val.fecha_ot}</td>
@@ -484,7 +487,7 @@ if (busqueda === "") {
                 <input type="text" value={observacion}
                   onChange={(event) => { setObservacion(event.target.value); }}
                   maxLength={maxLengthIndicaciones}
-                  className="form-control" id="observacion" placeholder="Ingrese Observacion" aria-describedby="basic-addon1"
+                  className="form-control" id="observacion" aria-describedby="basic-addon1"
                 ></input>
                 <div>
                 {observacion.length} caracteres
@@ -518,7 +521,7 @@ if (busqueda === "") {
                 <label for="dnicliente" className="form-label">DNI Cliente:</label>
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);
-                  }} className="form-control" id="dnicliente" placeholder="Ingrese Documento de Identidad" aria-describedby="basic-addon1">
+                  }} className="form-control" id="dnicliente" aria-describedby="basic-addon1">
                   </input>
                   <p>{errordni}</p>
                   <button type="button" className="btn btn-secondary" onClick={validardnicliente}>validar si DNI existe</button>
@@ -528,14 +531,14 @@ if (busqueda === "") {
                 <label for="nombres" className="form-label">Nombres:</label>
                   <input type="text" value={nombrecli} onChange={(event) => {
                     setNombrecli(event.target.value);
-                  }} className="form-control" id="nombres" placeholder="Nombres del Cliente" aria-describedby="basic-addon1">
+                  }} className="form-control" id="nombres" aria-describedby="basic-addon1">
                   </input>
               </div>
               <div className="mb-3">
-                <label for="apellidos" className="form-label">Apellidos:</label>
+                <label for="apellidos" className="form-label">Apellidos Completos:</label>
                 <input type="text" value={apellidocli} onChange={(event) => {
                     setApellidocli(event.target.value);
-                  }} className="form-control" id="apellidos" placeholder="Apellidos del Cliente" aria-describedby="basic-addon1"
+                  }} className="form-control" id="apellidos" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
@@ -577,17 +580,17 @@ if (busqueda === "") {
                 <input type="text" value={distritocli} onChange={(event) => {
                     setDistritocli(event.target.value);
                   }}
-                  className="form-control" id="distrito" placeholder="Ingrese Distrito" aria-describedby="basic-addon1"
+                  className="form-control" id="distrito" aria-describedby="basic-addon1"
                 ></input>
 
               </div>
               <div className="mb-3">
-                <label for="direccion" className="form-label">Direccion: </label>
+                <label for="direccion" className="form-label">Direccion exacta: </label>
                 <input type="text" value={direccioncli} onChange={(event) => {
                     setDireccioncli(event.target.value);
                   }}
                   maxLength={maxLengthDireccion}
-                  className="form-control" id="direccion" placeholder="Dirección del Cliente" aria-describedby="basic-addon1"
+                  className="form-control" id="direccion" aria-describedby="basic-addon1"
                 ></input>
                 <div>{direccioncli.length} caracteres</div>
               {direccioncli.length >= maxLengthDireccion && (
@@ -620,11 +623,19 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="telefono2" className="form-label">Telefono:</label>
+                <label for="telefono1" className="form-label">Telefono 1 (oligatorio):</label>
                 <input type="number" value={telefonocli} onChange={(event) => {
                     setTelefonocli(event.target.value);
                   }}
-                  className="form-control" id="telefono2" placeholder="Telefono del Cliente" aria-describedby="basic-addon1"
+                  className="form-control" id="telefono2" aria-describedby="basic-addon1"
+                ></input>
+              </div>
+              <div className="mb-3">
+                <label for="telefono2" className="form-label">Telefono 2 (opcional):</label>
+                <input type="number" value={telefonocli2} onChange={(event) => {
+                    setTelefonocli2(event.target.value);
+                  }}
+                  className="form-control" id="telefono2" aria-describedby="basic-addon1"
                 ></input>
               </div>
             </div>

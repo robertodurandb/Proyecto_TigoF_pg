@@ -179,6 +179,10 @@ function Consulta() {
             header: 'Splitter',
             accessorKey: 'splitter_instalacion',
           },
+          {
+            header: 'Plan',
+            accessorKey: 'nombreplan',
+          },
         ];
         const data = listaClientes;
 
