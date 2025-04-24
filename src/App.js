@@ -218,9 +218,8 @@ function App() {
       {logged ? (
         <AppLayout user={user} signOut={signOut} isAdmin={isAdmin()}>
           <Routes>
-            <Route path="/" element={<Consultas />} />
-            
             <Route element={<ProtectedRoute requiredRole="Admin" />}>
+              <Route path="/" element={<Consultas />} />
               <Route path="/Ordenes_Trabajo" element={<Ordenes_Transporte />} />
               <Route path="/cliente" element={<Clientes />} />
               <Route path="/cortes" element={<Cortes />} />
@@ -229,12 +228,12 @@ function App() {
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/sedes" element={<Sedes />} />
             </Route>
-            
+
             <Route path="/Instalaciones" element={<Instalacion />} />
             <Route path="/passwordupdate" element={<Passwordupdate />} />
             <Route path="/Pagos" element={<ImportPagos />} />
             <Route path="/ControlPagos" element={<ControlPagos />} />
-            
+
             <Route path="/unauthorized" element={<div>No tienes permisos para acceder a esta página</div>} />
           </Routes>
         </AppLayout>
