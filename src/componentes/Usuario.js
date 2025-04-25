@@ -8,7 +8,7 @@ function Usuarios() {
     const [iduser, setIduser] = useState("");
     const [nombre_user, setNombreuser] = useState("");
     const [apellido_user, setApellidouser] = useState("");
-    const [perfil_user, setPerfiluser] = useState("User");
+    const [perfil_user, setPerfiluser] = useState("Especialista");
     const [password, setPassword] = useState("");
     const [estado_user, setEstado] = useState(1);
     const [estados, setEstados] = useState([]);
@@ -118,7 +118,7 @@ function Usuarios() {
     setIduser("");
     setNombreuser("");
     setApellidouser("");
-    setPerfiluser("User");
+    setPerfiluser("Especialista");
     setPassword("");
     setEstado(1);
     setEditar(false);
@@ -219,7 +219,7 @@ function Usuarios() {
                           onChange={(event) => { setPerfiluser(event.target.value); }}
                           className="form-control" aria-label="Velocidad" aria-describedby="basic-addon1"
                           >
-                          <option>User</option>
+                          <option>Especialista</option>
                           <option>Tecnico</option>
                           <option>Admin</option>
                         </select>

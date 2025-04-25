@@ -12,9 +12,12 @@ let fechaactual = `${API.DATENOW}`
 
     const [ordenesPendientes, setOrdenesPendientes] = useState([]);
     const [instalaciones, setInstalaciones] = useState([]);
+    const [instalacionesforuser, setInstalacionesforuser] = useState([]);
     const [busqueda, setBusqueda] = useState("");
     const [busquedadni, setBusquedadni] = useState("");
+    const [perfiluser, setPerfiluser] = useState("");
     const [select_instalados, setSelect_instalados] = useState(false)
+
 
     const [id_ordentrabajo, setId_ordentrabajo] = useState();
     const [num_contrato, setNum_contrato] = useState();
@@ -72,7 +75,8 @@ let fechaactual = `${API.DATENOW}`
     // const ventanaModalGeo = () => setModalGeo(!modalGeo);
 
     let token = sessionStorage.getItem("token");
-    let user = sessionStorage.getItem("currentUser")
+    let user = sessionStorage.getItem("currentUser");
+    let perfil = sessionStorage.getItem("role");
     let ipbackend = `${API.URL}`;
 
     //***************** CODIGO PARA SUBIR IMAGEN **********//
@@ -461,6 +465,31 @@ const obtenerUbicacion = () => {
           });
       };
 
+      const getInstalacionesforuser = async () => {
+        try {
+          const response = await Axios.get(ipbackend + 'orders_install_user/' + user, {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+          }
+          );
+          setInstalacionesforuser(response.data);
+          console.log("El perfil del usuario es: "+perfiluser);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          //Capturar el mensaje específico cuando no hay instalaciones 404
+          if (error.response && error.response.status === 404) {
+            alert(error.response.data.message); // Muestra: "Usuario no tiene ninguna instalación"
+        } 
+        // Manejo de sesión expirada (401)   
+          if (error.response && error.response.status === 401){
+            sessionStorage.removeItem("token");
+            window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+        }
+      };
+
       // const updateGeolocalizacion = () => {
       //   let newgeo = contieneBarra();
       //   Axios.put(ipbackend+"updatecliente/"+dnicliente, {
@@ -495,6 +524,7 @@ const obtenerUbicacion = () => {
           setOrdenesPendientes(response.data);
           setUser_create(user);
           setUser_update(user);
+          setPerfiluser(perfil);
         } catch (error) {
           console.error('Error fetching data:', error);
           if (error.response && error.response.status === 401){
@@ -684,6 +714,7 @@ const getInstalaciones = async () => {
         setBusqueda(e.target.value);
         getInstalacionesPendientes();
         getInstalaciones();
+        getInstalacionesforuser();
         if(e.target.value=="instalados"){
           console.log("instalados")
           setSelect_instalados(true)
@@ -694,12 +725,15 @@ const getInstalaciones = async () => {
         }
         }
         let results = ordenesPendientes
-        if (busqueda === "instalados") {
-          results = instalaciones
-            
-          } else{
-            results = ordenesPendientes
-          }
+  if (busqueda === "instalados") {
+    if (perfiluser === "Tecnico") {
+      results = instalacionesforuser
+    } else {
+      results = instalaciones
+    }
+  } else {
+    results = ordenesPendientes
+  }
 
         //Funcion de Busqueda DNI
   const searcherdni = (e) =>{
@@ -723,7 +757,6 @@ if (busquedadni === "") {
 
         useEffect(() =>{
           getInstalacionesPendientes();
-          getInstalaciones();
           // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
 
