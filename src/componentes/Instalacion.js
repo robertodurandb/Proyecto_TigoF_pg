@@ -149,7 +149,7 @@ let fechaactual = `${API.DATENOW}`
     formData.append('image', userInfo.file);
     if (invalidImage==null) {
       try {
-        await Axios.put(ipbackend+'updatefotocajaantes/'+num_contrato, formData, {
+        await Axios.put(ipbackend+'updatefotocajaantes/'+id_ordentrabajo, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${token}`
@@ -158,6 +158,8 @@ let fechaactual = `${API.DATENOW}`
           alert("Se cargó imagen con éxito ")
           ventanaModalImagen();
           getInstalaciones();
+          getInstalacionesPendientes();
+          getInstalacionesforuser();
           limpiarcampos();
     } catch (error) {
         console.error(error);
@@ -172,7 +174,7 @@ const handleSubmitImgPotenciaAntes = async (event) => {
   formData.append('image', userInfo.file);
   if (invalidImage==null) {
     try {
-      await Axios.put(ipbackend+'updatefotopotenciaantes/'+num_contrato, formData, {
+      await Axios.put(ipbackend+'updatefotopotenciaantes/'+id_ordentrabajo, formData, {
           headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`
@@ -181,6 +183,8 @@ const handleSubmitImgPotenciaAntes = async (event) => {
         alert("Se cargó imagen con éxito ")
         ventanaModalImagen();
         getInstalaciones();
+        getInstalacionesPendientes();
+        getInstalacionesforuser();
         limpiarcampos();
 
   } catch (error) {
@@ -196,7 +200,7 @@ const handleSubmitImgCajaDespues = async (event) => {
   formData.append('image', userInfo.file);
   if (invalidImage==null) {
     try {
-      await Axios.put(ipbackend+'updatefotocajadespues/'+num_contrato, formData, {
+      await Axios.put(ipbackend+'updatefotocajadespues/'+id_ordentrabajo, formData, {
           headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`
@@ -204,6 +208,8 @@ const handleSubmitImgCajaDespues = async (event) => {
       });
         alert("Se cargó imagen con éxito ")
         getInstalaciones();
+        getInstalacionesPendientes();
+        getInstalacionesforuser();
         ventanaModalImagen();
         limpiarcampos();
   } catch (error) {
@@ -219,7 +225,7 @@ const handleSubmitImgPotenciaDespues = async (event) => {
   formData.append('image', userInfo.file);
   if (invalidImage==null) {
     try {
-      await Axios.put(ipbackend+'updatefotopotenciadespues/'+num_contrato, formData, {
+      await Axios.put(ipbackend+'updatefotopotenciadespues/'+id_ordentrabajo, formData, {
           headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`
@@ -227,6 +233,8 @@ const handleSubmitImgPotenciaDespues = async (event) => {
       });
         alert("Se cargó imagen con éxito ")
         getInstalaciones();
+        getInstalacionesPendientes();
+        getInstalacionesforuser();
         ventanaModalImagen();
         limpiarcampos();
   } catch (error) {
@@ -242,7 +250,7 @@ const handleSubmitImgInstalacionInterna = async (event) => {
   formData.append('image', userInfo.file);
   if (invalidImage==null) {
     try {
-      await Axios.put(ipbackend+'updatefotoinstalacion/'+num_contrato, formData, {
+      await Axios.put(ipbackend+'updatefotoinstalacion/'+id_ordentrabajo, formData, {
           headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`
@@ -250,6 +258,8 @@ const handleSubmitImgInstalacionInterna = async (event) => {
       });
         alert("Se cargó imagen con éxito ")
         getInstalaciones();
+        getInstalacionesPendientes();
+        getInstalacionesforuser();
         ventanaModalImagen();
         limpiarcampos();
   } catch (error) {
@@ -265,7 +275,7 @@ const handleSubmitImgPotenciaInterna = async (event) => {
   formData.append('image', userInfo.file);
   if (invalidImage==null) {
     try {
-      await Axios.put(ipbackend+'updatefotopotenciainterna/'+num_contrato, formData, {
+      await Axios.put(ipbackend+'updatefotopotenciainterna/'+id_ordentrabajo, formData, {
           headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${token}`
@@ -273,6 +283,8 @@ const handleSubmitImgPotenciaInterna = async (event) => {
       });
         alert("Se cargó imagen con éxito ")
         getInstalaciones();
+        getInstalacionesPendientes();
+        getInstalacionesforuser();
         ventanaModalImagen();
         limpiarcampos();
   } catch (error) {
@@ -288,7 +300,7 @@ const handleSubmitImgPotenciaInterna = async (event) => {
       formData.append('image', userInfo.file);
       if (invalidImage==null) {
         try {
-          await Axios.put(ipbackend+'updatefotocontrato/'+num_contrato, formData, {
+          await Axios.put(ipbackend+'updatefotocontrato/'+id_ordentrabajo, formData, {
               headers: {
                   'Content-Type': 'multipart/form-data',
                   'Authorization': `Bearer ${token}`
@@ -296,6 +308,8 @@ const handleSubmitImgPotenciaInterna = async (event) => {
           });
             alert("Se cargó imagen con éxito ")
             getInstalaciones();
+            getInstalacionesPendientes();
+            getInstalacionesforuser();
             ventanaModalImagen();
             limpiarcampos();
       } catch (error) {
@@ -311,7 +325,7 @@ const handleSubmitImgPotenciaInterna = async (event) => {
     formData.append('image', userInfo.file);
     if (invalidImage==null) {
       try {
-        await Axios.put(ipbackend+'updatefotocasa/'+num_contrato, formData, {
+        await Axios.put(ipbackend+'updatefotocasa/'+id_ordentrabajo, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${token}`
@@ -319,6 +333,8 @@ const handleSubmitImgPotenciaInterna = async (event) => {
         });
           alert("Se cargó imagen con éxito ")
           getInstalaciones();
+          getInstalacionesPendientes();
+          getInstalacionesforuser();
           ventanaModalImagen();
           limpiarcampos();
     } catch (error) {
@@ -567,16 +583,17 @@ const getInstalaciones = async () => {
         
     }
     const capturarIDforimage = () =>{
-      if (num_contrato==undefined) {
+      if (selectedRow==undefined) {
         alert("Debe seleccionar un registro")
       } else {
-        console.log(imgcontrato)
+        setId_ordentrabajo(selectedRow);
+        console.log(selectedRow)
         ventanaModalImagen();
       }
   }
 
     const capturarIDinstalacion = () =>{
-      if (num_contrato==undefined) {
+      if (num_contrato==undefined || selectedRow==undefined) {
         alert("Debe seleccionar un registro")
       } else {
       setEditar(true);
@@ -629,6 +646,14 @@ const getInstalaciones = async () => {
       setNombrecliente(cliente.nombrecli);
       setGeolocalizacion(cliente.geolocalizacion);
       setCobro_instalacion(cliente.costo_instalacion);
+      setImgcaja_antes(cliente.nombreimg_caja_antes);
+      setImgpotencia_antes(cliente.nombreimg_potencia_antes);
+      setImgcaja_despues(cliente.nombreimg_caja_despues);
+      setImgpotencia_despues(cliente.nombreimg_potencia_despues);
+      setImginstalacion_interna(cliente.nombreimg_instalacion_interna);
+      setImgpotencia_interna(cliente.nombreimg_potencia_interna);
+      setImgcontrato(cliente.nombreimg_contrato);
+      setImgcasa(cliente.nombreimg_casa);
       console.log(cliente.planinicial_idplanes)
       console.log(cliente.id_ordentrabajo)
       console.log("Esta seleccionando una fila de los pendientes de instalacion")
@@ -717,10 +742,12 @@ const getInstalaciones = async () => {
         getInstalacionesforuser();
         if(e.target.value=="instalados"){
           console.log("instalados")
+          limpiarcampos();
           setSelect_instalados(true)
         }
         if(e.target.value=="pendientes"){
           console.log("pendientes")
+          limpiarcampos();
           setSelect_instalados(false)
         }
         }
@@ -784,7 +811,7 @@ if (busquedadni === "") {
                 class="btn btn-outline-primary"
                 onClick={capturarIDforimage}
               >
-                Registrar fotos
+                Editar fotos
               </button>
               
             </div>
@@ -793,6 +820,14 @@ if (busquedadni === "") {
             
             
           ) : (
+            <>
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                onClick={capturarIDforimage}
+              >
+                Registrar fotos
+              </button>
             <button
                 type="button"
                 class="btn btn-outline-primary"
@@ -800,6 +835,7 @@ if (busquedadni === "") {
               >
                 Registrar Instalación
               </button>
+            </> 
           )}
 
           <div className="mb-3">

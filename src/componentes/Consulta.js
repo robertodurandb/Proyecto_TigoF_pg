@@ -551,11 +551,11 @@ function Consulta() {
                         <div className="col-6">{referenciacli}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Ubicación:</div>
+                        <div className='col-4'>Ubicación(ventas):</div>
                         <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Ubicación2:</div>
+                        <div className='col-4'>Ubicación(tec):</div>
                         <div className="col-6">
                             <Link
                                                         to={
