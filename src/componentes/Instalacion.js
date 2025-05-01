@@ -18,7 +18,6 @@ let fechaactual = `${API.DATENOW}`
     const [perfiluser, setPerfiluser] = useState("");
     const [select_instalados, setSelect_instalados] = useState(false)
 
-
     const [id_ordentrabajo, setId_ordentrabajo] = useState();
     const [num_contrato, setNum_contrato] = useState();
     const [contrato, setContrato] = useState();
@@ -36,7 +35,7 @@ let fechaactual = `${API.DATENOW}`
     const [splitter_instalacion, setSplitterinstalacion] = useState("");
     const [user_mk, setUser_mk] = useState("");
     const [cobro_instalacion, setCobro_instalacion] = useState(0);
-    const [condicion_equipo, setCondicion_equipo] = useState("Alquiler");
+    const [condicion_equipo, setCondicion_equipo] = useState("ALQUILER");
     const [cobro_equipo, setCobro_equipo] = useState(0);
     const [tipo_equipo, setTipo_equipo] = useState("");
     const [dia_pago, setDia_pago] = useState("");
@@ -57,9 +56,16 @@ let fechaactual = `${API.DATENOW}`
     // const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null);
     const [invalidImage, setinvalidImage] = useState(null);
-    const [userInfo, setuserInfo] = useState({
-      file:[],
-      filepreview:null,
+
+  const [images, setImages] = useState({
+    cajaAntes: { file: null, preview: null, name: imgcaja_antes },
+    potenciaAntes: { file: null, preview: null, name: imgpotencia_antes },
+    cajaDespues: { file: null, preview: null, name: imgcaja_despues },
+    potenciaDespues: { file: null, preview: null, name: imgpotencia_despues },
+    instalacionInterna: { file: null, preview: null, name: imginstalacion_interna },
+    potenciaInterna: { file: null, preview: null, name: imgpotencia_interna },
+    contrato: { file: null, preview: null, name: imgcontrato },
+    casa: { file: null, preview: null, name: imgcasa }
   });
 
     const maxLengthObservacion = 100;
@@ -67,12 +73,10 @@ let fechaactual = `${API.DATENOW}`
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
     const [modalImagen, setModalImagen] = useState(false);
-    // const [modalGeo, setModalGeo] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
     const ventanaModalImagen = () => setModalImagen(!modalImagen);
-    // const ventanaModalGeo = () => setModalGeo(!modalGeo);
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser");
@@ -81,7 +85,7 @@ let fechaactual = `${API.DATENOW}`
 
     //***************** CODIGO PARA SUBIR IMAGEN **********//
   let reader = new FileReader();
-  const handleImageChange = (event) => {
+  const handleImageChange = (event, imageType) => {
     const imageFile = event.target.files[0];
     const imageFilname = event.target.files[0].name;
  
@@ -123,12 +127,16 @@ let fechaactual = `${API.DATENOW}`
              type: 'image/jpeg',
              lastModified: Date.now()
          });
-         setuserInfo({
-            ...userInfo,
-            file:file,
-            filepreview:URL.createObjectURL(imageFile),
-       })
-       }, 'image/jpeg', 1);
+      setImages(prev => ({
+        ...prev,
+        [imageType]: {
+          ...prev[imageType],
+          file: file,
+          preview: URL.createObjectURL(imageFile),
+          name: imageFile.name
+        }
+      }));
+    }, 'image/jpeg', 1);
      setinvalidImage(null)
      };
       img.onerror = () => {
@@ -143,220 +151,60 @@ let fechaactual = `${API.DATENOW}`
   };
   //********************************************** */
   
-  const handleSubmitImgCajaAntes = async (event) => {
+  const handleSubmitImage = async (event, endpoint, imageType) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append('image', userInfo.file);
-    if (invalidImage==null) {
-      try {
-        await Axios.put(ipbackend+'updatefotocajaantes/'+id_ordentrabajo, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-          alert("Se cargó imagen con éxito ")
-          ventanaModalImagen();
-          getInstalaciones();
-          getInstalacionesPendientes();
-          getInstalacionesforuser();
-          limpiarcampos();
-    } catch (error) {
-        console.error(error);
+    const imageData = images[imageType];
+    
+    if (!imageData.file) {
+      alert('Por favor seleccione una imagen');
+      return;
     }
-    } else {
-      alert(invalidImage)
-    }
-};
-const handleSubmitImgPotenciaAntes = async (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append('image', userInfo.file);
-  if (invalidImage==null) {
-    try {
-      await Axios.put(ipbackend+'updatefotopotenciaantes/'+id_ordentrabajo, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        alert("Se cargó imagen con éxito ")
-        ventanaModalImagen();
-        getInstalaciones();
-        getInstalacionesPendientes();
-        getInstalacionesforuser();
-        limpiarcampos();
-
-  } catch (error) {
-      console.error(error);
-  }
-  } else {
-    alert(invalidImage)
-  }
-};
-const handleSubmitImgCajaDespues = async (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append('image', userInfo.file);
-  if (invalidImage==null) {
-    try {
-      await Axios.put(ipbackend+'updatefotocajadespues/'+id_ordentrabajo, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        alert("Se cargó imagen con éxito ")
-        getInstalaciones();
-        getInstalacionesPendientes();
-        getInstalacionesforuser();
-        ventanaModalImagen();
-        limpiarcampos();
-  } catch (error) {
-      console.error(error);
-  }
-  } else {
-    alert(invalidImage)
-  }
-};
-const handleSubmitImgPotenciaDespues = async (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append('image', userInfo.file);
-  if (invalidImage==null) {
-    try {
-      await Axios.put(ipbackend+'updatefotopotenciadespues/'+id_ordentrabajo, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        alert("Se cargó imagen con éxito ")
-        getInstalaciones();
-        getInstalacionesPendientes();
-        getInstalacionesforuser();
-        ventanaModalImagen();
-        limpiarcampos();
-  } catch (error) {
-      console.error(error);
-  }
-  } else {
-    alert(invalidImage)
-  }
-};
-const handleSubmitImgInstalacionInterna = async (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append('image', userInfo.file);
-  if (invalidImage==null) {
-    try {
-      await Axios.put(ipbackend+'updatefotoinstalacion/'+id_ordentrabajo, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        alert("Se cargó imagen con éxito ")
-        getInstalaciones();
-        getInstalacionesPendientes();
-        getInstalacionesforuser();
-        ventanaModalImagen();
-        limpiarcampos();
-  } catch (error) {
-      console.error(error);
-  }
-  } else {
-    alert(invalidImage)
-  }
-};
-const handleSubmitImgPotenciaInterna = async (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append('image', userInfo.file);
-  if (invalidImage==null) {
-    try {
-      await Axios.put(ipbackend+'updatefotopotenciainterna/'+id_ordentrabajo, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        alert("Se cargó imagen con éxito ")
-        getInstalaciones();
-        getInstalacionesPendientes();
-        getInstalacionesforuser();
-        ventanaModalImagen();
-        limpiarcampos();
-  } catch (error) {
-      console.error(error);
-  }
-  } else {
-    alert(invalidImage)
-  }
-};
-  const handleSubmitImgContrato = async (event) => {
-      event.preventDefault();
-      const formData = new FormData();
-      formData.append('image', userInfo.file);
-      if (invalidImage==null) {
-        try {
-          await Axios.put(ipbackend+'updatefotocontrato/'+id_ordentrabajo, formData, {
-              headers: {
-                  'Content-Type': 'multipart/form-data',
-                  'Authorization': `Bearer ${token}`
-              }
-          });
-            alert("Se cargó imagen con éxito ")
-            getInstalaciones();
-            getInstalacionesPendientes();
-            getInstalacionesforuser();
-            ventanaModalImagen();
-            limpiarcampos();
-      } catch (error) {
-          console.error(error);
-      }
-      } else {
-        alert(invalidImage)
-      }
-  };
-  const handleSubmitImgCasa = async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('image', userInfo.file);
-    if (invalidImage==null) {
-      try {
-        await Axios.put(ipbackend+'updatefotocasa/'+id_ordentrabajo, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-          alert("Se cargó imagen con éxito ")
-          getInstalaciones();
-          getInstalacionesPendientes();
-          getInstalacionesforuser();
-          ventanaModalImagen();
-          limpiarcampos();
-    } catch (error) {
-        console.error(error);
-    }
-    } else {
-      alert(invalidImage)
-    }
-};
-
   
-  //FUNCION PARA VER GEOLOCALIZACION
-  // function contieneBarra() {
-  //   if (geolocalizacion.includes('/')) {
-  //     console.log("si incluye /")
-  //     let newgeo = geolocalizacion.replace("/",",");
-  //     return(newgeo)
-  //   } else {
-  //     console.log("no incluye /")
-  //     return(geolocalizacion)
-  //   }
-  // }
+    const formData = new FormData();
+    formData.append('image', imageData.file);
+  
+    try {
+      await Axios.put(`${ipbackend}${endpoint}/${id_ordentrabajo}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      // Actualizar el estado con el nombre del archivo devuelto por el backend
+      const response = await Axios.get(`${ipbackend}getordentrabajo/${id_ordentrabajo}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+  
+      setImages(prev => ({
+        ...prev,
+        [imageType]: {
+          ...prev[imageType],
+          name: response.data[`nombreimg_${imageType.replace(/([A-Z])/g, '_$1').toLowerCase()}`]
+        }
+      }));
+  
+      alert(`Imagen ${imageType} cargada con éxito`);
+      getInstalacionesPendientes();
+    } catch (error) {
+      console.error(error);
+      alert('Error al cargar la imagen');
+    }
+
+    // Limpiar preview después de 5 segundos
+  setTimeout(() => {
+    setImages(prev => ({
+      ...prev,
+      [imageType]: {
+        ...prev[imageType],
+        preview: null
+      }
+    }));
+    if (images[imageType].preview) {
+      URL.revokeObjectURL(images[imageType].preview);
+    }
+  }, 5000);
+  };
   
   // FUNCION PARA OBTENER LAS COORDENADAS DEL TECNICO CON UN BOTÓN
   // En tu formulario de instalación
@@ -506,29 +354,6 @@ const obtenerUbicacion = () => {
         }
       };
 
-      // const updateGeolocalizacion = () => {
-      //   let newgeo = contieneBarra();
-      //   Axios.put(ipbackend+"updatecliente/"+dnicliente, {
-      //       geolocalizacion: newgeo,
-      //   },{
-      //     headers: {
-      //       'Authorization': `Bearer ${token}`
-      //     }
-      //   }).then(() => {
-      //     limpiarcampos();
-      //     ventanaModalGeo();
-      //     getInstalaciones();
-      //     alert("Geolocalización Actualizado con exito");
-      //   }).catch((error) => {
-      //     if (401 === error.response.status){
-      //     sessionStorage.removeItem("token");
-      //     window.location.reload();
-      //     alert("Sesión expirada, vuelva a iniciar sesión");
-      //     }
-      //     return error;
-      //     });
-      // };
-
       const getInstalacionesPendientes = async () => {
         try {
           const response = await Axios.get(ipbackend+'orders_pending', {
@@ -677,23 +502,15 @@ const getInstalaciones = async () => {
         setLongitud();
         setinvalidImage(null);
         setSelectedRow(null);
-        setuserInfo({
-          file:[],
-          filepreview:null
-        })
 
         setEditar(false);
       }
       const limpiarcamposeditar = ()=>{
         setFecha_actual(fechaactual);
         setinvalidImage(null);
-        setuserInfo({
-          file:[],
-          filepreview:null
-        })
-
         setEditar(false);
       }
+
       const cerrarModal = ()=>{
         limpiarcampos();
         ventanaModal();
@@ -702,12 +519,32 @@ const getInstalaciones = async () => {
         limpiarcamposeditar();
         ventanaModal();
       }
-      const cerrarModalImagen = ()=>{
-       ventanaModalImagen();
-      }
-      // const cerrarModalGeo = ()=>{
-      //   ventanaModalGeo();
-      //  }
+      const cerrarModalImagen = () => {
+        // Liberar las URLs de los previews para evitar memory leaks
+        if (images.cajaAntes.preview) URL.revokeObjectURL(images.cajaAntes.preview);
+        if (images.potenciaAntes.preview) URL.revokeObjectURL(images.potenciaAntes.preview);
+        if (images.cajaDespues.preview) URL.revokeObjectURL(images.cajaDespues.preview);
+        if (images.potenciaDespues.preview) URL.revokeObjectURL(images.potenciaDespues.preview);
+        if (images.instalacionInterna.preview) URL.revokeObjectURL(images.instalacionInterna.preview);
+        if (images.potenciaInterna.preview) URL.revokeObjectURL(images.potenciaInterna.preview);
+        if (images.contrato.preview) URL.revokeObjectURL(images.contrato.preview);
+        if (images.casa.preview) URL.revokeObjectURL(images.casa.preview);
+        // Resetear el estado de los previews
+        setImages({
+          cajaAntes: { ...images.cajaAntes, file: null, preview: null, name: null },
+          potenciaAntes: { ...images.potenciaAntes, file: null, preview: null, name: null },
+          cajaDespues: { ...images.cajaDespues, file: null, preview: null, name: null },
+          potenciaDespues: { ...images.potenciaDespues, file: null, preview: null, name: null },
+          instalacionInterna: { ...images.instalacionInterna, file: null, preview: null, name: null },
+          potenciaInterna: { ...images.potenciaInterna, file: null, preview: null, name: null },
+          contrato: { ...images.contrato, file: null, preview: null, name: null },
+          casa: { ...images.casa, file: null, preview: null, name: null }
+        });
+        setSelectedRow(null)
+        // Cerrar el modal
+        ventanaModalImagen();
+      };
+
   const verimagen1 = () => {
     window.open(ipbackend + imgcaja_antes, "_blank");
   }
@@ -782,10 +619,27 @@ if (busquedadni === "") {
   results = newfilter;
 }
 
-        useEffect(() =>{
-          getInstalacionesPendientes();
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [])
+        // useEffect para carga inicial (se ejecuta solo al montar el componente)
+  useEffect(() => {
+    getInstalacionesPendientes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+
+    if (selectedRow) {
+      setImages({
+        cajaAntes: { ...images.cajaAntes, name: imgcaja_antes },
+        potenciaAntes: { ...images.potenciaAntes, name: imgpotencia_antes },
+        cajaDespues: { ...images.cajaDespues, name: imgcaja_despues },
+        potenciaDespues: { ...images.potenciaDespues, name: imgpotencia_despues },
+        instalacionInterna: { ...images.instalacionInterna, name: imginstalacion_interna },
+        potenciaInterna: { ...images.potenciaInterna, name: imgpotencia_interna },
+        contrato: { ...images.contrato, name: imgcontrato },
+        casa: { ...images.casa, name: imgcasa }
+      });
+    }
+  }, [imgcaja_antes, imgpotencia_antes, imgcaja_despues, imgpotencia_despues, imginstalacion_interna, imgpotencia_interna, imgcontrato, imgcasa, selectedRow])
 
       return (
         <div className="App">
@@ -872,8 +726,8 @@ if (busquedadni === "") {
                       <th>cobro instalacion</th>
                       <th>CT Splitter</th>
                       <th>User_MK</th>
-                      <th>Ubicación</th>
-                      <th>Geolocalización</th>
+                      <th>Ubicación (Maps)</th>
+                      <th>Coordenadas</th>
                       <th>Técnico</th>
                       <th>Fecha Instalacion</th>
                     </>
@@ -1040,8 +894,8 @@ if (busquedadni === "") {
                     id="condicion_equipo"
                     aria-describedby="basic-addon1"
                   >
-                    <option>Alquiler</option>
-                    <option>Venta</option>
+                    <option>ALQUILER</option>
+                    <option>VENTA</option>
                   </select>
                 </div>
                 <div className="mb-3">
@@ -1055,7 +909,7 @@ if (busquedadni === "") {
                       setTipo_equipo(event.target.value);
                     }}
                     maxLength={100}
-                    className="form-control"
+                    className="form-control uppercase-input"
                     id="Equipo ONT"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1101,7 +955,7 @@ if (busquedadni === "") {
                       setCajainstalacion(event.target.value);
                     }}
                     maxLength={40}
-                    className="form-control"
+                    className="form-control uppercase-input"
                     id="cajainstalacion"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1117,7 +971,7 @@ if (busquedadni === "") {
                       setSplitterinstalacion(event.target.value);
                     }}
                     maxLength={40}
-                    className="form-control"
+                    className="form-control uppercase-input"
                     id="splitter_instalacion"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1133,7 +987,7 @@ if (busquedadni === "") {
                       setUser_mk(event.target.value);
                     }}
                     maxLength={20}
-                    className="form-control"
+                    className="form-control uppercase-input"
                     id="observacion"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1149,7 +1003,7 @@ if (busquedadni === "") {
                       setObservacion(event.target.value);
                     }}
                     maxLength={maxLengthObservacion}
-                    className="form-control"
+                    className="form-control uppercase-input"
                     id="observacion"
                     aria-describedby="basic-addon1"
                   ></input>
@@ -1206,183 +1060,300 @@ if (busquedadni === "") {
 
           <Modal isOpen={modalImagen} toggle={ventanaModalImagen}>
             <ModalBody>
-              <div className="from-group h3">
-                Adjuntar fotos:
-                <span>{" " + apellidocliente + " " + nombrecliente}</span>
+              <div className="from-group">
+                <h3 className="text-center">****CARGAR IMAGENES****</h3>
+                <h5>CLIENTE:<span>{" " + apellidocliente + " " + nombrecliente}</span></h5> 
               </div>
+
               {/* FOTO 1 CAJA ANTES */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 1 Caja antes:{" "}
-                </label>
-                <button onClick={verimagen1}>{imgcaja_antes}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgCajaAntes}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 1 Caja antes:</label>
+                {images.cajaAntes.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen1()}
+                  >
+                    {images.cajaAntes.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotocajaantes', 'cajaAntes')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'cajaAntes')}
+                      key={`cajaAntes-${images.cajaAntes.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.cajaAntes.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.cajaAntes.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
+
               {/* FOTO 2 POTENCIA ANTES */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 2 Potencia antes:{" "}
-                </label>
-                <button onClick={verimagen2}>{imgpotencia_antes}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgPotenciaAntes}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 2 Potencia antes:</label>
+                {images.potenciaAntes.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen2()}
+                  >
+                    {images.potenciaAntes.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotopotenciaantes', 'potenciaAntes')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'potenciaAntes')}
+                      key={`potenciaAntes-${images.cajaAntes.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.potenciaAntes.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.potenciaAntes.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
+
               {/* FOTO 3 CAJA DESPUES */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 3 Caja después:{" "}
-                </label>
-                <button onClick={verimagen3}>{imgcaja_despues}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgCajaDespues}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 3 Caja despues:</label>
+                {images.cajaDespues.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen3()}
+                  >
+                    {images.cajaDespues.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotocajadespues', 'cajaDespues')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'cajaDespues')}
+                      key={`cajaDespues-${images.cajaDespues.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.cajaDespues.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.cajaDespues.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
+
               {/* FOTO 4 POTENCIA DESPUES */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 4 Potencia después:{" "}
-                </label>
-                <button onClick={verimagen4}>{imgpotencia_despues}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgPotenciaDespues}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 4 Potencia despues:</label>
+                {images.potenciaDespues.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen4()}
+                  >
+                    {images.potenciaDespues.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotopotenciadespues', 'potenciaDespues')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'potenciaDespues')}
+                      key={`potenciaDespues-${images.potenciaDespues.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.potenciaDespues.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.potenciaDespues.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
-              {/* FOTO 5 INSTALACION INTERIOR */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 5 Instalación interior:{" "}
-                </label>
-                <button onClick={verimagen5}>{imginstalacion_interna}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgInstalacionInterna}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+
+              {/* FOTO 5 INSTALACION INTERNA */}
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 5 Instalación interna:</label>
+                {images.instalacionInterna.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen5()}
+                  >
+                    {images.instalacionInterna.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotoinstalacion', 'instalacionInterna')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'instalacionInterna')}
+                      key={`instalacionInterna-${images.instalacionInterna.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.instalacionInterna.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.instalacionInterna.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
-              {/* FOTO 6 POTENCIA INTERIOR */}
-              <div>
-                <label className="form-label fw-bold">
-                  Foto 6 Potencia interior:{" "}
-                </label>
-                <button onClick={verimagen6}>{imgpotencia_interna}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgPotenciaInterna}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+
+              {/* FOTO 6 POTENCIA INTERNA */}
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 6 Potencia interna:</label>
+                {images.potenciaInterna.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen6()}
+                  >
+                    {images.potenciaInterna.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotopotenciainterna', 'potenciaInterna')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'potenciaInterna')}
+                      key={`potenciaInterna-${images.potenciaInterna.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.potenciaInterna.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.potenciaInterna.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
+
               {/* FOTO 7 CONTRATO */}
-              <div>
-                <label className="form-label fw-bold">Foto 7 Contrato: </label>
-                <button onClick={verimagen7}>{imgcontrato}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgContrato}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 8 Contrato:</label>
+                {images.contrato.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen7()}
+                  >
+                    {images.contrato.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotocontrato', 'contrato')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'contrato')}
+                      key={`contrato-${images.contrato.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.contrato.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.contrato.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
+
               {/* FOTO 8 CASA */}
-              <div>
-                <label className="form-label fw-bold">Foto 8 Casa: </label>
-                <button onClick={verimagen8}>{imgcasa}</button>
-                <br />
-                <form
-                  className="input-group mb-3"
-                  onSubmit={handleSubmitImgCasa}
-                >
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleImageChange}
-                  />
-                  <br />
-                  <button type="submit" className="btn btn-secondary">
-                    Cargar
+              <div className="mb-4">
+                <label className="form-label fw-bold d-block">Foto 8 Casa:</label>
+                {images.casa.name && (
+                  <button
+                    className="btn btn-link p-0 mb-2"
+                    onClick={() => verimagen8()}
+                  >
+                    {images.casa.name}
                   </button>
+                )}
+                <form onSubmit={(e) => handleSubmitImage(e, 'updatefotocasa', 'casa')}>
+                  <div className="input-group">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleImageChange(e, 'casa')}
+                      key={`casa-${images.casa.name}`} // Forzar re-render al cambiar
+                    />
+                    <button type="submit" className="btn btn-primary">
+                      Cargar
+                    </button>
+                  </div>
+                  {images.casa.preview && (
+                    <div className="mt-2">
+                      <img
+                        src={images.casa.preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        className="img-thumbnail"
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
             </ModalBody>
+
             <ModalFooter>
               <div>
                 <button className="btn btn-danger" onClick={cerrarModalImagen}>
@@ -1392,39 +1363,6 @@ if (busquedadni === "") {
             </ModalFooter>
           </Modal>
 
-          {/* <Modal isOpen={modalGeo} toggle={ventanaModalGeo}>
-            <ModalBody>
-              <div className="from-group h3">
-                Actualizar Geolocalización:
-                <span>{" " + apellidocliente + " " + nombrecliente}</span>
-                <br />
-                <input
-                  type="text"
-                  value={geolocalizacion}
-                  onChange={(event) => {
-                    setGeolocalizacion(event.target.value);
-                  }}
-                  className="form-control"
-                  id="geolocalizacion"
-                  placeholder="Ingresar las coordenadas"
-                  aria-describedby="basic-addon1"
-                ></input>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <div>
-                <button
-                  className="btn btn-warning m-2"
-                  onClick={updateGeolocalizacion}
-                >
-                  Actualizar
-                </button>
-                <button className="btn btn-danger" onClick={cerrarModalGeo}>
-                  Cancelar
-                </button>
-              </div>
-            </ModalFooter>
-          </Modal> */}
         </div>
       );
 }

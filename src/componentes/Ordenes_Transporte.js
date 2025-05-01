@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import '../estilos/style.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import API from '../utils/const';
 
@@ -475,7 +476,7 @@ if (busqueda === "") {
                 <label for="costo_instalacion" className="form-label">
                   Costo Instalacion:
                 </label>
-                <input type="text" value={costo_instalacion}
+                <input type="num" value={costo_instalacion}
                   onChange={(event) => { setCosto_instalacion(event.target.value); }}
                   className="form-control" id="costo_instalacion" placeholder="Costo instalacion" aria-describedby="basic-addon1"
                 ></input>
@@ -487,7 +488,7 @@ if (busqueda === "") {
                 <input type="text" value={observacion}
                   onChange={(event) => { setObservacion(event.target.value); }}
                   maxLength={maxLengthIndicaciones}
-                  className="form-control" id="observacion" aria-describedby="basic-addon1"
+                  className="form-control uppercase-input" id="observacion" aria-describedby="basic-addon1"
                 ></input>
                 <div>
                 {observacion.length} caracteres
@@ -515,10 +516,10 @@ if (busqueda === "") {
         <Modal isOpen={modalMostrar2} toggle={ventanaModal2}>
           <ModalBody>
             <div className="from-group">
-              <h4 className="">Paso 1: Datos del Cliente</h4>
+              <h4 className="">PASO 1: DATOS DEL CLIENTE</h4>
               <p>***************************************</p>
               <div className="mb-3">
-                <label for="dnicliente" className="form-label">DNI Cliente:</label>
+                <label for="dnicliente" className="form-label">DNI CLIENTE:</label>
                   <input type="text" value={cliente_dnicliente} onChange={(event) => {
                     setCliente_dnicliente(event.target.value);
                   }} className="form-control" id="dnicliente" aria-describedby="basic-addon1">
@@ -528,33 +529,33 @@ if (busqueda === "") {
 
               </div>
               <div className="mb-3">
-                <label for="nombres" className="form-label">Nombres:</label>
+                <label for="nombres" className="form-label">NOMBRES:</label>
                   <input type="text" value={nombrecli} onChange={(event) => {
                     setNombrecli(event.target.value);
-                  }} className="form-control" id="nombres" aria-describedby="basic-addon1">
+                  }} className="form-control uppercase-input" id="nombres" aria-describedby="basic-addon1">
                   </input>
               </div>
               <div className="mb-3">
-                <label for="apellidos" className="form-label">Apellidos Completos:</label>
+                <label for="apellidos" className="form-label">APELLIDOS:</label>
                 <input type="text" value={apellidocli} onChange={(event) => {
                     setApellidocli(event.target.value);
-                  }} className="form-control" id="apellidos" aria-describedby="basic-addon1"
+                  }} className="form-control uppercase-input" id="apellidos" aria-describedby="basic-addon1"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="provincia" className="form-label">Provincia: </label>
+                <label for="provincia" className="form-label">PROVINCIA: </label>
                 <select value={provinciacli} onChange={(event) => {
                     setProvinciacli(event.target.value);
                   }}
                   className="form-control" id="provincia" aria-label="provincia" aria-describedby="basic-addon1"
                 >
-                  <option>Lima</option>
-                  <option>Piura</option>
+                  <option>LIMA</option>
+                  <option>PIURA</option>
                 </select>
               </div>
               <div className="mb-3">
                           <label for='sedes' className="form-label">
-                            Sede:
+                            SEDE:
                           </label>
                           <select
                             className="form-control"
@@ -563,7 +564,7 @@ if (busqueda === "") {
                             value={sedecli}
                             onChange={handleSedeChange}
                           >
-                            <option value="">- Seleccione una opción -</option>
+                            <option value="">- OPCIONES -</option>
                             {sedes.map((sede) => {
                               return (
                                 <>
@@ -576,21 +577,21 @@ if (busqueda === "") {
                           </select>                         
                 </div>
               <div className="mb-3">
-                <label for="distrito" className="form-label"> Distrito:</label>
+                <label for="distrito" className="form-label"> DISTRITO:</label>
                 <input type="text" value={distritocli} onChange={(event) => {
                     setDistritocli(event.target.value);
                   }}
-                  className="form-control" id="distrito" aria-describedby="basic-addon1"
+                  className="form-control uppercase-input" id="distrito" aria-describedby="basic-addon1"
                 ></input>
 
               </div>
               <div className="mb-3">
-                <label for="direccion" className="form-label">Direccion exacta: </label>
+                <label for="direccion" className="form-label">DIRECCIÓN: </label>
                 <input type="text" value={direccioncli} onChange={(event) => {
                     setDireccioncli(event.target.value);
                   }}
                   maxLength={maxLengthDireccion}
-                  className="form-control" id="direccion" aria-describedby="basic-addon1"
+                  className="form-control uppercase-input" id="direccion" aria-describedby="basic-addon1"
                 ></input>
                 <div>{direccioncli.length} caracteres</div>
               {direccioncli.length >= maxLengthDireccion && (
@@ -600,12 +601,12 @@ if (busqueda === "") {
               )}
               </div>
               <div className="mb-3">
-                <label for="referenciacli" className="form-label">Referencia:</label>
+                <label for="referenciacli" className="form-label">REFERENCIA:</label>
                 <input type="text" value={referenciacli} onChange={(event) => {
                     setReferenciacli(event.target.value);
                   }}
                   maxLength={maxLengthReferencia}
-                  className="form-control" id="referenciacli" aria-describedby="basic-addon1"
+                  className="form-control uppercase-input" id="referenciacli" aria-describedby="basic-addon1"
                 ></input>
                 <div>{referenciacli.length} caracteres</div>
               {referenciacli.length >= maxLengthReferencia && (
@@ -615,15 +616,15 @@ if (busqueda === "") {
               )}
               </div>
               <div className="mb-3">
-                <label for="geolocalizacion" className="form-label">Geolocalización URL Maps:</label>
+                <label for="geolocalizacion" className="form-label">UBICACIÓN MAPS:</label>
                 <input type="text" value={geolocalizacion} onChange={(event) => {
                     setGeolocalizacion(event.target.value);
                   }}
-                  className="form-control" id="geolocalizacion" aria-describedby="basic-addon1"
+                  className="form-control" id="geolocalizacion" aria-describedby="basic-addon1" placeholder="Ejm: https://maps.app.goo.gl/*****"
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="telefono1" className="form-label">Telefono 1 (oligatorio):</label>
+                <label for="telefono1" className="form-label">TELEFONO 1:</label>
                 <input type="number" value={telefonocli} onChange={(event) => {
                     setTelefonocli(event.target.value);
                   }}
@@ -631,7 +632,7 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="telefono2" className="form-label">Telefono 2 (opcional):</label>
+                <label for="telefono2" className="form-label">TELEFONO 2 (opcional):</label>
                 <input type="number" value={telefonocli2} onChange={(event) => {
                     setTelefonocli2(event.target.value);
                   }}
@@ -642,10 +643,10 @@ if (busqueda === "") {
           </ModalBody>
           <ModalFooter>
             <button className="btn btn-success" onClick={addcliente}>
-              Guardar y Siguiente
+              GUARDAR Y SIGUIENTE
             </button>
             <button className="btn btn-danger" onClick={cerrarModalCliente}>
-              Cerrar
+              CANCELAR
             </button>
           </ModalFooter>
         </Modal>

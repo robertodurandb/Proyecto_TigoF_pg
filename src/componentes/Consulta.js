@@ -66,6 +66,9 @@ function Consulta() {
     const [detalle_estado, setDetalle_estado] = useState();
     const [user_create, setUser_create] = useState();
     const [estados, setEstados] = useState([]);
+    // Estados para el rango
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
 
     const maxLengthDetalle = 120;
 
@@ -135,6 +138,10 @@ function Consulta() {
       }
 
       const columns = [
+        {
+          header: 'Fecha Contrato',
+          accessorKey: 'fecha_inicio_contrato',
+        },
           {
             header: 'Servicio',
             accessorKey: 'nombre_estado',
@@ -300,7 +307,7 @@ function Consulta() {
             setTelefonocli(table.getSelectedRowModel().flatRows[0].original.telefonocli);
             setTelefonocli2(table.getSelectedRowModel().flatRows[0].original.telefonocli2);
             setFechainstalacion(table.getSelectedRowModel().flatRows[0].original.fecha_instalacion);
-            setFechacontrato(table.getSelectedRowModel().flatRows[0].original.fecha_contrato);
+            setFechacontrato(table.getSelectedRowModel().flatRows[0].original.fecha_inicio_contrato);
             setTecnico_instalador(table.getSelectedRowModel().flatRows[0].original.tecnico_instalador);
             setComentario_instalacion(table.getSelectedRowModel().flatRows[0].original.comentario_instalacion);
             setImgcaja_antes(table.getSelectedRowModel().flatRows[0].original.nombreimg_caja_antes);
@@ -382,6 +389,7 @@ function Consulta() {
     setEstado_actual(estadoId);
   };
 
+
     useEffect(() =>{
         getClientes()
         getEstados()
@@ -392,14 +400,14 @@ function Consulta() {
         <div className='App'>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
             <br/>
+
+        <br/>
             <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
               <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
               <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
               <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServicio}>Suspender/Cortar</button>
             </div>
-            {/* <input value={filtering} type='text' placeholder='Búsqueda de registros' className='form-control border border-success'
-            onChange={(e) => setFiltering(e.target.value)}
-            /> */}
+
             <div className='table-responsive'>
             <table className='table'>
                 <thead>
@@ -500,7 +508,6 @@ function Consulta() {
                     {table.getRowCount().toLocaleString()} Filas
                 </div>
                 </div>
-
 
             <Modal isOpen={modalMostrar} toggle={ventanaModal}>
                 <ModalBody>
@@ -683,7 +690,6 @@ function Consulta() {
             </Modal>
 
             {/* MODAL PARA CORTAR SERVICIO */}
-
             <Modal isOpen={modalEstadoServicio} toggle={ventanaModalEstadoServicio}>
                       <ModalBody>
                         <div className="from-group">
@@ -760,8 +766,6 @@ function Consulta() {
                         </button>
                       </ModalFooter>
                     </Modal>
-
-
         </div>
     )
 }
