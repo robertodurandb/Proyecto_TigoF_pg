@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Axios from "axios";
 import '../estilos/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import html2canvas from 'html2canvas';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 import { Link } from 'react-router-dom';
 import API from '../utils/const';
 import {
@@ -62,8 +65,10 @@ function Consulta() {
     const [fecha_ultimo_pago, setFecha_ultimo_pago] = useState();
     const [fecha_proximo_pago, setFecha_proximo_pago] = useState();
     const [estado_anterior, setEstado_anterior] = useState();
-    const [estado_actual, setEstado_actual] = useState();
-    const [detalle_estado, setDetalle_estado] = useState();
+    const [estado_suspendido, setEstado_suspendido] = useState(3);
+    const [estado_activo, setEstado_activo] = useState(1);
+    const [detalle_suspension, setDetalle_suspension] = useState("Por falta de pago");
+    const [detalle_activacion, setDetalle_activacion] = useState("Ya realizó el pago");
     const [user_create, setUser_create] = useState();
     const [estados, setEstados] = useState([]);
     // Estados para el rango
@@ -83,7 +88,9 @@ function Consulta() {
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrarFotos, setModalMostrarFotos] = useState(false);
-    const [modalEstadoServicio, setModalEstadoServicio] = useState(false);
+    const [modalSuspenderServicio, setModalSuspenderServicio] = useState(false);
+    const [modalActivarServicio, setModalActivarServicio] = useState(false);
+    const modalRef = useRef(null); // 1. Definir correctamente la referencia
 
     let ipbackend = `${API.URL}`
     let token = sessionStorage.getItem("token");
@@ -91,7 +98,8 @@ function Consulta() {
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalfotos = () => setModalMostrarFotos(!modalMostrarFotos);
-    const ventanaModalEstadoServicio = () => setModalEstadoServicio(!modalEstadoServicio);
+    const ventanaModalSuspenderServicio = () => setModalSuspenderServicio(!modalSuspenderServicio);
+    const ventanaModalActivarServicio = () => setModalActivarServicio(!modalActivarServicio);
 
     const getClientes = async () => {
         try {
@@ -122,16 +130,22 @@ function Consulta() {
             .then(data => setEstados(data))
       }
 
-      const cerrarModalEstadoServicio = ()=>{
+      const cerrarModalSuspenderServicio = ()=>{
         limpiarcampos();
-        ventanaModalEstadoServicio();
+        ventanaModalSuspenderServicio();
+      }
+      const cerrarModalActivarServicio = ()=>{
+        limpiarcampos();
+        ventanaModalActivarServicio();
       }
       const limpiarcampos = () => {
         setDnicli("");
         setNum_contrato();
         setContrato("");
-        setDetalle_estado("");
-        setEstado_actual();
+        setDetalle_suspension("Por falta de pago");
+        setDetalle_activacion("Ya realizó el pago")
+        setEstado_suspendido(3);
+        setEstado_activo(1);
         setEstado_anterior();
         setEstado_servicio("");
         setUser_create(user);
@@ -334,7 +348,7 @@ function Consulta() {
         }
     };
 
-    const modificarEstadoServicio = () => {
+    const modificarEstadoServiciosusp = () => {
         if (table.getSelectedRowModel().flatRows[0]==undefined) {
             alert("Debe seleccionar un registro")
         }else{
@@ -345,17 +359,31 @@ function Consulta() {
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
             setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
             setEstado_anterior(table.getSelectedRowModel().flatRows[0].original.estado_servicio);
-            ventanaModalEstadoServicio();
+            ventanaModalSuspenderServicio();
+        }
+    };
+        const modificarEstadoServicioact = () => {
+        if (table.getSelectedRowModel().flatRows[0]==undefined) {
+            alert("Debe seleccionar un registro")
+        }else{
+            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
+            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
+            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
+            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
+            setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
+            setEstado_anterior(table.getSelectedRowModel().flatRows[0].original.estado_servicio);
+            ventanaModalActivarServicio();
         }
     };
 
-    const registrarCambioEstado = () => {
+    const registrarSuspension = () => {
         Axios.post(ipbackend+"createcambioestado", 
           {  
               num_contrato: num_contrato,
-              detalle: detalle_estado,
+              detalle: detalle_suspension,
               estado_anterior: estado_anterior,
-              estado_actual: estado_actual,
+              estado_actual: estado_suspendido,
               user_create: user_create,
           },{
             headers: {
@@ -364,7 +392,7 @@ function Consulta() {
           })
           .then(Axios.put(ipbackend+"updateinstalacion/"+num_contrato,
             {
-              estado_servicio: estado_actual,
+              estado_servicio: estado_suspendido,
             },{
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -372,8 +400,41 @@ function Consulta() {
             }))
             .then(() => {
             getClientes();
-            cerrarModalEstadoServicio();
-            alert("Estado Servicio actualizado correctamente");
+            cerrarModalSuspenderServicio();
+            alert("Se suspendio el servicio correctamente");
+          }).catch((error) => {
+            if (error.response && error.response.status === 400){
+            alert("Error: "+error.response.data.error);
+            console.log(error.response.data.error)
+            }
+            return error;
+            });
+      }
+      const registrarActivacion = () => {
+        Axios.post(ipbackend+"createcambioestado", 
+          {  
+              num_contrato: num_contrato,
+              detalle: detalle_activacion,
+              estado_anterior: estado_anterior,
+              estado_actual: estado_activo,
+              user_create: user_create,
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          .then(Axios.put(ipbackend+"updateinstalacion/"+num_contrato,
+            {
+              estado_servicio: estado_activo,
+            },{
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }))
+            .then(() => {
+            getClientes();
+            cerrarModalActivarServicio();
+            alert("Se activó el servicio con éxito");
           }).catch((error) => {
             if (error.response && error.response.status === 400){
             alert("Error: "+error.response.data.error);
@@ -383,12 +444,50 @@ function Consulta() {
             });
       }
 
-      // Función para manejar el cambio en el select de estados
-  const handleEstadoChange = (event) => {
-    const estadoId = event.target.value;
-    setEstado_actual(estadoId);
-  };
+const compartirComoImagen = async () => {
+        try {
+            // 2. Acceder al contenido del modal a través de la referencia
+            const modalContent = modalRef.current;
+            
+            if (!modalContent) return;
+            
+            // 3. Ocultar botones temporalmente para la captura
+            const footer = modalContent.querySelector('.modal-footer');
+            if (footer) footer.style.visibility = 'hidden';
+            
+            // 4. Capturar el contenido del modal
+            const canvas = await html2canvas(modalContent.querySelector('.modal-content'), {
+                scale: 1,
+                logging: false,
+                backgroundColor: '#ffffff',
+                useCORS: true
+            });
+            
+            // 5. Restaurar visibilidad del footer
+            if (footer) footer.style.visibility = 'visible';
+            
+            // 6. Convertir a imagen
+            const imagen = canvas.toDataURL('image/png');
 
+        // 6. Descarga automática primero
+            const link = document.createElement('a');
+            link.download = 'contrato.png';
+            link.href = imagen;
+            link.click();
+            
+            // 7. Esperar 1 segundo para que complete la descarga
+            setTimeout(() => {
+                // Abrir WhatsApp después de la descarga
+                const texto = encodeURIComponent("Detalles del contrato:");
+                window.open(`https://wa.me/?text=${texto}`, '_blank');
+
+            }, 3500);
+                
+        } catch (error) {
+            console.error('Error al compartir:', error);
+            alert('No se pudo compartir la imagen');
+        }
+    };
 
     useEffect(() =>{
         getClientes()
@@ -399,14 +498,17 @@ function Consulta() {
     return(
         <div className='App'>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
-            <br/>
 
-        <br/>
-            <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
-              <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
-              <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
-              <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServicio}>Suspender/Cortar</button>
-            </div>
+        <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
+          <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServiciosusp}>Suspender/Cortar</button>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServicioact}>Activar</button>
+        </div>
+        <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
+          <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
+        </div>
 
             <div className='table-responsive'>
             <table className='table'>
@@ -509,44 +611,45 @@ function Consulta() {
                 </div>
                 </div>
 
-            <Modal isOpen={modalMostrar} toggle={ventanaModal}>
+            <Modal isOpen={modalMostrar} toggle={ventanaModal} innerRef={modalRef} id='shareable-modal'>
                 <ModalBody>
                 <div className='container'>
-                    <h3 className=''>Detalle del Contrato</h3>
+                    <h3 className=''>Detalle del Contrato &nbsp;<button className='btn btn-success' onClick={compartirComoImagen}>
+                            <i className="fab fa-whatsapp me-2"></i>
+                            Enviar
+                        </button></h3>
                     <div className='row mb-2'>
-                        <div className='col-4'>Num_Contrato:</div>
-                        <div className='col-6'>{num_contrato}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Contrato Fisico:</div>
+                        <div className='col-4'>Contrato:</div>
                         <div className='col-6'>{contrato}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Estado Servicio:</div>
+                        <div className='col-4'>Fec.Contrato:</div>
+                        <div className="col-6">{fechacontrato}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Servicio:</div>
                         <div className="col-6">{estado_servicio}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Usuario Mikrotik:</div>
-                        <div className="col-6">{user_mk}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>DNI Cliente:</div>
-                        <div className='col-6'>{dnicli}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Nombres:</div>
-                        <div className="col-6">{apellidocli+" "}{nombrecli}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Sede:</div>
                         <div className="col-6">{sedecli}</div>
                     </div>
                     <div className='row mb-2'>
+                        <div className='col-4'>Nombres:</div>
+                        <div className="col-6">{apellidocli+" "}{nombrecli}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>DNI:</div>
+                        <div className='col-6'>{dnicli}</div>
+                    </div>
+                    
+                    
+                    <div className='row mb-2'>
                         <div className='col-4'>Telefonos:</div>
                         <div className="col-6">{telefonocli} / {telefonocli2}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Direccion Cliente:</div>
+                        <div className='col-4'>Direccion:</div>
                         <div className="col-6">{direccioncli}</div>
                     </div>
                     <div className='row mb-2'>
@@ -557,35 +660,17 @@ function Consulta() {
                         <div className='col-4'>Referencia:</div>
                         <div className="col-6">{referenciacli}</div>
                     </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Ubicación(ventas):</div>
-                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Ubicación(tec):</div>
-                        <div className="col-6">
-                            <Link
-                                                        to={
-                                                          "https://www.google.com/maps/search/?api=1&query=" +
-                                                          latitud+","+longitud+
-                                                          "&zoom=20"
-                                                        }
-                                                        target="_blank"
-                                                      >
-                                                        <a>{latitud},{longitud}</a>
-                                                      </Link>
-                        </div>
-                    </div>
+                    
                     <div className='row mb-2'>
                         <div className='col-4'>CT/Spliter:</div>
                         <div className="col-6">{caja_instalacion} / {splitter_instalacion}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Plan Actual:</div>
+                        <div className='col-4'>Plan:</div>
                         <div className="col-6">{nombreplan}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>descripción Plan:</div>
+                        <div className='col-4'>detalle Plan:</div>
                         <div className="col-6">{descplan}</div>
                     </div>
                     <div className='row mb-2'>
@@ -596,30 +681,42 @@ function Consulta() {
                         <div className='col-4'>Dia de Pago:</div>
                         <div className="col-6">{diapago}</div>
                     </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Usuario Mikrotik:</div>
+                        <div className="col-6">{user_mk}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Ubicación 1:</div>
+                        <div className="col-6"><Link to={geolocalizacion} target="_blank"><a>{geolocalizacion}</a></Link></div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Ubicación 2:</div>
+                        <div className="col-6"><Link to={"https://www.google.com/maps/search/?api=1&query=" +
+                                                          latitud+","+longitud+"&zoom=20"} target="_blank"
+                                                      ><a>{latitud},{longitud}</a>
+                                                </Link>
+                        </div>
+                    </div>
                     <div className='corte'>----------------------------------------------------------------</div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Fecha Contrato:</div>
-                        <div className="col-6">{fechacontrato}</div>
+                        <div className='col-4'>Equipos:</div>
+                        <div className="col-6">{tipo_equipo}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Condición:</div>
+                        <div className="col-6">{condicion_equipo}</div>
+                    </div>      
+                    <div className='row mb-2'>
+                        <div className='col-4'>Tecnico:</div>
+                        <div className="col-6">{tecnico_instalador}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Observación tec:</div>
+                        <div className="col-6">{comentario_instalacion}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Fecha Instalacion:</div>
                         <div className="col-6">{fechainstalacion}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Responsable instalacion:</div>
-                        <div className="col-6">{tecnico_instalador}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Comentario instalacion:</div>
-                        <div className="col-6">{comentario_instalacion}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Condición Equipo:</div>
-                        <div className="col-6">{condicion_equipo}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Tipo Equipo:</div>
-                        <div className="col-6">{tipo_equipo}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Costo por equipo:</div>
@@ -629,19 +726,10 @@ function Consulta() {
                         <div className='col-4'>Costo por instalacion:</div>
                         <div className="col-6">{cobro_instalacion}</div>
                     </div>
-                    <div className='corte'>----------------------------------------------------------------</div>            
-                    <div className='row mb-2'>
-                        <div className='col-4'>Fecha último pago:</div>
-                        <div className="col-6">{fecha_ultimo_pago}</div>
-                    </div>
-                    <div className='row mb-2'>
-                        <div className='col-4'>Fecha próximo pago:</div>
-                        <div className="col-6">{fecha_proximo_pago}</div>
-                    </div>
                 </div>
                 </ModalBody>
                 <ModalFooter>
-                    <button className='btn btn-danger' onClick={ventanaModal}>Cerrar</button>
+                    <button className='btn btn-danger' onClick={ventanaModal}>Cerrar</button>  
                 </ModalFooter>
             </Modal>
 
@@ -690,79 +778,81 @@ function Consulta() {
             </Modal>
 
             {/* MODAL PARA CORTAR SERVICIO */}
-            <Modal isOpen={modalEstadoServicio} toggle={ventanaModalEstadoServicio}>
+            <Modal isOpen={modalSuspenderServicio} toggle={ventanaModalSuspenderServicio}>
                       <ModalBody>
                         <div className="from-group">
-                          <h4 className="">Modificar Estado Servicio:</h4>
+                          <h4 className="">Está seguro que suspender el servicio:</h4>
                           <div className="mb-3">
-                            <label for="nombre_estadoanterior" className="form-label">Estado Actual:</label>
-                            <span className="input-group-text" id="basic-addon1">
-                                {estado_servicio}
-                              </span>
-                          </div>
-                          <div className="mb-3">
-                            <label for="numcontrato" className="form-label">N° Contrato:</label>
-                            <span className="input-group-text" id="basic-addon1">
-                                {num_contrato}
-                              </span>
-                              <label for="numcontrato" className="form-label">Contrato Físico:</label>
-                            <span className="input-group-text" id="basic-addon1">
-                                {contrato}
-                              </span>
-                          </div>
-                          <div className="mb-3">
-                            <label for="dnicliente" className="form-label">DNI Cliente:</label>
+                            <label for="dnicliente" className="form-label">Cliente:</label>
                             <span className="input-group-text" id="basic-addon1">
                                 {dnicli}
-                              </span>
-                          </div>
-                          <div className="mb-3">
-                            <label for="nombrecliente" className="form-label">Nombres:</label>
+                            </span>
                             <span className="input-group-text" id="basic-addon1">
                                 {apellidocli} {nombrecli}
-                              </span>
+                            </span>
+                            <span className="input-group-text" id="basic-addon1">
+                                {estado_servicio}
+                            </span>
                           </div>
+                           
                             <div className="mb-3">
-                                <label for='estado_nuevo' className="form-label">
-                                    Estado nuevo:
-                                </label>
-                                <select
-                                    className="form-control"
-                                    aria-describedby="basic-addon1"
-                                    key={estado_actual}
-                                    value={estado_actual}
-                                    onChange={handleEstadoChange}
-                                >
-                                    <option value="">- Seleccione una opción -</option>
-                                    {estados.map((estado) => {
-                                        return (
-                                            <>
-                                                <option value={estado.id_estado}>
-                                                    {estado.nombre_estado}
-                                                </option>
-                                            </>
-                                        );
-                                    })}
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                            <label for="nombres" className="form-label">Detalle:</label>
+                            <label for="nombres" className="form-label">Motivo:</label>
                               <input type="text" onChange={(event) => {
-                                setDetalle_estado(event.target.value);
+                                setDetalle_suspension(event.target.value);
                               }}
                               maxLength={maxLengthDetalle}
-                              className="form-control" id="detalle_estado" placeholder="Detalle del cambio estado" aria-describedby="basic-addon1">
+                              value={detalle_suspension	}
+                              className="form-control" id="detalle_suspension" aria-describedby="basic-addon1">
                               </input>
-                              {/* <div>{detalle_estado.length} caracteres</div> */}
                           </div>
                         </div>
                       </ModalBody>
                       <ModalFooter>
-                          <button className="btn btn-success" onClick={registrarCambioEstado}>
-                          Registrar
+                          <button className="btn btn-success" onClick={registrarSuspension}>
+                          Suspender
                         </button>         
-                        <button className="btn btn-danger" onClick={cerrarModalEstadoServicio}>
-                          Cerrar
+                        <button className="btn btn-danger" onClick={cerrarModalSuspenderServicio}>
+                          Cancelar
+                        </button>
+                      </ModalFooter>
+                    </Modal>
+
+                     {/* MODAL PARA ACTIVAR SERVICIO */}
+            <Modal isOpen={modalActivarServicio} toggle={ventanaModalActivarServicio}>
+                      <ModalBody>
+                        <div className="from-group">
+                          <h4 className="">Está seguro que Activar el servicio:</h4>
+                          <div className="mb-3">
+                            <label for="dnicliente" className="form-label">Cliente:</label>
+                            <span className="input-group-text" id="basic-addon1">
+                                {dnicli}
+                            </span>
+                            <span className="input-group-text" id="basic-addon1">
+                                {apellidocli} {nombrecli}
+                            </span>
+                            <span className="input-group-text" id="basic-addon1">
+                                {estado_servicio}
+                            </span>
+                          </div>
+                           
+                            <div className="mb-3">
+                            <label for="nombres" className="form-label">Motivo:</label>
+                              <input type="text" onChange={(event) => {
+                                setDetalle_activacion(event.target.value);
+                              }}
+                              maxLength={maxLengthDetalle}
+                              value={detalle_activacion}
+                              className="form-control" id="detalle_activacion" aria-describedby="basic-addon1">
+                              </input>
+                          </div>
+                        </div>
+                      </ModalBody>
+                      <ModalFooter>
+                          <button className="btn btn-success" onClick={registrarActivacion}>
+                          Activar
+                        </button>         
+                        <button className="btn btn-danger" onClick={cerrarModalActivarServicio}>
+                          Cancelar
                         </button>
                       </ModalFooter>
                     </Modal>
