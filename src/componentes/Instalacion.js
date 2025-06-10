@@ -712,7 +712,7 @@ if (busquedadni === "") {
                   <th>DNI</th>
                   <th>Apellidos</th>
                   <th>Nombres</th>
-                  <th>Distrito</th>
+                  <th>Sede</th>
                   <th>Direccion</th>
                   <th>Referencia</th>
                   <th>Telefonos</th>
@@ -757,7 +757,7 @@ if (busquedadni === "") {
                     <td>{cliente.clienteinicial_dnicliente}</td>
                     <td>{cliente.apellidocli}</td>
                     <td>{cliente.nombrecli}</td>
-                    <td>{cliente.distritocli}</td>
+                    <td>{cliente.nombre_sede}</td>
                     <td>{cliente.direccioncli}</td>
                     <th>{cliente.referenciacli}</th>
                     <td>{cliente.telefonocli} {cliente.telefonocli2}</td>

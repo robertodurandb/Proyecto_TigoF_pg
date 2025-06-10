@@ -181,10 +181,6 @@ function Consulta() {
             accessorKey: 'nombrecli',
           },
           {
-            header: 'Provincia',
-            accessorKey: 'provinciacli',
-          },
-          {
             header: 'Distrito',
             accessorKey: 'distritocli',
           },
@@ -203,6 +199,10 @@ function Consulta() {
           {
             header: 'Plan',
             accessorKey: 'nombreplan',
+          },
+          {
+            header: 'Tecnico',
+            accessorKey: 'tecnico_instalador',
           },
         ];
         const data = listaClientes;

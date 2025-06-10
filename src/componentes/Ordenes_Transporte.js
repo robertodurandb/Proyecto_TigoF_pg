@@ -22,7 +22,6 @@ function Ordenes_Transporte() {
     const [ordenes, setOrdenes] = useState([]);
     const [sedes, setSedes] = useState([]);
     const [editar, setEditar] = useState(false);
-    const [instalado, setInstalado] = useState(false);
 
     const [busqueda, setBusqueda] = useState("");
     const maxLengthDireccion = 100;
@@ -38,7 +37,6 @@ function Ordenes_Transporte() {
     const [apellidocli, setApellidocli] = useState("");
     const [direccioncli, setDireccioncli] = useState("");
     const [distritocli, setDistritocli] = useState("");
-    const [provinciacli, setProvinciacli] = useState("Lima");
     const [telefonocli, setTelefonocli] = useState();
     const [telefonocli2, setTelefonocli2] = useState();
     const [referenciacli, setReferenciacli] = useState('');
@@ -105,8 +103,6 @@ function Ordenes_Transporte() {
               apellidocli: apellidocli,
               sedecli: sedecli,
               direccioncli: direccioncli,
-              distritocli: distritocli,
-              provinciacli: provinciacli,
               telefonocli: telefonocli,
               telefonocli2: telefonocli2,
               referenciacli: referenciacli,
@@ -246,7 +242,6 @@ function validardnicliente() {
       setApellidocli(listaclientes[index].apellidocli)
       setNombrecli(listaclientes[index].nombrecli)
       setDireccioncli(listaclientes[index].direccioncli)
-      setDistritocli(listaclientes[index].distritocli)
       setTelefonocli(listaclientes[index].telefonocli)
       setFecha_createcli(listaclientes[index].fecha_create)
     }
@@ -272,7 +267,6 @@ function validardnicliente() {
     setApellidocli("");
     setDireccioncli("");
     setDistritocli("");
-    setProvinciacli("Lima");
     setReferenciacli("");
     setGeolocalizacion("");
     setTelefonocli();
@@ -285,7 +279,6 @@ function validardnicliente() {
     setApellidocli("");
     setDireccioncli("");
     setDistritocli("");
-    setProvinciacli("Lima");
     setTelefonocli("");
     setFecha_createcli("");
     setUser_create(user);
@@ -543,17 +536,6 @@ if (busqueda === "") {
                 ></input>
               </div>
               <div className="mb-3">
-                <label for="provincia" className="form-label">PROVINCIA: </label>
-                <select value={provinciacli} onChange={(event) => {
-                    setProvinciacli(event.target.value);
-                  }}
-                  className="form-control" id="provincia" aria-label="provincia" aria-describedby="basic-addon1"
-                >
-                  <option>LIMA</option>
-                  <option>PIURA</option>
-                </select>
-              </div>
-              <div className="mb-3">
                           <label for='sedes' className="form-label">
                             SEDE:
                           </label>
@@ -578,12 +560,7 @@ if (busqueda === "") {
                 </div>
               <div className="mb-3">
                 <label for="distrito" className="form-label"> DISTRITO:</label>
-                <input type="text" value={distritocli} onChange={(event) => {
-                    setDistritocli(event.target.value);
-                  }}
-                  className="form-control uppercase-input" id="distrito" aria-describedby="basic-addon1"
-                ></input>
-
+                <span> {distritocli}</span>
               </div>
               <div className="mb-3">
                 <label for="direccion" className="form-label">DIRECCIÓN: </label>
@@ -678,14 +655,6 @@ if (busqueda === "") {
                 </label>
                   <span className="input-group-text" id="basic-addon1">
                     {direccioncli}
-                  </span>
-              </div>
-              <div className="mb-3">
-                <label for="distritocli" className="form-label">
-                  Distrito:
-                </label>
-                  <span className="input-group-text" id="basic-addon1">
-                    {distritocli}
                   </span>
               </div>
               <div className="mb-3">
