@@ -192,11 +192,12 @@ const cerrarTodosLosModales = () => {
        //****************Busqueda de ESTADOS= ACTIVOS e INACTIVOS
     const searcherEstado = (e) => {
         setFiltroEstado(e.target.value);
+        setFiltroUbicacion("");
+        setFiltroDni("");
     }
       /***********************BUSQUEDA POR UBICACION */
       const searcherUbicacion = (e) => {
         setFiltroUbicacion(e.target.value);
-        console.log(e.target.value)
     }
       /***********************BUSQUEDA POR DNI, APELLIDOS, SEDE */
       const searcherDni = (e) => {
@@ -210,35 +211,17 @@ const cerrarTodosLosModales = () => {
         results_estado = clientesInactivos
     }
 
-  //Funcion de Filtrado por UBICACION
-  const newfilterUbicacion = results_estado.filter(dato => {
-    return (
-      dato.nombre_sede.toLowerCase().includes(filtroUbicacion.toLocaleLowerCase())
-    )
+  const resultadosFiltrados = results_estado.filter(dato => {
+    const cumpleUbicacion = !filtroUbicacion ||
+      dato.nombre_sede.toLowerCase().includes(filtroUbicacion.toLowerCase());
+
+    const cumpleDni = !filtroDni ||
+      dato.clienteactual_dnicliente.toLowerCase().includes(filtroDni.toLowerCase()) ||
+      dato.apellidocli.toLowerCase().includes(filtroDni.toLowerCase()) || 
+      dato.nombre_estado.toLowerCase().includes(filtroDni.toLowerCase());
+
+    return cumpleUbicacion && cumpleDni;
   });
-
-  let results_ubicacion = "";
-  if (filtroUbicacion === "") {
-    results_ubicacion = results_estado;
-  } else {
-    results_ubicacion = newfilterUbicacion;
-  }
-
-  //Funcion de Filtrado por DNI o APELLIDOS
-  const newfilterDni = results_ubicacion.filter(dato => {
-    return (
-      dato.clienteactual_dnicliente.toLowerCase().includes(filtroDni.toLocaleLowerCase()) ||
-      dato.apellidocli.toLowerCase().includes(filtroDni.toLocaleLowerCase())
-    )
-  });
-
-  let results_Dni = "";
-  if (filtroDni === "") {
-    results_Dni = results_ubicacion;
-  } else {
-    results_Dni = newfilterDni;
-  }
-        
 
         // useEffect para carga inicial (se ejecuta solo al montar el componente)
   useEffect(() => {
@@ -301,7 +284,7 @@ const cerrarTodosLosModales = () => {
         value={filtroDni}
         onChange={searcherDni}
         type="text"
-        placeholder="Busqueda por DNI o Apellidos"
+        placeholder="Busqueda por DNI o Apellidos o estado"
         className="form-control border border-success"
       />
 
@@ -326,7 +309,7 @@ const cerrarTodosLosModales = () => {
                   </tr>
               </thead>
               <tbody>
-                {results_Dni.map((cliente, key) => (
+                {resultadosFiltrados.map((cliente, key) => (
                                   <tr
                                     key={cliente.num_contrato}
                                     value={num_contrato}
