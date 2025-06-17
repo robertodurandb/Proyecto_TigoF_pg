@@ -8,11 +8,11 @@ import Sedes from '../src/componentes/Sedes';
 import Ordenes_Transporte from '../src/componentes/Ordenes_Transporte';
 import Instalacion from '../src/componentes/Instalacion';
 import Consultas from './componentes/Consulta';
-// import Inicio from './componentes/Inicio';
+import CambioEstados from './componentes/CambioEstados';
 import ImportPagos from '../src/componentes/ImportPagos';
 import ControlPagos from '../src/componentes/ControlPagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
-// import Gestiontickets from '../src/componentes/Gestiontickets';
+import Pagos from '../src/componentes/Pagos';
 import Cortes from '../src/componentes/Cortes_Activaciones';
 import Logs from '../src/componentes/Logs_Carga';
 
@@ -109,11 +109,14 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
             <li>
             <Link to="/" className="links1" role='button' onClick={() => setIsOpen(false)}>Consultas</Link>
           </li>
-          {/* <li>
-            <Link to="/Cortes" className="links1" role='button' onClick={() => setIsOpen(false)}>Registro_Cortes</Link>
-          </li> */}
+          <li>
+            <Link to="/Pagos" className="links1" role='button' onClick={() => setIsOpen(false)}>Pagos</Link>
+          </li>
+          <li>
+            <Link to="/cambioestados" className="links1" role='button' onClick={() => setIsOpen(false)}>Historial</Link>
+          </li>
             <li>
-              <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>Ordenes_Trabajo</Link>
+              <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>OTs</Link>
             </li>
 
             </>
@@ -220,6 +223,7 @@ function App() {
           <Routes>
             <Route element={<ProtectedRoute requiredRole="Admin" />}>
               <Route path="/" element={<Consultas />} />
+              <Route path="/Pagos" element={<Pagos />} />
               <Route path="/Ordenes_Trabajo" element={<Ordenes_Transporte />} />
               <Route path="/cliente" element={<Clientes />} />
               <Route path="/cortes" element={<Cortes />} />
@@ -227,6 +231,7 @@ function App() {
               <Route path="/planes" element={<Planes />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/sedes" element={<Sedes />} />
+              <Route path="/cambioestados" element={<CambioEstados />} />
             </Route>
 
             <Route path="/Instalaciones" element={<Instalacion />} />

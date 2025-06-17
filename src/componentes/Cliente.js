@@ -32,16 +32,25 @@ function Cliente() {
     let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
  
+    const getClientes = async () => {
+        try {
+          const response = await Axios.get(ipbackend+'getclientes', {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+          }
+          );
+          setListaClientes(response.data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          if (error.response && error.response.status === 401){
+            sessionStorage.removeItem("token");
+            window.location.reload();
+            alert("Sesión expirada, vuelva a iniciar sesión");
+            }
+        }
+      };
   
-  function getClientes(){
-    fetch(ipbackend+"getclientes", {
-      headers:{
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(response => response.json())
-    .then(data => setListaClientes(data))
-    }
     function isAdmin() {
       let role = sessionStorage.getItem("role");
       return role == "Admin";

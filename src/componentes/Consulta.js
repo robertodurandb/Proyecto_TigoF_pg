@@ -64,18 +64,10 @@ function Consulta() {
     const [diapago, setDiapago] = useState();
     const [fecha_ultimo_pago, setFecha_ultimo_pago] = useState();
     const [fecha_proximo_pago, setFecha_proximo_pago] = useState();
-    const [estado_anterior, setEstado_anterior] = useState();
-    const [estado_suspendido, setEstado_suspendido] = useState(3);
-    const [estado_activo, setEstado_activo] = useState(1);
-    const [detalle_suspension, setDetalle_suspension] = useState("Por falta de pago");
-    const [detalle_activacion, setDetalle_activacion] = useState("Ya realizó el pago");
-    const [user_create, setUser_create] = useState();
     const [estados, setEstados] = useState([]);
     // Estados para el rango
-    const [fechaInicio, setFechaInicio] = useState('');
-    const [fechaFin, setFechaFin] = useState('');
 
-    const maxLengthDetalle = 120;
+    
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
@@ -88,8 +80,6 @@ function Consulta() {
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrarFotos, setModalMostrarFotos] = useState(false);
-    const [modalSuspenderServicio, setModalSuspenderServicio] = useState(false);
-    const [modalActivarServicio, setModalActivarServicio] = useState(false);
     const modalRef = useRef(null); // 1. Definir correctamente la referencia
 
     let ipbackend = `${API.URL}`
@@ -98,8 +88,6 @@ function Consulta() {
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalfotos = () => setModalMostrarFotos(!modalMostrarFotos);
-    const ventanaModalSuspenderServicio = () => setModalSuspenderServicio(!modalSuspenderServicio);
-    const ventanaModalActivarServicio = () => setModalActivarServicio(!modalActivarServicio);
 
     const getClientes = async () => {
         try {
@@ -110,7 +98,6 @@ function Consulta() {
           }
           );
           setListaClientes(response.data);
-          setUser_create(user);
         } catch (error) {
           console.error('Error fetching data:', error);
           if (error.response && error.response.status === 401){
@@ -128,27 +115,6 @@ function Consulta() {
         })
             .then(response => response.json())
             .then(data => setEstados(data))
-      }
-
-      const cerrarModalSuspenderServicio = ()=>{
-        limpiarcampos();
-        ventanaModalSuspenderServicio();
-      }
-      const cerrarModalActivarServicio = ()=>{
-        limpiarcampos();
-        ventanaModalActivarServicio();
-      }
-      const limpiarcampos = () => {
-        setDnicli("");
-        setNum_contrato();
-        setContrato("");
-        setDetalle_suspension("Por falta de pago");
-        setDetalle_activacion("Ya realizó el pago")
-        setEstado_suspendido(3);
-        setEstado_activo(1);
-        setEstado_anterior();
-        setEstado_servicio("");
-        setUser_create(user);
       }
 
       const columns = [
@@ -348,102 +314,6 @@ function Consulta() {
         }
     };
 
-    const modificarEstadoServiciosusp = () => {
-        if (table.getSelectedRowModel().flatRows[0]==undefined) {
-            alert("Debe seleccionar un registro")
-        }else{
-            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
-            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
-            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
-            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
-            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
-            setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
-            setEstado_anterior(table.getSelectedRowModel().flatRows[0].original.estado_servicio);
-            ventanaModalSuspenderServicio();
-        }
-    };
-        const modificarEstadoServicioact = () => {
-        if (table.getSelectedRowModel().flatRows[0]==undefined) {
-            alert("Debe seleccionar un registro")
-        }else{
-            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
-            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
-            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
-            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
-            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
-            setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado);
-            setEstado_anterior(table.getSelectedRowModel().flatRows[0].original.estado_servicio);
-            ventanaModalActivarServicio();
-        }
-    };
-
-    const registrarSuspension = () => {
-        Axios.post(ipbackend+"createcambioestado", 
-          {  
-              num_contrato: num_contrato,
-              detalle: detalle_suspension,
-              estado_anterior: estado_anterior,
-              estado_actual: estado_suspendido,
-              user_create: user_create,
-          },{
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-          .then(Axios.put(ipbackend+"updateinstalacion/"+num_contrato,
-            {
-              estado_servicio: estado_suspendido,
-            },{
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            }))
-            .then(() => {
-            getClientes();
-            cerrarModalSuspenderServicio();
-            alert("Se suspendio el servicio correctamente");
-          }).catch((error) => {
-            if (error.response && error.response.status === 400){
-            alert("Error: "+error.response.data.error);
-            console.log(error.response.data.error)
-            }
-            return error;
-            });
-      }
-      const registrarActivacion = () => {
-        Axios.post(ipbackend+"createcambioestado", 
-          {  
-              num_contrato: num_contrato,
-              detalle: detalle_activacion,
-              estado_anterior: estado_anterior,
-              estado_actual: estado_activo,
-              user_create: user_create,
-          },{
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-          .then(Axios.put(ipbackend+"updateinstalacion/"+num_contrato,
-            {
-              estado_servicio: estado_activo,
-            },{
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            }))
-            .then(() => {
-            getClientes();
-            cerrarModalActivarServicio();
-            alert("Se activó el servicio con éxito");
-          }).catch((error) => {
-            if (error.response && error.response.status === 400){
-            alert("Error: "+error.response.data.error);
-            console.log(error.response.data.error)
-            }
-            return error;
-            });
-      }
-
 const compartirComoImagen = async () => {
         try {
             // 2. Acceder al contenido del modal a través de la referencia
@@ -498,12 +368,6 @@ const compartirComoImagen = async () => {
     return(
         <div className='App'>
             <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
-
-        <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
-          <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServiciosusp}>Suspender/Cortar</button>
-          &nbsp;&nbsp;
-          <button type="button" class="btn btn-outline-primary" onClick={modificarEstadoServicioact}>Activar</button>
-        </div>
         <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
           <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
           &nbsp;&nbsp;
@@ -777,85 +641,7 @@ const compartirComoImagen = async () => {
                 </ModalFooter>
             </Modal>
 
-            {/* MODAL PARA CORTAR SERVICIO */}
-            <Modal isOpen={modalSuspenderServicio} toggle={ventanaModalSuspenderServicio}>
-                      <ModalBody>
-                        <div className="from-group">
-                          <h4 className="">Está seguro que suspender el servicio:</h4>
-                          <div className="mb-3">
-                            <label for="dnicliente" className="form-label">Cliente:</label>
-                            <span className="input-group-text" id="basic-addon1">
-                                {dnicli}
-                            </span>
-                            <span className="input-group-text" id="basic-addon1">
-                                {apellidocli} {nombrecli}
-                            </span>
-                            <span className="input-group-text" id="basic-addon1">
-                                {estado_servicio}
-                            </span>
-                          </div>
-                           
-                            <div className="mb-3">
-                            <label for="nombres" className="form-label">Motivo:</label>
-                              <input type="text" onChange={(event) => {
-                                setDetalle_suspension(event.target.value);
-                              }}
-                              maxLength={maxLengthDetalle}
-                              value={detalle_suspension	}
-                              className="form-control" id="detalle_suspension" aria-describedby="basic-addon1">
-                              </input>
-                          </div>
-                        </div>
-                      </ModalBody>
-                      <ModalFooter>
-                          <button className="btn btn-success" onClick={registrarSuspension}>
-                          Suspender
-                        </button>         
-                        <button className="btn btn-danger" onClick={cerrarModalSuspenderServicio}>
-                          Cancelar
-                        </button>
-                      </ModalFooter>
-                    </Modal>
-
-                     {/* MODAL PARA ACTIVAR SERVICIO */}
-            <Modal isOpen={modalActivarServicio} toggle={ventanaModalActivarServicio}>
-                      <ModalBody>
-                        <div className="from-group">
-                          <h4 className="">Está seguro que Activar el servicio:</h4>
-                          <div className="mb-3">
-                            <label for="dnicliente" className="form-label">Cliente:</label>
-                            <span className="input-group-text" id="basic-addon1">
-                                {dnicli}
-                            </span>
-                            <span className="input-group-text" id="basic-addon1">
-                                {apellidocli} {nombrecli}
-                            </span>
-                            <span className="input-group-text" id="basic-addon1">
-                                {estado_servicio}
-                            </span>
-                          </div>
-                           
-                            <div className="mb-3">
-                            <label for="nombres" className="form-label">Motivo:</label>
-                              <input type="text" onChange={(event) => {
-                                setDetalle_activacion(event.target.value);
-                              }}
-                              maxLength={maxLengthDetalle}
-                              value={detalle_activacion}
-                              className="form-control" id="detalle_activacion" aria-describedby="basic-addon1">
-                              </input>
-                          </div>
-                        </div>
-                      </ModalBody>
-                      <ModalFooter>
-                          <button className="btn btn-success" onClick={registrarActivacion}>
-                          Activar
-                        </button>         
-                        <button className="btn btn-danger" onClick={cerrarModalActivarServicio}>
-                          Cancelar
-                        </button>
-                      </ModalFooter>
-                    </Modal>
+           
         </div>
     )
 }

@@ -646,8 +646,6 @@ if (busquedadni === "") {
           <h1 className="mb3">Registro de Instalaciones</h1>
           {select_instalados ? (
             <>
-            <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'
-              />
             <div
               className="btn-group mt-2"
               role="group"
@@ -666,13 +664,12 @@ if (busquedadni === "") {
                 onClick={capturarIDforimage}
               >
                 Editar fotos
-              </button>
-              
+              </button>    
             </div>
+            <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' 
+            className='form-control border border-success'
+              />
             </>
-            
-            
-            
           ) : (
             <>
             <button
@@ -808,19 +805,6 @@ if (busquedadni === "") {
                         </td>
                       </>
                     )}
-                    {/* {select_instalados ? null : (
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-outline-success"
-                          onClick={() => {
-                            capturarIDordentrabajo(cliente);
-                          }}
-                        >
-                          Registrar
-                        </button>
-                      </td>
-                    )} */}
                   </tr>
                 ))}
               </tbody>

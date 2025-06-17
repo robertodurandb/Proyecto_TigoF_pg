@@ -343,8 +343,12 @@ if (busqueda === "") {
     <div className="App">
         <h1 className="mb-3">Registro de Ordenes de Trabajo</h1>
         <button type="button" className="btn btn-info" onClick={agregarCliente}>
-          Registrar Nueva OT
+          Registrar OT instalacion
         </button>
+        &nbsp;&nbsp;
+      <button type="button" className="btn btn-info">
+        Registrar OT varios
+      </button>
         <br />
         <br />
         <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'/>
