@@ -221,6 +221,7 @@ function Usuarios() {
                           >
                           <option>Especialista</option>
                           <option>Tecnico</option>
+                          <option>Ventas</option>
                           <option>Admin</option>
                         </select>
                 </div>

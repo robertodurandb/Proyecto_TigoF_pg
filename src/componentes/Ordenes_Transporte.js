@@ -341,14 +341,14 @@ if (busqueda === "") {
 
   return (
     <div className="App">
-        <h1 className="mb-3">Registro de Ordenes de Trabajo</h1>
+        <h1 className="mb-3">Registro de OTs para Instalaciones</h1>
         <button type="button" className="btn btn-info" onClick={agregarCliente}>
           Registrar OT instalacion
         </button>
-        &nbsp;&nbsp;
+        {/* &nbsp;&nbsp;
       <button type="button" className="btn btn-info">
         Registrar OT varios
-      </button>
+      </button> */}
         <br />
         <br />
         <input value={busqueda} onChange={searcher} type='text' placeholder='Busqueda por DNI' className='form-control border border-success'/>

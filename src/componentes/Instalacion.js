@@ -33,11 +33,14 @@ let fechaactual = `${API.DATENOW}`
     const [user_update, setUser_update] = useState("");
     const [caja_instalacion, setCajainstalacion] = useState("");
     const [splitter_instalacion, setSplitterinstalacion] = useState("");
+    const [caja_nueva, setCajanueva] = useState("");
+    const [splitter_nuevo, setSplitternuevo] = useState("");
     const [user_mk, setUser_mk] = useState("");
     const [cobro_instalacion, setCobro_instalacion] = useState(0);
     const [condicion_equipo, setCondicion_equipo] = useState("ALQUILER");
     const [cobro_equipo, setCobro_equipo] = useState(0);
     const [tipo_equipo, setTipo_equipo] = useState("");
+    const [equiponuevo, setEquiponuevo] = useState("");
     const [dia_pago, setDia_pago] = useState("");
     const [estado_servicio, setEstado_servicio] = useState(1);
     const [imgcaja_antes, setImgcaja_antes] = useState();
@@ -51,6 +54,7 @@ let fechaactual = `${API.DATENOW}`
     const [geolocalizacion, setGeolocalizacion] = useState();
     const [latitud, setLatitud]  = useState();
     const [longitud, setLongitud] = useState();
+    const [detalle, setDetalle] = useState();
     const [editar, setEditar] = useState(false);
 
     // const [selectedImage, setSelectedImage] = useState(null);
@@ -73,10 +77,14 @@ let fechaactual = `${API.DATENOW}`
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalConfirmar, setModalConfirmar] = useState(false);
     const [modalImagen, setModalImagen] = useState(false);
+    const [modalCaja, setModalCaja] = useState(false);
+    const [modalEquipos, setModalEquipos] = useState(false);
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalConfirmar = () => setModalConfirmar(!modalConfirmar);
     const ventanaModalImagen = () => setModalImagen(!modalImagen);
+    const ventanaModalCaja = () => setModalCaja(!modalCaja);
+    const ventanaModalEquipos = () => setModalEquipos(!modalEquipos);
 
     let token = sessionStorage.getItem("token");
     let user = sessionStorage.getItem("currentUser");
@@ -297,28 +305,72 @@ const obtenerUbicacion = () => {
           });
       };
 
-      const updateinstalacion = () => {
+      const updateinstalacioncaja = () => {
         Axios.put(ipbackend+"updateinstalacion/"+num_contrato, {
-            comentario_instalacion: observacion,
             user_update: user_update,
             fecha_update: fecha_actual,
-            caja_instalacion: caja_instalacion,
-            splitter_instalacion: splitter_instalacion,
-            user_mk: user_mk,
-            condicion_equipo: condicion_equipo,
-            tipo_equipo: tipo_equipo,
-            cobro_equipo: cobro_equipo,
-            cobro_instalacion: cobro_instalacion
+            caja_instalacion: caja_nueva,
+            splitter_instalacion: splitter_nuevo
         },{
           headers: {
             'Authorization': `Bearer ${token}`
           }
-        }).then(() => {
+        })
+        .then(Axios.post(ipbackend+"create_historicocajas/",
+            {
+              num_contrato: num_contrato,
+              user_create: user_update,
+              caja_terminal_anterior: caja_instalacion,
+              caja_terminal_nuevo: caja_nueva,
+              splitter_anterior: splitter_instalacion,
+              splitter_nuevo: splitter_nuevo,
+              detalle: detalle
+            },{
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }))
+        .then(() => {
           limpiarcampos();
-          ventanaModal();
-          // getInstalacionesPendientes();
+          ventanaModalCaja();
           getInstalaciones();
-          alert("Instalacion Actualizada con exito");
+          alert("Caja actualizada con exito");
+        }).catch((error) => {
+          if (401 === error.response.status){
+          sessionStorage.removeItem("token");
+          window.location.reload();
+          alert("Sesión expirada, vuelva a iniciar sesión");
+          }
+          return error;
+          });
+      };
+
+      const updateinstalacionequipos = () => {
+        Axios.put(ipbackend+"updateinstalacion/"+num_contrato, {
+            user_update: user_update,
+            fecha_update: fecha_actual,
+            tipo_equipo: equiponuevo
+        },{
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(Axios.post(ipbackend+"create_historicoequipos/",
+            {
+              num_contrato: num_contrato,
+              user_create: user_update,
+              tipo_equipo_anterior: tipo_equipo,
+              tipo_equipo_nuevo: equiponuevo
+            },{
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }))
+        .then(() => {
+          limpiarcampos();
+          ventanaModalEquipos();
+          getInstalaciones();
+          alert("Equipos actualizado con exito");
         }).catch((error) => {
           if (401 === error.response.status){
           sessionStorage.removeItem("token");
@@ -417,15 +469,23 @@ const getInstalaciones = async () => {
       }
   }
 
-    const capturarIDinstalacion = () =>{
+      const corregirCajaSplitter = () =>{
       if (num_contrato==undefined || selectedRow==undefined) {
         alert("Debe seleccionar un registro")
       } else {
       setEditar(true);
-      ventanaModal();   
+      ventanaModalCaja();   
       }
   }
-    // Función para manejar el clic en una fila
+        const corregirEquipos = () =>{
+      if (num_contrato==undefined || selectedRow==undefined) {
+        alert("Debe seleccionar un registro")
+      } else {
+      setEditar(true);
+      ventanaModalEquipos();   
+      }
+  }
+    // Función para manejar el clic en una fila de las instalaciones completadas
     const handleRowClick = (cliente) => {    
       setSelectedRow(cliente.id_ordentrabajo);
       setNum_contrato(cliente.num_contrato);
@@ -436,10 +496,13 @@ const getInstalaciones = async () => {
       setNombrecliente(cliente.nombrecli);
       setCondicion_equipo(cliente.condicion_equipo);
       setTipo_equipo(cliente.tipo_equipo);
+      setEquiponuevo(cliente.tipo_equipo);
       setCobro_equipo(cliente.cobro_equipo);
       setCobro_instalacion(cliente.cobro_instalacion);
       setCajainstalacion(cliente.caja_instalacion);
       setSplitterinstalacion(cliente.splitter_instalacion);
+      setCajanueva(cliente.caja_instalacion);
+      setSplitternuevo(cliente.splitter_instalacion);
       setUser_mk(cliente.user_mk);
       setObservacion(cliente.comentario_instalacion);
       setImgcaja_antes(cliente.nombreimg_caja_antes);
@@ -500,6 +563,10 @@ const getInstalaciones = async () => {
         setGeolocalizacion("")
         setLatitud();
         setLongitud();
+        setCajanueva("");
+        setSplitternuevo("");
+        setEquiponuevo("");
+        setDetalle("");
         setinvalidImage(null);
         setSelectedRow(null);
 
@@ -518,6 +585,14 @@ const getInstalaciones = async () => {
       const cerrarModalEditar = ()=>{
         limpiarcamposeditar();
         ventanaModal();
+      }
+        const cerrarModalEditarcaja = ()=>{
+        limpiarcampos();
+        ventanaModalCaja();
+      }
+        const cerrarModalEditarequipos = ()=>{
+        limpiarcampos();
+        ventanaModalEquipos();
       }
       const cerrarModalImagen = () => {
         // Liberar las URLs de los previews para evitar memory leaks
@@ -607,15 +682,12 @@ const getInstalaciones = async () => {
 // Funcion de Filtrado por dni
 const newfilter = results.filter(dato => {
   return (
-    dato.dnicliente.toLowerCase().includes(busquedadni.toLocaleLowerCase())
-)
+    dato.dnicliente.toLowerCase().includes(busquedadni.toLocaleLowerCase()) ||
+    dato.apellidocli.toLowerCase().includes(busquedadni.toLocaleLowerCase())
+  )
 });
 
-// let resultsdni = [];
-
-if (busquedadni === "") {
-  results = results;
-} else {
+if (busquedadni !== "") {
   results = newfilter;
 }
 
@@ -651,23 +723,16 @@ if (busquedadni === "") {
               role="group"
               aria-label="Basic outlined example"
             >
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                onClick={capturarIDinstalacion}
-              >
-                Editar instalación
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                onClick={capturarIDforimage}
-              >
-                Editar fotos
-              </button>    
+              <button type="button" class="btn btn-outline-primary" onClick={corregirCajaSplitter}>
+                Corregir CT/Splitter
+              </button> 
+              &nbsp;&nbsp;
+              <button type="button" class="btn btn-outline-primary" onClick={corregirEquipos}>
+                Corregir equipos
+              </button> 
             </div>
-            <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI' 
-            className='form-control border border-success'
+            <input value={busquedadni} onChange={searcherdni} type='text' placeholder='Busqueda por DNI o APELLIDOS' 
+            className='form-control border border-success mt-2'
               />
             </>
           ) : (
@@ -679,6 +744,7 @@ if (busquedadni === "") {
               >
                 Registrar fotos
               </button>
+              &nbsp;&nbsp;
             <button
                 type="button"
                 class="btn btn-outline-primary"
@@ -713,26 +779,29 @@ if (busquedadni === "") {
                   <th>Direccion</th>
                   <th>Referencia</th>
                   <th>Telefonos</th>
-                  <th>Fecha programada</th>
-                  <th>Horario programado</th>
+
                   {select_instalados ? (
                     <>
                       <th>Condic equipo</th>
-                      <th>Tipo equipo</th>
+                      <th>Equipos</th>
                       <th>cobro equipo</th>
                       <th>cobro instalacion</th>
-                      <th>CT Splitter</th>
+                      <th>CT / Splitter</th>
                       <th>User_MK</th>
-                      <th>Ubicación (Maps)</th>
                       <th>Coordenadas</th>
-                      <th>Técnico</th>
+                      <th>Tecnico</th>
                       <th>Fecha Instalacion</th>
+                      <th>User update</th>
+                      <th>Fecha update</th>
                     </>
                   ) : (
                     <>
+                      <th>Fecha programada</th>
+                      <th>Horario programado</th>
                       <th>Plan</th>
                       <th>Indicaciones</th>
                       <th>Ubicación</th>
+                      <th>Venta</th>
                     </>
                   )}
                 </tr>
@@ -758,8 +827,7 @@ if (busquedadni === "") {
                     <td>{cliente.direccioncli}</td>
                     <th>{cliente.referenciacli}</th>
                     <td>{cliente.telefonocli} {cliente.telefonocli2}</td>
-                    <td>{cliente.fechaprog_instalacion}</td>
-                    <td>{cliente.horario_instalacion}</td>
+
                     {select_instalados ? (
                       <>
                         <td>{cliente.condicion_equipo}</td>
@@ -768,14 +836,6 @@ if (busquedadni === "") {
                         <td>{cliente.cobro_instalacion}</td>
                         <td>{cliente.caja_instalacion} / {cliente.splitter_instalacion}</td>
                         <td>{cliente.user_mk}</td>
-                        <td>
-                          <Link
-                            to={cliente.geolocalizacion}
-                            target="_blank"
-                          >
-                            <a>{cliente.geolocalizacion}</a>
-                          </Link>
-                        </td>
                         <td>
                         <Link
                             to={
@@ -790,9 +850,13 @@ if (busquedadni === "") {
                         </td>
                         <td>{cliente.tecnico}</td>
                         <td>{cliente.fecha_instalacion}</td>
+                        <td>{cliente.user_update}</td>
+                        <td>{cliente.fecha_update}</td>
                       </>
                     ) : (
                       <>
+                        <td>{cliente.fechaprog_instalacion}</td>
+                        <td>{cliente.horario_instalacion}</td>
                         <td>{cliente.nombreplan}</td>
                         <td>{cliente.indicacion_instalacion}</td>
                         <td>
@@ -803,6 +867,7 @@ if (busquedadni === "") {
                             <a>{cliente.geolocalizacion}</a>
                           </Link>
                         </td>
+                        <td>{cliente.user_create}</td>
                       </>
                     )}
                   </tr>
@@ -814,32 +879,17 @@ if (busquedadni === "") {
           <Modal isOpen={modalMostrar} toggle={ventanaModal}>
             <ModalBody>
               <div className="from-group">
-                {editar ? (
-                  <h4>Editar Instalación</h4>
-                ) : (
                   <h4 className="">Registrar Instalación:</h4>
-                )}
-
                 <div className="mb-3">
                   <label for="contrato" className="form-label">
                     N° Contrato Físico:
                   </label>
-                  {editar ? (
-                    <span className="input-group-text" id="basic-addon1">
-                      {contrato}
-                    </span>
-                  ) : (
-                    <input
-                      type="text"
-                      value={contrato}
+                    <input type="text" value={contrato}
                       onChange={(event) => {
                         setContrato(event.target.value);
                       }}
-                      className="form-control"
-                      id="contrato"
-                      aria-describedby="basic-addon1"
+                      className="form-control" id="contrato" aria-describedby="basic-addon1"
                     ></input>
-                  )}
                 </div>
                 <div className="mb-3">
                   <label for="dnicliente" className="form-label">
@@ -995,22 +1045,6 @@ if (busquedadni === "") {
               </div>
             </ModalBody>
             <ModalFooter>
-              {editar ? (
-                <div>
-                  <button
-                    className="btn btn-success"
-                    onClick={updateinstalacion}
-                  >
-                    Actualizar
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={cerrarModalEditar}
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              ) : (
                 <div>
                   <button className="btn btn-success" onClick={addinstalacion}>
                     Registrar
@@ -1019,7 +1053,6 @@ if (busquedadni === "") {
                     Cerrar
                   </button>
                 </div>
-              )}
             </ModalFooter>
           </Modal>
 
@@ -1344,6 +1377,111 @@ if (busquedadni === "") {
                   Cerrar
                 </button>
               </div>
+            </ModalFooter>
+          </Modal>
+
+          <Modal isOpen={modalCaja} toggle={ventanaModalCaja}>
+            <ModalBody>
+              <div className="from-group">
+                  <h4>Corregir Caja Terminal Splitter</h4>                  
+                <div className="mb-3">
+                  <label for="dnicliente" className="form-label">
+                    Cliente:
+                  </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {dnicliente} - {apellidocliente} {nombrecliente}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <label for="caja_instalacion" className="form-label">
+                    Caja Terminal(CT):
+                  </label>
+                  <input type="text" onChange={(event) => {
+                      setCajanueva(event.target.value);
+                    }}
+                    maxLength={40}
+                    value={caja_nueva}
+                    className="form-control uppercase-input"
+                    id="cajainstalacion"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="splitter_instalacion" className="form-label">
+                    Splitter:
+                  </label>
+                  <input type="text" onChange={(event) => {
+                      setSplitternuevo(event.target.value);
+                    }}
+                    maxLength={40}
+                    value={splitter_nuevo}
+                    className="form-control uppercase-input"
+                    id="splitter_instalacion"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+                <div className="mb-3">
+                  <label for="detalle" className="form-label">
+                    Motivo:
+                  </label>
+                  <input type="text" onChange={(event) => {
+                      setDetalle(event.target.value);
+                    }}
+                    value={detalle}
+                    className="form-control uppercase-input"
+                    id="splitter_instalacion"
+                    aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+                <div>
+                  <button className="btn btn-success" onClick={updateinstalacioncaja}>
+                    Actualizar
+                  </button>
+                  <button className="btn btn-danger" onClick={cerrarModalEditarcaja}>
+                    Cerrar
+                  </button>
+                </div>
+            </ModalFooter>
+          </Modal>
+
+<Modal isOpen={modalEquipos} toggle={ventanaModalEquipos}>
+            <ModalBody>
+              <div className="from-group">
+                  <h4>Cambio Equipos</h4>           
+                <div className="mb-3">
+                  <label for="dnicliente" className="form-label">
+                    Cliente:
+                  </label>
+                  <span className="input-group-text" id="basic-addon1">
+                    {dnicliente} - {apellidocliente} {nombrecliente}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <label for="caja_instalacion" className="form-label">
+                    Equipos:
+                  </label>
+                  <input type="text" onChange={(event) => {
+                      setEquiponuevo(event.target.value);
+                    }}
+                    maxLength={40}
+                    value={equiponuevo}
+                    className="form-control uppercase-input" id="cajainstalacion" aria-describedby="basic-addon1"
+                  ></input>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+                <div>
+                  <button className="btn btn-success" onClick={updateinstalacionequipos}>
+                    Actualizar
+                  </button>
+                  <button className="btn btn-danger" onClick={cerrarModalEditarequipos}>
+                    Cerrar
+                  </button>
+                </div>
             </ModalFooter>
           </Modal>
 

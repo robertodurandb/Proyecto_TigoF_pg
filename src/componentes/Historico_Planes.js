@@ -3,22 +3,22 @@ import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API from '../utils/const'
 
-function CambioEstados() {
-    const [Listacambioestados, setListacambioestados] = useState([]);
+function Historico_Planes() {
+    const [Listacambioplanes, setListacambioplanes] = useState([]);
     const [busqueda, setBusqueda] = useState("");
    
     let token = sessionStorage.getItem("token");
     let ipbackend = `${API.URL}`;
  
-  const getCambioEstados = async () => {
+  const getCambioPlanes = async () => {
         try {
-          const response = await Axios.get(ipbackend+'getcambioestadosall', {
+          const response = await Axios.get(ipbackend+'gethistorico_planes', {
             headers:{
                 'Authorization': `Bearer ${token}`
             }
           }
           );
-          setListacambioestados(response.data);
+          setListacambioplanes(response.data);
         } catch (error) {
           console.error('Error fetching data:', error);
           if (error.response && error.response.status === 401){
@@ -35,7 +35,7 @@ function CambioEstados() {
     console.log(e.target.value)
     }
 //Funcion de Filtrado
- const newfilter = Listacambioestados.filter(dato => {
+ const newfilter = Listacambioplanes.filter(dato => {
     return (
 dato.clienteactual_dnicliente.toLowerCase().includes(busqueda.toLocaleLowerCase()) ||
 dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
@@ -45,19 +45,19 @@ dato.apellidocli.toLowerCase().includes(busqueda.toLocaleLowerCase())
 let results = [];
 
 if (busqueda === "") {
-    results = Listacambioestados;
+    results = Listacambioplanes;
 } else {
     results = newfilter;
 }
 
   useEffect(() =>{
-    getCambioEstados();
+    getCambioPlanes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
   return (
     <div className="App">
-      <h1 className="mb-3">Historial de Clientes (estados)</h1>
+      <h1 className="mb-3">Histórico de Planes y Descuentos</h1>
       <br />
       <br />
       <input
@@ -74,11 +74,12 @@ if (busqueda === "") {
               <th scope="col">DNI</th>
               <th scope="col">Apellidos</th>
               <th scope="col">Nombres</th>
-              <th scope="col">Estado anterior</th>
-              <th scope="col">Nuevo estado</th>
-              <th scope="col">Detalle</th>
+              <th scope="col">Plan anterior</th>
+              <th scope="col">Descuento anterior</th>
+              <th scope="col">Plan nuevo</th>
+              <th scope="col">Descuento nuevo</th>
+              <th scope="col">Comentario</th>
               <th scope="col">Fecha</th>
-              <th scope="col">Hora</th>
               <th scope="col">Usuario</th>
             </tr>
           </thead>
@@ -89,11 +90,12 @@ if (busqueda === "") {
                   <th>{val.clienteactual_dnicliente}</th>
                   <td>{val.apellidocli}</td>
                   <td>{val.nombrecli}</td>
-                  <td>{val.nomestado_anterior}</td>
-                  <td>{val.nomestado_actual}</td>
-                  <td>{val.detalle}</td>
+                  <td>{val.plan_anterior}</td>
+                  <td>{val.descuento_anterior}</td>
+                  <td>{val.plan_nuevo}</td>
+                  <td>{val.descuento_nuevo}</td>
+                  <td>{val.comentario}</td>
                   <td>{val.fecha_create}</td>
-                  <td>{val.hora_create}</td>
                   <td>{val.user_create}</td>
                 </tr>
               );
@@ -106,4 +108,4 @@ if (busqueda === "") {
   );
 }
 
-export default CambioEstados;
+export default Historico_Planes;

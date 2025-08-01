@@ -20,23 +20,32 @@ import {
 function Consulta() {
 
     const [listaClientes, setListaClientes] = useState([]);
-
+    const [listaPlanes, setListaPlanes] = useState([]);
     //Datos para el Modal
     const [num_contrato, setNum_contrato] = useState();
+    const [planes_idplanes, setPlanes_idplanes] = useState();
+    const [plan_anterior, setPlan_anterior] = useState();
     const [contrato, setContrato] = useState();
     const [dnicli, setDnicli] = useState();
+    const [nuevo_dnicli, setNuevo_Dnicli] = useState();
     const [nombrecli, setNombrecli] = useState();
     const [apellidocli, setApellidocli] = useState();
     const [direccioncli, setDireccioncli] = useState();
-    const [distritocli, setDistritocli] = useState();
     const [referenciacli, setReferenciacli] = useState();
     const [telefonocli, setTelefonocli] = useState();
     const [telefonocli2, setTelefonocli2] = useState();
     const [nombreplan, setNombreplan] = useState();
     const [precioplan, setPrecioplan] = useState();
+    const [descuento_anterior, setDescuento_anterior] = useState();
+    const [mensaje, setMensaje] = useState('');
+    const [descuento, setDescuento] = useState();
+    const [comentario, setComentario] = useState('');
+    const [preciofinal, setPreciofinal] = useState();
     const [descplan, setDescplan] = useState();
     const [sedecli, setSedecli] = useState();
     const [user_mk, setUser_mk] = useState();
+    const [user_venta, setUserventa] = useState();
+    const [fecha_venta, setFechaventa] = useState();
     
     //TABLA INSTALACION
     const [tecnico_instalador, setTecnico_instalador] = useState();
@@ -64,10 +73,7 @@ function Consulta() {
     const [diapago, setDiapago] = useState();
     const [fecha_ultimo_pago, setFecha_ultimo_pago] = useState();
     const [fecha_proximo_pago, setFecha_proximo_pago] = useState();
-    const [estados, setEstados] = useState([]);
     // Estados para el rango
-
-    
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
@@ -80,6 +86,8 @@ function Consulta() {
 
     const [modalMostrar, setModalMostrar] = useState(false);
     const [modalMostrarFotos, setModalMostrarFotos] = useState(false);
+    const [modalCorregirDNI, setModalCorregirDNI] = useState(false);
+    const [modalCambiarPlan, setModalCambiarPlan] = useState(false);
     const modalRef = useRef(null); // 1. Definir correctamente la referencia
 
     let ipbackend = `${API.URL}`
@@ -88,6 +96,8 @@ function Consulta() {
 
     const ventanaModal = () => setModalMostrar(!modalMostrar);
     const ventanaModalfotos = () => setModalMostrarFotos(!modalMostrarFotos);
+    const ventanaModalCorregirDNI = () => setModalCorregirDNI(!modalCorregirDNI);
+    const ventanaModalCambiarPlan = () => setModalCambiarPlan(!modalCambiarPlan);
 
     const getClientes = async () => {
         try {
@@ -107,14 +117,95 @@ function Consulta() {
             }
         }
       };
-      function getEstados(){
-        fetch(ipbackend+'getestados', {
+      //OBTENER LISTA PLANES
+      function getPlanes(){
+        fetch(ipbackend+'getplanes', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
             .then(response => response.json())
-            .then(data => setEstados(data))
+            .then(data => setListaPlanes(data))
+      }
+
+//CORREGIR DNI CLIENTE
+const corregirDNI = () => {
+        Axios.post(ipbackend+"contratos/corregir-dni", 
+          {  
+              nuevo_dni: nuevo_dnicli,
+              dni_incorrecto: dnicli
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+            .then(() => {
+            getClientes();
+            cerrarModalCorregirDNI();
+            alert("Se corrigió el DNI");
+          }).catch((error) => {
+            if (error.response && error.response.status === 400){
+            alert("Error: "+error.response.data.error);
+            console.log(error.response.data.error)
+            }
+            return error;
+            });
+      }
+
+      //CAMBIAR PLAN
+const confirmarCambioPlan = () => {
+
+   // Verificar si hay cambios reales
+    if (planes_idplanes === plan_anterior && descuento === descuento_anterior) {
+        setMensaje("No se detectaron cambios para actualizar");
+        return; // Salir de la función sin hacer la petición
+    }
+
+        Axios.put(ipbackend+"updateinstalacion/"+num_contrato, 
+          {  
+              planactual_idplanes: planes_idplanes,
+              descuento: descuento
+          },{
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+            .then(Axios.post(ipbackend+"create_historicoplanes",
+            {
+              num_contrato: num_contrato,
+              user_create: user,
+              plan_anterior: plan_anterior,
+              plan_nuevo: planes_idplanes,
+              descuento_anterior: descuento_anterior,
+              descuento_nuevo: descuento,
+              comentario: comentario
+            },{
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }))
+            .then(() => {
+            getClientes();
+            cerrarModalCambiarPlan();
+            alert("Se cambió el Plan");
+          }).catch((error) => {
+            if (error.response && error.response.status === 400){
+            alert("Error: "+error.response.data.error);
+            console.log(error.response.data.error)
+            }
+            return error;
+            });
+      }
+
+ const cerrarModalCorregirDNI = ()=>{
+        ventanaModalCorregirDNI();
+        setNuevo_Dnicli();
+      }
+ const cerrarModalCambiarPlan = ()=>{
+        ventanaModalCambiarPlan();
+        setNuevo_Dnicli();
+        setMensaje('');
+        setComentario('');
       }
 
       const columns = [
@@ -125,14 +216,6 @@ function Consulta() {
           {
             header: 'Servicio',
             accessorKey: 'nombre_estado',
-          },
-          {
-            header: 'Sede',
-            accessorKey: 'nombre_sede',
-          },
-          {
-            header: 'Dia pago',
-            accessorKey: 'dia_pago',
           },
           {
             header: 'DNI',
@@ -146,13 +229,17 @@ function Consulta() {
             header: 'Nombre',
             accessorKey: 'nombrecli',
           },
-          {
-            header: 'Distrito',
-            accessorKey: 'distritocli',
+            {
+            header: 'Sede',
+            accessorKey: 'nombre_sede',
           },
           {
             header: 'Dirección',
             accessorKey: 'direccioncli',
+          },
+          {
+            header: 'Dia pago',
+            accessorKey: 'dia_pago',
           },
           {
             header: 'Caja Terminal',
@@ -225,8 +312,36 @@ function Consulta() {
             window.open(ipbackend + imgcasa, "_blank");
           }
 
-    const mostrarCliente=()=>{
-        ventanaModal();
+    // ABRIR MODAL PARA CORREGIR DNI
+    const corregirDNIcli = () => {
+        if (table.getSelectedRowModel().flatRows[0] == undefined) {
+            alert("Debe seleccionar un registro")
+        } else {
+            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
+            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
+            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
+            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
+            ventanaModalCorregirDNI();
+        }
+    }
+    // ABRIR MODAL PARA CAMBIAR DE PLAN
+    const cambiarPlan = () => {
+        if (table.getSelectedRowModel().flatRows[0] == undefined) {
+            alert("Debe seleccionar un registro")
+        } else {
+            setNum_contrato(table.getSelectedRowModel().flatRows[0].original.num_contrato);
+            setContrato(table.getSelectedRowModel().flatRows[0].original.contrato);
+            setNombrecli(table.getSelectedRowModel().flatRows[0].original.nombrecli);
+            setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
+            setDnicli(table.getSelectedRowModel().flatRows[0].original.clienteactual_dnicliente);
+            setPlanes_idplanes(table.getSelectedRowModel().flatRows[0].original.planactual_idplanes);
+            setPlan_anterior(table.getSelectedRowModel().flatRows[0].original.planactual_idplanes);
+            setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
+            setDescuento(table.getSelectedRowModel().flatRows[0].original.descuento);
+            setDescuento_anterior(table.getSelectedRowModel().flatRows[0].original.descuento);
+            ventanaModalCambiarPlan();
+        }
     }
 
     const detalleCliente = () => {
@@ -240,7 +355,6 @@ function Consulta() {
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
             setDiapago(table.getSelectedRowModel().flatRows[0].original.dia_pago);
             setDireccioncli(table.getSelectedRowModel().flatRows[0].original.direccioncli);
-            setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
             setSedecli(table.getSelectedRowModel().flatRows[0].original.nombre_sede);
             setUser_mk(table.getSelectedRowModel().flatRows[0].original.user_mk);
             setReferenciacli(table.getSelectedRowModel().flatRows[0].original.referenciacli);
@@ -256,6 +370,8 @@ function Consulta() {
             setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
             setDescplan(table.getSelectedRowModel().flatRows[0].original.descplan);
             setPrecioplan(table.getSelectedRowModel().flatRows[0].original.precioplan);
+            setDescuento(table.getSelectedRowModel().flatRows[0].original.descuento);
+            setPreciofinal(table.getSelectedRowModel().flatRows[0].original.precio_final);
             setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado); 
             setCaja_instalacion(table.getSelectedRowModel().flatRows[0].original.caja_instalacion);
             setSplitter_instalacion(table.getSelectedRowModel().flatRows[0].original.splitter_instalacion);
@@ -265,7 +381,9 @@ function Consulta() {
             setCobroinstalacion(table.getSelectedRowModel().flatRows[0].original.cobro_instalacion);
             setFecha_ultimo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_ultimo_pago);
             setFecha_proximo_pago(table.getSelectedRowModel().flatRows[0].original.fecha_proximo_pago);
-            mostrarCliente();
+            setUserventa(table.getSelectedRowModel().flatRows[0].original.user_venta);
+            setFechaventa(table.getSelectedRowModel().flatRows[0].original.fecha_venta);
+            ventanaModal();
         }
     }
     const verFotos = () => {
@@ -279,7 +397,6 @@ function Consulta() {
             setApellidocli(table.getSelectedRowModel().flatRows[0].original.apellidocli);
             setDiapago(table.getSelectedRowModel().flatRows[0].original.dia_pago);
             setDireccioncli(table.getSelectedRowModel().flatRows[0].original.direccioncli);
-            setDistritocli(table.getSelectedRowModel().flatRows[0].original.distritocli);
             setSedecli(table.getSelectedRowModel().flatRows[0].original.nombre_sede);
             setUser_mk(table.getSelectedRowModel().flatRows[0].original.user_mk);
             setReferenciacli(table.getSelectedRowModel().flatRows[0].original.referenciacli);
@@ -301,6 +418,8 @@ function Consulta() {
             setNombreplan(table.getSelectedRowModel().flatRows[0].original.nombreplan);
             setDescplan(table.getSelectedRowModel().flatRows[0].original.descplan);
             setPrecioplan(table.getSelectedRowModel().flatRows[0].original.precioplan);
+            setDescuento(table.getSelectedRowModel().flatRows[0].original.descuento);
+            setPreciofinal(table.getSelectedRowModel().flatRows[0].original.precio_final);
             setEstado_servicio(table.getSelectedRowModel().flatRows[0].original.nombre_estado); 
             setCaja_instalacion(table.getSelectedRowModel().flatRows[0].original.caja_instalacion);
             setSplitter_instalacion(table.getSelectedRowModel().flatRows[0].original.splitter_instalacion);
@@ -360,18 +479,22 @@ const compartirComoImagen = async () => {
     };
 
     useEffect(() =>{
-        getClientes()
-        getEstados()
+        getClientes();
+        getPlanes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return(
         <div className='App'>
-            <h1 className='mb-3'>Consulta de Clientes y Contratos</h1>
+            <h1 className='mb-3'>Consultas</h1>
         <div className="btn-group mb-3" role="group" aria-label="Basic outlined example">
-          <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Ver datos cliente</button>
+          <button type="button" class="btn btn-outline-primary" onClick={detalleCliente}>Datos</button>
           &nbsp;&nbsp;
-          <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Ver fotos</button>
+          <button type="button" class="btn btn-outline-primary" onClick={verFotos}>Fotos</button>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-outline-primary" onClick={corregirDNIcli}>Corregir DNI</button>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-outline-primary" onClick={cambiarPlan}>Cambio plan</button>
         </div>
 
             <div className='table-responsive'>
@@ -517,14 +640,13 @@ const compartirComoImagen = async () => {
                         <div className="col-6">{direccioncli}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Distrito:</div>
-                        <div className="col-6">{distritocli}</div>
-                    </div>
-                    <div className='row mb-2'>
                         <div className='col-4'>Referencia:</div>
                         <div className="col-6">{referenciacli}</div>
                     </div>
-                    
+                    <div className='row mb-2'>
+                        <div className='col-4'>Dia de Pago:</div>
+                        <div className="col-6">{diapago}</div>
+                    </div>
                     <div className='row mb-2'>
                         <div className='col-4'>CT/Spliter:</div>
                         <div className="col-6">{caja_instalacion} / {splitter_instalacion}</div>
@@ -539,11 +661,15 @@ const compartirComoImagen = async () => {
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Precio Plan:</div>
-                        <div className="col-6">S/. {precioplan}.00</div>
+                        <div className="col-6">S/. {precioplan}</div>
                     </div>
                     <div className='row mb-2'>
-                        <div className='col-4'>Dia de Pago:</div>
-                        <div className="col-6">{diapago}</div>
+                        <div className='col-4'>Descuento:</div>
+                        <div className="col-6">S/. {descuento}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Precio final:</div>
+                        <div className="col-6">S/. {preciofinal}</div>
                     </div>
                     <div className='row mb-2'>
                         <div className='col-4'>Usuario Mikrotik:</div>
@@ -589,6 +715,14 @@ const compartirComoImagen = async () => {
                     <div className='row mb-2'>
                         <div className='col-4'>Costo por instalacion:</div>
                         <div className="col-6">{cobro_instalacion}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>User venta:</div>
+                        <div className="col-6">{user_venta}</div>
+                    </div>
+                    <div className='row mb-2'>
+                        <div className='col-4'>Fecha venta:</div>
+                        <div className="col-6">{fecha_venta}</div>
                     </div>
                 </div>
                 </ModalBody>
@@ -641,7 +775,108 @@ const compartirComoImagen = async () => {
                 </ModalFooter>
             </Modal>
 
-           
+       {/* MODAL PARA CORREGIR DNI */}
+          <Modal isOpen={modalCorregirDNI} toggle={ventanaModalCorregirDNI}>
+            <ModalBody>
+              <div className="from-group">
+              {
+                  <h4 className="">Corregir DNI Cliente:</h4>
+              } 
+                <div className="mb-3">
+                  <span className="input-group-text" id="basic-addon1">
+                    DNI Incorrecto: {dnicli}
+                  </span>
+                  <span className="input-group-text" id="basic-addon1">
+                    {apellidocli} {nombrecli}
+                  </span>
+                </div>
+    
+                <div className="mb-3">
+                  <label for="nombres" className="form-label">Ingrese DNI correcto:</label>
+                  <input type="text" onChange={(event) => {
+                    setNuevo_Dnicli(event.target.value);
+                  }}
+                    value={nuevo_dnicli}
+                    className="form-control" id="detalle_suspension" aria-describedby="basic-addon1">
+                  </input>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <button className="btn btn-success" onClick={corregirDNI}>
+                Confirmar
+              </button>
+              <button className="btn btn-danger" onClick={cerrarModalCorregirDNI}>
+                Cancelar
+              </button>
+            </ModalFooter>
+          </Modal>
+
+ {/* MODAL PARA CAMBIAR DE PLAN */}
+          <Modal isOpen={modalCambiarPlan} toggle={ventanaModalCambiarPlan}>
+            <ModalBody>
+              <div className="from-group">
+              {
+                  <h4 className="">Cambiar de Plan:</h4>
+              } 
+                <div className="mb-3">
+                  <span className="input-group-text" id="basic-addon1">
+                    Plan anterior: {nombreplan}
+                  </span>
+                  <span className="input-group-text" id="basic-addon1">
+                    {apellidocli} {nombrecli}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <label for="nombres" className="form-label">Ingrese nuevo Plan:</label>
+                  <select
+                  className="form-control" aria-describedby="basic-addon1" key={planes_idplanes} value={planes_idplanes}
+                  onChange={(event) => { setPlanes_idplanes(event.target.value);}}
+                >
+                  {listaPlanes.map((planes) => {
+                    return (
+                      <>
+                        <option value={planes.idplanes}>
+                          {planes.nombreplan}
+                        </option>
+                      </>
+                    );
+                  })}
+                </select>
+                </div>
+                <div className="mb-3">
+              <label for="nombres" className="form-label">Descuento:</label>
+              <input type="text" onChange={(event) => {
+                setDescuento(event.target.value);
+              }}
+                value={descuento}
+                className="form-control" id="detalle_suspension" aria-describedby="basic-addon1">
+              </input>
+              </div>
+              <div className="mb-3">
+              <label for="comentario" className="form-label">Comentario:</label>
+              <input type="text" onChange={(event) => {
+                setComentario(event.target.value);
+              }}
+                value={comentario}
+                className="form-control" id="detalle_suspension" aria-describedby="basic-addon1">
+              </input>
+              </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <button className="btn btn-success" onClick={confirmarCambioPlan}>
+                Confirmar
+              </button>
+              <button className="btn btn-danger" onClick={cerrarModalCambiarPlan}>
+                Cancelar
+              </button>
+              {mensaje && <div className="alert alert-info">{mensaje}
+                </div>}
+              
+            </ModalFooter>
+          </Modal>
+  
         </div>
     )
 }

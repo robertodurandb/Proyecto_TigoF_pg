@@ -8,12 +8,15 @@ import Sedes from '../src/componentes/Sedes';
 import Ordenes_Transporte from '../src/componentes/Ordenes_Transporte';
 import Instalacion from '../src/componentes/Instalacion';
 import Consultas from './componentes/Consulta';
-import CambioEstados from './componentes/CambioEstados';
+import HistoricoCortes from './componentes/Historico_Cortes';
+import HistoricoCajas from './componentes/Historico_Cajas';
+import HistoricoEquipos from './componentes/Historico_Equipos';
+import HistoricoPlanes from './componentes/Historico_Planes';
 import ImportPagos from '../src/componentes/ImportPagos';
 import ControlPagos from '../src/componentes/ControlPagos';
 import Passwordupdate from '../src/componentes/Passwordupdate';
 import Pagos from '../src/componentes/Pagos';
-import Cortes from '../src/componentes/Cortes_Activaciones';
+import Recojos from '../src/componentes/Recojos';
 import Logs from '../src/componentes/Logs_Carga';
 
 import Usuarios from '../src/componentes/Usuario';
@@ -30,7 +33,7 @@ import {
 import { Button } from "reactstrap";
 
 // Componente para rutas protegidas
-const ProtectedRoute = ({ children, requiredRole = null }) => {
+const ProtectedRoute = ({ children, requiredRoles = null }) => {
   const isLoggedIn = sessionStorage.getItem('token');
   const userRole = sessionStorage.getItem('role');
 
@@ -38,15 +41,37 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     return <Navigate to="/" replace />;
   }
 
-  if (requiredRole && userRole !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />;
+  if (requiredRoles) {
+    // Si requiredRoles es un array, verifica si el rol está incluido
+    // Si es un string, verifica igualdad
+    const hasAccess = Array.isArray(requiredRoles) 
+      ? requiredRoles.includes(userRole)
+      : requiredRoles === userRole;
+    
+    if (!hasAccess) {
+      return <Navigate to="/unauthorized" replace />;
+    }
   }
 
   return children || <Outlet />;
 };
+// const ProtectedRoute = ({ children, requiredRole = null }) => {
+//   const isLoggedIn = sessionStorage.getItem('token');
+//   const userRole = sessionStorage.getItem('role');
+
+//   if (!isLoggedIn) {
+//     return <Navigate to="/" replace />;
+//   }
+
+//   if (requiredRole && userRole !== requiredRole) {
+//     return <Navigate to="/unauthorized" replace />;
+//   }
+
+//   return children || <Outlet />;
+// };
 
 // Componente de layout para la estructura de la aplicación
-const AppLayout = ({ children, user, signOut, isAdmin }) => {
+const AppLayout = ({ children, user, signOut, userRole }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenbutton, setIsOpenbutton] = useState(false);
   const dropdownRef = useRef(null);
@@ -104,7 +129,7 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
         <div className='logo'>TIGO</div>
         <ul className={isOpen ? 'nav-links2' : 'nav-links1'}>
           
-          {isAdmin && (
+          {userRole === "Admin" && (
             <>
             <li>
             <Link to="/" className="links1" role='button' onClick={() => setIsOpen(false)}>Consultas</Link>
@@ -112,19 +137,28 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
           <li>
             <Link to="/Pagos" className="links1" role='button' onClick={() => setIsOpen(false)}>Pagos</Link>
           </li>
-          <li>
-            <Link to="/cambioestados" className="links1" role='button' onClick={() => setIsOpen(false)}>Historial</Link>
-          </li>
             <li>
               <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>OTs</Link>
             </li>
-
-            </>
-            
+            </>   
           )}
-          <li>
-            <Link to="/Instalaciones" className="links1" role='button' onClick={() => setIsOpen(false)}>Instalaciones</Link>
-          </li>
+          {(userRole === "Admin" || userRole === "Tecnico" || userRole === "Especialista") && (
+            <>
+              <li>
+              <Link to="/Instalaciones" className="links1" role='button' onClick={() => setIsOpen(false)}>Instalaciones</Link>
+              </li>
+              <li>
+                <Link to="/Recojos" className="links1" role='button' onClick={() => setIsOpen(false)}>Recojos</Link>
+              </li>
+            </>   
+          )}
+          {userRole === "Ventas" && (
+            <>
+            <li>
+              <Link to="/Ordenes_Trabajo" className="links1" role='button' onClick={() => setIsOpen(false)}>OTs</Link>
+            </li>
+            </>   
+          )}
         </ul>
 
         <div 
@@ -144,7 +178,7 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
           </button>
           {isOpenbutton && (
             <div className="dropdown-content">
-              {isAdmin && (
+              {userRole === "Admin" && (
                 <>
                   <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
                     <Link className='text-decoration-none text-reset' to="/usuarios">
@@ -164,6 +198,26 @@ const AppLayout = ({ children, user, signOut, isAdmin }) => {
                   <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
                     <Link className='text-decoration-none text-reset' to="/sedes">
                       Tabla Sedes
+                    </Link>
+                  </button>
+                  <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
+                    <Link className='text-decoration-none text-reset' to="/historicocortes">
+                      Histórico cortes
+                    </Link>
+                  </button>
+                  <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
+                    <Link className='text-decoration-none text-reset' to="/historicocajas">
+                      Histórico cajas
+                    </Link>
+                  </button>
+                  <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
+                    <Link className='text-decoration-none text-reset' to="/historicoequipos">
+                      Histórico equipos
+                    </Link>
+                  </button>
+                  <button className="dropdown-item" onClick={() => setIsOpenbutton(false)}>
+                    <Link className='text-decoration-none text-reset' to="/historicoplanes">
+                      Histórico planes
                     </Link>
                   </button>
                 </>
@@ -199,10 +253,13 @@ function App() {
     setUser(sessionStorage.getItem('currentUser'));
   }
 
-  function isAdmin() {
-    const role = sessionStorage.getItem("role");
-    return role === "Admin";
-  }
+  // function isAdmin() {
+  //   const role = sessionStorage.getItem("role");
+  //   return role === "Admin";
+  // }
+  function getUserRole() {
+  return sessionStorage.getItem("role");
+}
 
   function signOut() {
     sessionStorage.removeItem("token");
@@ -219,26 +276,34 @@ function App() {
   return (
     <div className='main1'>
       {logged ? (
-        <AppLayout user={user} signOut={signOut} isAdmin={isAdmin()}>
+        <AppLayout user={user} signOut={signOut} userRole={getUserRole()}>
           <Routes>
-            <Route element={<ProtectedRoute requiredRole="Admin" />}>
+            <Route element={<ProtectedRoute requiredRoles="Admin" />}>
               <Route path="/" element={<Consultas />} />
               <Route path="/Pagos" element={<Pagos />} />
-              <Route path="/Ordenes_Trabajo" element={<Ordenes_Transporte />} />
+              <Route path="/Pagos" element={<ImportPagos />} />
+              <Route path="/ControlPagos" element={<ControlPagos />} />
               <Route path="/cliente" element={<Clientes />} />
-              <Route path="/cortes" element={<Cortes />} />
               <Route path="/logs" element={<Logs />} />
               <Route path="/planes" element={<Planes />} />
               <Route path="/usuarios" element={<Usuarios />} />
               <Route path="/sedes" element={<Sedes />} />
-              <Route path="/cambioestados" element={<CambioEstados />} />
+              <Route path="/historicocortes" element={<HistoricoCortes />} />
+              <Route path="/historicocajas" element={<HistoricoCajas />} />
+              <Route path="/historicoequipos" element={<HistoricoEquipos />} />
+              <Route path="/historicoplanes" element={<HistoricoPlanes />} />
+            </Route>
+            <Route element={<ProtectedRoute requiredRoles={["Admin", "Ventas"]} />}>        
+              <Route path="/Ordenes_Trabajo" element={<Ordenes_Transporte />} />
+            </Route>
+            <Route element={<ProtectedRoute requiredRoles={["Admin", "Tecnico", "Especialista"]} />}>        
+              <Route path="/Ordenes_Trabajo" element={<Ordenes_Transporte />} />
+              <Route path="/Instalaciones" element={<Instalacion />} />
+              <Route path="/Recojos" element={<Recojos />} />
             </Route>
 
-            <Route path="/Instalaciones" element={<Instalacion />} />
             <Route path="/passwordupdate" element={<Passwordupdate />} />
-            <Route path="/Pagos" element={<ImportPagos />} />
-            <Route path="/ControlPagos" element={<ControlPagos />} />
-
+            
             <Route path="/unauthorized" element={<div>No tienes permisos para acceder a esta página</div>} />
           </Routes>
         </AppLayout>

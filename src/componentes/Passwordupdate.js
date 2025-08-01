@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API from '../utils/const'
-import Inicio from '../componentes/Inicio';
 import {
   BrowserRouter as Router,
   Routes,
